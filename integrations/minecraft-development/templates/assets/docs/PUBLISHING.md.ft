@@ -1,0 +1,10 @@
+#[[# 可视化发布
+
+先在所需目标分组点 build_<id>，再点 verify_<id> 检查实际发行 JAR。发布任务分别为 publish_modrinth_<id>、publish_curseforge_<id>、publish_maven_<id>。
+
+表单显示目标和发行文件，填写平台项目 ID/Token 或 Maven HTTPS 地址/凭据，再确认上传。凭据只传给当前子进程环境，不存到工程、Gradle properties 或日志。只发布一个平台时，不需要另一个平台的凭据。
+
+已有环境凭据的自动化调用仍可直接用目标 publishMods，显式选择 publish_platform；没有默认远端 Maven 地址。平台审核与公网下载不能由上传任务或本地构建成功推断。
+
+模组上传和 Maven publication 选择相同 production JAR：旧 Fabric remapJar、旧 Forge reobfJar，未混淆目标 jar。sources JAR 是额外源码产物。检查必须使用实际发行包，不能只检查开发类路径。
+]]#

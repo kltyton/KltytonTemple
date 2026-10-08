@@ -1,0 +1,8 @@
+#[[# CI
+
+根 writeCiMatrix 读取目标 gradle.properties，输出启用目标的 Windows/Linux 矩阵。不额外维护 ci.properties，不调用 Python。
+
+CI 只运行原生目标 build_<id> 与 verify_<id>，安装所需 JDK，并检查实际 JAR。没有空 common test job、默认 clean 或盲目重试；没有客户端或模组平台上传。
+
+本地输出与 CI 结论分别绑定实际目标和场景。未实际运行 Actions 时只报告工作流已配置。
+]]#

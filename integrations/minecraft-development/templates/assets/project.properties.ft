@@ -1,0 +1,9 @@
+#[[org.gradle.jvmargs=-Xmx3G -Dfile.encoding=UTF-8
+org.gradle.daemon=false
+]]#mod_id=${MOD_ID}
+mod_name=${MOD_NAME}
+mod_group_id=${BUILD_COORDS.groupId}
+mod_authors=${AUTHORS}
+mod_version=${BUILD_COORDS.version}
+mod_license=${LICENSE}
+mod_description=${DESCRIPTION}

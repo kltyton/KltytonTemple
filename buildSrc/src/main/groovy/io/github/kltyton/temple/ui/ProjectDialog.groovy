@@ -1,0 +1,47 @@
+package io.github.kltyton.temple.ui
+
+import io.github.kltyton.temple.workspace.ProjectCreation
+import io.github.kltyton.temple.workspace.ProjectFiles
+import java.awt.BorderLayout
+import java.awt.GridLayout
+import javax.swing.*
+
+final class ProjectDialog {
+    static void main(String[] arguments) {
+        UIManager.setLookAndFeel(UIManager.systemLookAndFeelClassName)
+        File root = new File(arguments[0]).canonicalFile
+        Map<String, JTextField> fields = [
+            mod_id: new JTextField(), mod_name: new JTextField(), mod_group_id: new JTextField('io.github.kltyton'),
+            mod_authors: new JTextField(), mod_version: new JTextField('1.0.0'), mod_license: new JTextField('MIT'),
+            mod_description: new JTextField('A Minecraft mod.'), directory: new JTextField()
+        ]
+        Map<String, String> labels = [mod_id:'Mod ID', mod_name:'Mod 名称', mod_group_id:'Java 包名',
+                                     mod_authors:'作者', mod_version:'版本', mod_license:'许可证',
+                                     mod_description:'描述', directory:'新工程目录']
+        JPanel properties = new JPanel(new GridLayout(0, 2, 12, 8))
+        fields.each { name, field -> properties.add(new JLabel(labels[name])); properties.add(field) }
+        Map<String, JCheckBox> choices = ProjectFiles.targets(root).collectEntries {
+            [(it.id): new JCheckBox(it.id, true)]
+        }
+        JPanel targets = new JPanel(new GridLayout(0, 2, 8, 4))
+        choices.values().each { targets.add(it) }
+        JPanel form = new JPanel(new BorderLayout(0, 12))
+        form.add(properties, BorderLayout.NORTH)
+        form.add(targets, BorderLayout.CENTER)
+        while (JOptionPane.showConfirmDialog(null, form, 'KltytonTemple · 创建新项目',
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
+            try {
+                List<String> selected = choices.findAll { it.value.selected }.keySet().toList()
+                if (selected.empty) { throw new IllegalArgumentException('至少选择一个目标') }
+                Properties identity = new Properties()
+                fields.findAll { it.key != 'directory' }.each { name, field -> identity.setProperty(name, field.text.trim()) }
+                if (!fields.directory.text.trim()) { throw new IllegalArgumentException('请选择新工程目录') }
+                File created = ProjectCreation.create(root, new File(fields.directory.text.trim()), identity, selected)
+                JOptionPane.showMessageDialog(null, "已创建 ${created}。在 IDEA 中打开目录即可。")
+                return
+            } catch (IllegalArgumentException | IOException problem) {
+                JOptionPane.showMessageDialog(null, problem.message, '无法创建项目', JOptionPane.ERROR_MESSAGE)
+            }
+        }
+    }
+}

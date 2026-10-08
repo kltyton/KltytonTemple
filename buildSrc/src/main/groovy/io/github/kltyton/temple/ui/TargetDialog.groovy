@@ -1,0 +1,49 @@
+package io.github.kltyton.temple.ui
+
+import io.github.kltyton.temple.workspace.ProjectCreation
+import io.github.kltyton.temple.workspace.ProjectFiles
+import io.github.kltyton.temple.workspace.TargetDefinition
+import java.awt.GridLayout
+import javax.swing.*
+
+final class TargetDialog {
+    static void main(String[] arguments) {
+        UIManager.setLookAndFeel(UIManager.systemLookAndFeelClassName)
+        File root = new File(arguments[0]).canonicalFile
+        List<TargetDefinition> targets = ProjectFiles.targets(root)
+        JComboBox<String> source = new JComboBox<>(targets.collect { it.id } as String[])
+        JTextField minecraft = new JTextField()
+        JTextField loader = new JTextField()
+        JTextField fabricApi = new JTextField()
+        JTextField javaVersion = new JTextField('21')
+        JTextField gradleJava = new JTextField('21')
+        JTextField wrapper = new JTextField()
+        JPanel form = new JPanel(new GridLayout(0, 2, 12, 8))
+        [['复制已有目标', source], ['Minecraft 版本', minecraft], ['Loader 版本', loader],
+         ['Fabric API（仅 Fabric）', fabricApi], ['编译 Java', javaVersion], ['Gradle Java', gradleJava],
+         ['Gradle 版本（空白保持）', wrapper]].each { pair ->
+            form.add(new JLabel(pair[0].toString())); form.add(pair[1] as java.awt.Component)
+        }
+        while (JOptionPane.showConfirmDialog(null, form, 'KltytonTemple · 新增目标',
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
+            try {
+                ['编译 Java': javaVersion.text, 'Gradle Java': gradleJava.text].each { name, value ->
+                    if (!(value ==~ /[0-9]+/) || value.toInteger() < 8) { throw new IllegalArgumentException("无效的${name}") }
+                }
+                TargetDefinition blueprint = targets.find { it.id == source.selectedItem }
+                Properties values = new Properties()
+                values.setProperty('minecraft_version', minecraft.text.trim())
+                values.setProperty('loader_version', loader.text.trim())
+                values.setProperty('java_version', javaVersion.text.trim())
+                values.setProperty('gradle_java_version', gradleJava.text.trim())
+                if (fabricApi.text.trim()) { values.setProperty('fabric_api_version', fabricApi.text.trim()) }
+                if (wrapper.text.trim()) { values.setProperty('wrapper_version', wrapper.text.trim()) }
+                TargetDefinition created = ProjectCreation.add(root, blueprint, values)
+                JOptionPane.showMessageDialog(null, "已创建 ${created.id}。刷新 Gradle 后出现任务；请按新版本 API 完成适配。")
+                return
+            } catch (IllegalArgumentException | IOException problem) {
+                JOptionPane.showMessageDialog(null, problem.message, '无法创建目标', JOptionPane.ERROR_MESSAGE)
+            }
+        }
+    }
+}

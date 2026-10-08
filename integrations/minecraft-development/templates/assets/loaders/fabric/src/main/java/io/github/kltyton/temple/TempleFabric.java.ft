@@ -1,0 +1,11 @@
+#[[package ]]#${BUILD_COORDS.groupId}#[[;
+
+import net.fabricmc.api.ModInitializer;
+
+public final class TempleFabric implements ModInitializer {
+    @Override
+    public void onInitialize() {
+        TempleCommon.initialize();
+    }
+}
+]]#

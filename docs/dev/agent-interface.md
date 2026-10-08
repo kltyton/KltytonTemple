@@ -1,20 +1,11 @@
-# Agent 接口
+# Gradle 与 Agent 入口
 
-入口是项目根目录 temple.py；Python 3.11+，标准库，无 daemon。每个命令的 --json 输出可直接解析，错误写 stderr 并退出 2；构建失败返回 1 并提供全部已执行目标的真实退出码。
+正式入口是原生 Gradle 插件 io.github.kltyton.temple，由项目 buildSrc 提供。IDEA 直接导入根目录，任务按 Loader/Minecraft 分组。没有 Python CLI 或桥接进程。
 
-| 操作 | 命令 |
-| --- | --- |
-| 列出全部目标 | python temple.py list --json |
-| CI 子集 | python temple.py matrix --json |
-| 静态边界与本机 JDK | python temple.py doctor --json |
-| 读取既有工程声明 | python temple.py inspect <path> --json |
-| 查询目标 IDEA 目录 | python temple.py ide --target <id> --json |
-| 选择根 IDE 目标 | python temple.py select --target <id> --json |
-| 准备构建调用 | python temple.py build --target <id> --plan --json |
-| 批量构建 | python temple.py build --log-dir <logs> --json |
-| 检查真实 JAR | python temple.py verify --target <id> --json |
-| 发布计划 | python temple.py publish --target <id> --platform modrinth --json |
+Root listTargets 返回目标事实；writeCiMatrix 输出启用目标；buildAllTargets 依赖各目标 build_<id>。Task ID 中的短横线和点统一替换为下划线。例如 forge-1.20.1 对应 build_forge_1_20_1、select_forge_1_20_1、runClient_forge_1_20_1、verify_forge_1_20_1。
 
-build 可重复 --target。不存在的目标、不安全的共享路径、重复 Java 源、错误 JDK 和已有初始化目录均返回明确错误。list 不需要 JDK，doctor 不执行 Gradle。build、run、publish 会按命令实际操作，必须受当前用户任务合同约束。发布默认只计划；--execute 会发生远端写入。
+select_<id> 同步根 Wrapper 分发配置、活动目标和身份源码；重新加载 Gradle 后，IDE 使用正确的目标模型。build/run 通过该目标自己的 GradleWrapperMain 和 Java 工具链运行，不把不同 Wrapper 当作同一个根 Gradle 子工程。
 
-MCP 不是必须条件：能读取文件和执行命令的代理可直接使用本接口。提供了 [可分发 Skill](../../integrations/skills/kltyton-temple/SKILL.md)；不要求改变主模型、Provider、全局工具、个人规则或已有技能。
+所有构建、运行、资源生成、发布仍受用户当前合同约束。createProject/addTarget 是可视化表单；发布表单仅把凭据交给本轮子进程，确认后才上传。listTargets、任务规划与 JAR 检查均不证明游戏运行或视觉行为通过。
+
+既有工程可复用同一 buildSrc 和根入口；保留其源层路径、mod_java_package/mod_entry_class、Loader/Wrapper pins 与专用构建钩子。无需改写游戏代码或手工资源。

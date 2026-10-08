@@ -1,0 +1,24 @@
+#[[plugins {
+    id 'groovy'
+    id 'java-gradle-plugin'
+}
+
+dependencies {
+    implementation localGroovy()
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+tasks.withType(GroovyCompile).configureEach { groovyOptions.encoding = 'UTF-8' }
+
+gradlePlugin {
+    plugins {
+        temple {
+            id = 'io.github.kltyton.temple'
+            implementationClass = 'io.github.kltyton.temple.gradle.TemplePlugin'
+        }
+    }
+}
+]]#

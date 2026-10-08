@@ -1,0 +1,1439 @@
+{
+    "version": 3,
+    "label": "KltytonTemple",
+    "group": "mod",
+    "properties": [
+        {
+            "name": "BUILD_COORDS",
+            "type": "build_system_coordinates",
+            "order": 10
+        },
+        {
+            "name": "MOD_ID",
+            "type": "string",
+            "label": "Mod ID",
+            "default": "my_mod",
+            "validator": "[a-z][a-z0-9_]{1,63}",
+            "derives": {
+                "parents": [
+                    "PROJECT_NAME"
+                ],
+                "method": "replace",
+                "parameters": {
+                    "regex": "[^a-z0-9_]+",
+                    "replacement": "_",
+                    "lowercase": true,
+                    "maxLength": 64
+                }
+            }
+        },
+        {
+            "name": "MOD_NAME",
+            "type": "string",
+            "label": "Mod \u540d\u79f0",
+            "inheritFrom": "PROJECT_NAME",
+            "default": "My Mod"
+        },
+        {
+            "name": "TARGET_PROFILE",
+            "type": "string",
+            "label": "\u7248\u672c\u4e0e\u52a0\u8f7d\u5668",
+            "options": {
+                "all": "\u5168\u90e8\u7248\u672c\u4e0e\u52a0\u8f7d\u5668",
+                "mc1201": "fabric-1.20.1 + forge-1.20.1",
+                "mc1211": "fabric-1.21.1 + neoforge-1.21.1",
+                "mc2612": "fabric-26.1.2 + neoforge-26.1.2",
+                "fabric-1.20.1": "fabric-1.20.1",
+                "fabric-1.21.1": "fabric-1.21.1",
+                "fabric-26.1.2": "fabric-26.1.2",
+                "forge-1.18.2": "forge-1.18.2",
+                "forge-1.19.2": "forge-1.19.2",
+                "forge-1.20.1": "forge-1.20.1",
+                "neoforge-1.21.1": "neoforge-1.21.1",
+                "neoforge-26.1.2": "neoforge-26.1.2",
+                "neoforge-26.2.0": "neoforge-26.2.0"
+            },
+            "default": "all",
+            "forceDropdown": true
+        },
+        {
+            "name": "AUTHORS",
+            "type": "string",
+            "label": "\u4f5c\u8005",
+            "default": "kltyton"
+        },
+        {
+            "name": "LICENSE",
+            "type": "string",
+            "label": "\u8bb8\u53ef\u8bc1",
+            "default": "MIT"
+        },
+        {
+            "name": "DESCRIPTION",
+            "type": "string",
+            "label": "\u63cf\u8ff0",
+            "default": "A Minecraft mod."
+        },
+        {
+            "name": "JDK",
+            "type": "jdk",
+            "default": 21,
+            "order": 20
+        }
+    ],
+    "files": [
+        {
+            "template": "assets/.gitattributes.ft",
+            "destination": ".gitattributes",
+            "reformat": false
+        },
+        {
+            "template": "assets/.github/CODEOWNERS.example.ft",
+            "destination": ".github/CODEOWNERS.example",
+            "reformat": false
+        },
+        {
+            "template": "assets/.github/pull_request_template.md.ft",
+            "destination": ".github/pull_request_template.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/.github/workflows/verify-common.yml.ft",
+            "destination": ".github/workflows/verify-common.yml",
+            "reformat": false
+        },
+        {
+            "template": "assets/.gitignore.ft",
+            "destination": ".gitignore",
+            "reformat": false
+        },
+        {
+            "template": "assets/build.gradle.ft",
+            "destination": "build.gradle",
+            "reformat": false
+        },
+        {
+            "template": "assets/buildSrc/build.gradle.ft",
+            "destination": "buildSrc/build.gradle",
+            "reformat": false
+        },
+        {
+            "template": "assets/buildSrc/src/main/groovy/io/github/kltyton/temple/artifact/DistributionInspector.groovy.ft",
+            "destination": "buildSrc/src/main/groovy/io/github/kltyton/temple/artifact/DistributionInspector.groovy",
+            "reformat": false
+        },
+        {
+            "template": "assets/buildSrc/src/main/groovy/io/github/kltyton/temple/gradle/TemplePlugin.groovy.ft",
+            "destination": "buildSrc/src/main/groovy/io/github/kltyton/temple/gradle/TemplePlugin.groovy",
+            "reformat": false
+        },
+        {
+            "template": "assets/buildSrc/src/main/groovy/io/github/kltyton/temple/integration/MinecraftTemplates.groovy.ft",
+            "destination": "buildSrc/src/main/groovy/io/github/kltyton/temple/integration/MinecraftTemplates.groovy",
+            "reformat": false
+        },
+        {
+            "template": "assets/buildSrc/src/main/groovy/io/github/kltyton/temple/ui/ProjectDialog.groovy.ft",
+            "destination": "buildSrc/src/main/groovy/io/github/kltyton/temple/ui/ProjectDialog.groovy",
+            "reformat": false
+        },
+        {
+            "template": "assets/buildSrc/src/main/groovy/io/github/kltyton/temple/ui/PublishDialog.groovy.ft",
+            "destination": "buildSrc/src/main/groovy/io/github/kltyton/temple/ui/PublishDialog.groovy",
+            "reformat": false
+        },
+        {
+            "template": "assets/buildSrc/src/main/groovy/io/github/kltyton/temple/ui/TargetDialog.groovy.ft",
+            "destination": "buildSrc/src/main/groovy/io/github/kltyton/temple/ui/TargetDialog.groovy",
+            "reformat": false
+        },
+        {
+            "template": "assets/buildSrc/src/main/groovy/io/github/kltyton/temple/workspace/ProjectCreation.groovy.ft",
+            "destination": "buildSrc/src/main/groovy/io/github/kltyton/temple/workspace/ProjectCreation.groovy",
+            "reformat": false
+        },
+        {
+            "template": "assets/buildSrc/src/main/groovy/io/github/kltyton/temple/workspace/ProjectFiles.groovy.ft",
+            "destination": "buildSrc/src/main/groovy/io/github/kltyton/temple/workspace/ProjectFiles.groovy",
+            "reformat": false
+        },
+        {
+            "template": "assets/buildSrc/src/main/groovy/io/github/kltyton/temple/workspace/TargetDefinition.groovy.ft",
+            "destination": "buildSrc/src/main/groovy/io/github/kltyton/temple/workspace/TargetDefinition.groovy",
+            "reformat": false
+        },
+        {
+            "template": "assets/common/src/main/java/io/github/kltyton/temple/TempleCommon.java.ft",
+            "destination": "common/src/main/java/${BUILD_COORDS.groupId.replace(\".\", \"/\")}/TempleCommon.java",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/CI_TARGET_DISCOVERY.md.ft",
+            "destination": "docs/CI_TARGET_DISCOVERY.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/dev/agent-interface.md.ft",
+            "destination": "docs/dev/agent-interface.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/dev/architecture.md.ft",
+            "destination": "docs/dev/architecture.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/licenses/LICENSE-CHAMPIONASH5357.txt.ft",
+            "destination": "docs/licenses/LICENSE-CHAMPIONASH5357.txt",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/MAINTENANCE_WORKFLOW.md.ft",
+            "destination": "docs/MAINTENANCE_WORKFLOW.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/PUBLISHING.md.ft",
+            "destination": "docs/PUBLISHING.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/01-1.20.4-to-1.20.5/00-overview.md.ft",
+            "destination": "docs/version-differences/01-1.20.4-to-1.20.5/00-overview.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/01-1.20.4-to-1.20.5/01.md.ft",
+            "destination": "docs/version-differences/01-1.20.4-to-1.20.5/01.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/01-1.20.4-to-1.20.5/02.md.ft",
+            "destination": "docs/version-differences/01-1.20.4-to-1.20.5/02.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/01-1.20.4-to-1.20.5/03.md.ft",
+            "destination": "docs/version-differences/01-1.20.4-to-1.20.5/03.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/01-1.20.4-to-1.20.5/04.md.ft",
+            "destination": "docs/version-differences/01-1.20.4-to-1.20.5/04.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/01-1.20.4-to-1.20.5/05.md.ft",
+            "destination": "docs/version-differences/01-1.20.4-to-1.20.5/05.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/01-1.20.4-to-1.20.5/06.md.ft",
+            "destination": "docs/version-differences/01-1.20.4-to-1.20.5/06.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/01-1.20.4-to-1.20.5/07.md.ft",
+            "destination": "docs/version-differences/01-1.20.4-to-1.20.5/07.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/01-1.20.4-to-1.20.5/08.md.ft",
+            "destination": "docs/version-differences/01-1.20.4-to-1.20.5/08.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/01-1.20.4-to-1.20.5/09.md.ft",
+            "destination": "docs/version-differences/01-1.20.4-to-1.20.5/09.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/01-1.20.4-to-1.20.5/10.md.ft",
+            "destination": "docs/version-differences/01-1.20.4-to-1.20.5/10.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/01-1.20.4-to-1.20.5/11.md.ft",
+            "destination": "docs/version-differences/01-1.20.4-to-1.20.5/11.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/01-1.20.4-to-1.20.5/12.md.ft",
+            "destination": "docs/version-differences/01-1.20.4-to-1.20.5/12.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/01-1.20.4-to-1.20.5/13.md.ft",
+            "destination": "docs/version-differences/01-1.20.4-to-1.20.5/13.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/01-1.20.4-to-1.20.5/14.md.ft",
+            "destination": "docs/version-differences/01-1.20.4-to-1.20.5/14.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/01-1.20.4-to-1.20.5/15.md.ft",
+            "destination": "docs/version-differences/01-1.20.4-to-1.20.5/15.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/01-1.20.4-to-1.20.5/16.md.ft",
+            "destination": "docs/version-differences/01-1.20.4-to-1.20.5/16.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/01-1.20.4-to-1.20.5/README.md.ft",
+            "destination": "docs/version-differences/01-1.20.4-to-1.20.5/README.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/02-1.20.5-to-1.20.6/00-overview.md.ft",
+            "destination": "docs/version-differences/02-1.20.5-to-1.20.6/00-overview.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/02-1.20.5-to-1.20.6/01.md.ft",
+            "destination": "docs/version-differences/02-1.20.5-to-1.20.6/01.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/02-1.20.5-to-1.20.6/02.md.ft",
+            "destination": "docs/version-differences/02-1.20.5-to-1.20.6/02.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/02-1.20.5-to-1.20.6/README.md.ft",
+            "destination": "docs/version-differences/02-1.20.5-to-1.20.6/README.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/03-1.20.6-to-1.21/00-overview.md.ft",
+            "destination": "docs/version-differences/03-1.20.6-to-1.21/00-overview.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/03-1.20.6-to-1.21/01.md.ft",
+            "destination": "docs/version-differences/03-1.20.6-to-1.21/01.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/03-1.20.6-to-1.21/02.md.ft",
+            "destination": "docs/version-differences/03-1.20.6-to-1.21/02.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/03-1.20.6-to-1.21/03.md.ft",
+            "destination": "docs/version-differences/03-1.20.6-to-1.21/03.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/03-1.20.6-to-1.21/04.md.ft",
+            "destination": "docs/version-differences/03-1.20.6-to-1.21/04.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/03-1.20.6-to-1.21/05.md.ft",
+            "destination": "docs/version-differences/03-1.20.6-to-1.21/05.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/03-1.20.6-to-1.21/06.md.ft",
+            "destination": "docs/version-differences/03-1.20.6-to-1.21/06.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/03-1.20.6-to-1.21/07.md.ft",
+            "destination": "docs/version-differences/03-1.20.6-to-1.21/07.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/03-1.20.6-to-1.21/08.md.ft",
+            "destination": "docs/version-differences/03-1.20.6-to-1.21/08.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/03-1.20.6-to-1.21/09.md.ft",
+            "destination": "docs/version-differences/03-1.20.6-to-1.21/09.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/03-1.20.6-to-1.21/10.md.ft",
+            "destination": "docs/version-differences/03-1.20.6-to-1.21/10.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/03-1.20.6-to-1.21/11.md.ft",
+            "destination": "docs/version-differences/03-1.20.6-to-1.21/11.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/03-1.20.6-to-1.21/README.md.ft",
+            "destination": "docs/version-differences/03-1.20.6-to-1.21/README.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/04-1.21-to-1.21.1/00-overview.md.ft",
+            "destination": "docs/version-differences/04-1.21-to-1.21.1/00-overview.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/04-1.21-to-1.21.1/01.md.ft",
+            "destination": "docs/version-differences/04-1.21-to-1.21.1/01.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/04-1.21-to-1.21.1/README.md.ft",
+            "destination": "docs/version-differences/04-1.21-to-1.21.1/README.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/05-1.21.1-to-1.21.2/00-overview.md.ft",
+            "destination": "docs/version-differences/05-1.21.1-to-1.21.2/00-overview.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/05-1.21.1-to-1.21.2/01.md.ft",
+            "destination": "docs/version-differences/05-1.21.1-to-1.21.2/01.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/05-1.21.1-to-1.21.2/02.md.ft",
+            "destination": "docs/version-differences/05-1.21.1-to-1.21.2/02.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/05-1.21.1-to-1.21.2/03.md.ft",
+            "destination": "docs/version-differences/05-1.21.1-to-1.21.2/03.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/05-1.21.1-to-1.21.2/04.md.ft",
+            "destination": "docs/version-differences/05-1.21.1-to-1.21.2/04.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/05-1.21.1-to-1.21.2/05.md.ft",
+            "destination": "docs/version-differences/05-1.21.1-to-1.21.2/05.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/05-1.21.1-to-1.21.2/06.md.ft",
+            "destination": "docs/version-differences/05-1.21.1-to-1.21.2/06.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/05-1.21.1-to-1.21.2/07.md.ft",
+            "destination": "docs/version-differences/05-1.21.1-to-1.21.2/07.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/05-1.21.1-to-1.21.2/08.md.ft",
+            "destination": "docs/version-differences/05-1.21.1-to-1.21.2/08.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/05-1.21.1-to-1.21.2/09.md.ft",
+            "destination": "docs/version-differences/05-1.21.1-to-1.21.2/09.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/05-1.21.1-to-1.21.2/10.md.ft",
+            "destination": "docs/version-differences/05-1.21.1-to-1.21.2/10.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/05-1.21.1-to-1.21.2/11.md.ft",
+            "destination": "docs/version-differences/05-1.21.1-to-1.21.2/11.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/05-1.21.1-to-1.21.2/12.md.ft",
+            "destination": "docs/version-differences/05-1.21.1-to-1.21.2/12.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/05-1.21.1-to-1.21.2/13.md.ft",
+            "destination": "docs/version-differences/05-1.21.1-to-1.21.2/13.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/05-1.21.1-to-1.21.2/14.md.ft",
+            "destination": "docs/version-differences/05-1.21.1-to-1.21.2/14.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/05-1.21.1-to-1.21.2/15.md.ft",
+            "destination": "docs/version-differences/05-1.21.1-to-1.21.2/15.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/05-1.21.1-to-1.21.2/16.md.ft",
+            "destination": "docs/version-differences/05-1.21.1-to-1.21.2/16.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/05-1.21.1-to-1.21.2/17.md.ft",
+            "destination": "docs/version-differences/05-1.21.1-to-1.21.2/17.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/05-1.21.1-to-1.21.2/18.md.ft",
+            "destination": "docs/version-differences/05-1.21.1-to-1.21.2/18.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/05-1.21.1-to-1.21.2/README.md.ft",
+            "destination": "docs/version-differences/05-1.21.1-to-1.21.2/README.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/06-1.21.2-to-1.21.4/00-overview.md.ft",
+            "destination": "docs/version-differences/06-1.21.2-to-1.21.4/00-overview.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/06-1.21.2-to-1.21.4/01.md.ft",
+            "destination": "docs/version-differences/06-1.21.2-to-1.21.4/01.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/06-1.21.2-to-1.21.4/02.md.ft",
+            "destination": "docs/version-differences/06-1.21.2-to-1.21.4/02.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/06-1.21.2-to-1.21.4/03.md.ft",
+            "destination": "docs/version-differences/06-1.21.2-to-1.21.4/03.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/06-1.21.2-to-1.21.4/04.md.ft",
+            "destination": "docs/version-differences/06-1.21.2-to-1.21.4/04.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/06-1.21.2-to-1.21.4/05.md.ft",
+            "destination": "docs/version-differences/06-1.21.2-to-1.21.4/05.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/06-1.21.2-to-1.21.4/README.md.ft",
+            "destination": "docs/version-differences/06-1.21.2-to-1.21.4/README.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/07-1.21.4-to-1.21.5/00-overview.md.ft",
+            "destination": "docs/version-differences/07-1.21.4-to-1.21.5/00-overview.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/07-1.21.4-to-1.21.5/01.md.ft",
+            "destination": "docs/version-differences/07-1.21.4-to-1.21.5/01.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/07-1.21.4-to-1.21.5/02.md.ft",
+            "destination": "docs/version-differences/07-1.21.4-to-1.21.5/02.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/07-1.21.4-to-1.21.5/03.md.ft",
+            "destination": "docs/version-differences/07-1.21.4-to-1.21.5/03.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/07-1.21.4-to-1.21.5/04.md.ft",
+            "destination": "docs/version-differences/07-1.21.4-to-1.21.5/04.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/07-1.21.4-to-1.21.5/05.md.ft",
+            "destination": "docs/version-differences/07-1.21.4-to-1.21.5/05.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/07-1.21.4-to-1.21.5/06.md.ft",
+            "destination": "docs/version-differences/07-1.21.4-to-1.21.5/06.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/07-1.21.4-to-1.21.5/07.md.ft",
+            "destination": "docs/version-differences/07-1.21.4-to-1.21.5/07.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/07-1.21.4-to-1.21.5/08.md.ft",
+            "destination": "docs/version-differences/07-1.21.4-to-1.21.5/08.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/07-1.21.4-to-1.21.5/09.md.ft",
+            "destination": "docs/version-differences/07-1.21.4-to-1.21.5/09.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/07-1.21.4-to-1.21.5/10.md.ft",
+            "destination": "docs/version-differences/07-1.21.4-to-1.21.5/10.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/07-1.21.4-to-1.21.5/11.md.ft",
+            "destination": "docs/version-differences/07-1.21.4-to-1.21.5/11.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/07-1.21.4-to-1.21.5/12.md.ft",
+            "destination": "docs/version-differences/07-1.21.4-to-1.21.5/12.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/07-1.21.4-to-1.21.5/13.md.ft",
+            "destination": "docs/version-differences/07-1.21.4-to-1.21.5/13.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/07-1.21.4-to-1.21.5/README.md.ft",
+            "destination": "docs/version-differences/07-1.21.4-to-1.21.5/README.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/08-1.21.5-to-1.21.6/00-overview.md.ft",
+            "destination": "docs/version-differences/08-1.21.5-to-1.21.6/00-overview.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/08-1.21.5-to-1.21.6/01.md.ft",
+            "destination": "docs/version-differences/08-1.21.5-to-1.21.6/01.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/08-1.21.5-to-1.21.6/02.md.ft",
+            "destination": "docs/version-differences/08-1.21.5-to-1.21.6/02.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/08-1.21.5-to-1.21.6/03.md.ft",
+            "destination": "docs/version-differences/08-1.21.5-to-1.21.6/03.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/08-1.21.5-to-1.21.6/04.md.ft",
+            "destination": "docs/version-differences/08-1.21.5-to-1.21.6/04.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/08-1.21.5-to-1.21.6/05.md.ft",
+            "destination": "docs/version-differences/08-1.21.5-to-1.21.6/05.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/08-1.21.5-to-1.21.6/06.md.ft",
+            "destination": "docs/version-differences/08-1.21.5-to-1.21.6/06.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/08-1.21.5-to-1.21.6/07.md.ft",
+            "destination": "docs/version-differences/08-1.21.5-to-1.21.6/07.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/08-1.21.5-to-1.21.6/08.md.ft",
+            "destination": "docs/version-differences/08-1.21.5-to-1.21.6/08.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/08-1.21.5-to-1.21.6/README.md.ft",
+            "destination": "docs/version-differences/08-1.21.5-to-1.21.6/README.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/09-1.21.6-to-1.21.7/00-overview.md.ft",
+            "destination": "docs/version-differences/09-1.21.6-to-1.21.7/00-overview.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/09-1.21.6-to-1.21.7/01.md.ft",
+            "destination": "docs/version-differences/09-1.21.6-to-1.21.7/01.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/09-1.21.6-to-1.21.7/02.md.ft",
+            "destination": "docs/version-differences/09-1.21.6-to-1.21.7/02.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/09-1.21.6-to-1.21.7/README.md.ft",
+            "destination": "docs/version-differences/09-1.21.6-to-1.21.7/README.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/10-1.21.7-to-1.21.8/00-overview.md.ft",
+            "destination": "docs/version-differences/10-1.21.7-to-1.21.8/00-overview.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/10-1.21.7-to-1.21.8/01.md.ft",
+            "destination": "docs/version-differences/10-1.21.7-to-1.21.8/01.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/10-1.21.7-to-1.21.8/02.md.ft",
+            "destination": "docs/version-differences/10-1.21.7-to-1.21.8/02.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/10-1.21.7-to-1.21.8/README.md.ft",
+            "destination": "docs/version-differences/10-1.21.7-to-1.21.8/README.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/11-1.21.8-to-1.21.9/00-overview.md.ft",
+            "destination": "docs/version-differences/11-1.21.8-to-1.21.9/00-overview.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/11-1.21.8-to-1.21.9/01.md.ft",
+            "destination": "docs/version-differences/11-1.21.8-to-1.21.9/01.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/11-1.21.8-to-1.21.9/02.md.ft",
+            "destination": "docs/version-differences/11-1.21.8-to-1.21.9/02.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/11-1.21.8-to-1.21.9/03.md.ft",
+            "destination": "docs/version-differences/11-1.21.8-to-1.21.9/03.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/11-1.21.8-to-1.21.9/04.md.ft",
+            "destination": "docs/version-differences/11-1.21.8-to-1.21.9/04.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/11-1.21.8-to-1.21.9/05.md.ft",
+            "destination": "docs/version-differences/11-1.21.8-to-1.21.9/05.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/11-1.21.8-to-1.21.9/06.md.ft",
+            "destination": "docs/version-differences/11-1.21.8-to-1.21.9/06.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/11-1.21.8-to-1.21.9/07.md.ft",
+            "destination": "docs/version-differences/11-1.21.8-to-1.21.9/07.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/11-1.21.8-to-1.21.9/08.md.ft",
+            "destination": "docs/version-differences/11-1.21.8-to-1.21.9/08.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/11-1.21.8-to-1.21.9/09.md.ft",
+            "destination": "docs/version-differences/11-1.21.8-to-1.21.9/09.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/11-1.21.8-to-1.21.9/README.md.ft",
+            "destination": "docs/version-differences/11-1.21.8-to-1.21.9/README.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/12-1.21.9-to-1.21.10/00-overview.md.ft",
+            "destination": "docs/version-differences/12-1.21.9-to-1.21.10/00-overview.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/12-1.21.9-to-1.21.10/01.md.ft",
+            "destination": "docs/version-differences/12-1.21.9-to-1.21.10/01.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/12-1.21.9-to-1.21.10/02.md.ft",
+            "destination": "docs/version-differences/12-1.21.9-to-1.21.10/02.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/12-1.21.9-to-1.21.10/README.md.ft",
+            "destination": "docs/version-differences/12-1.21.9-to-1.21.10/README.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/13-1.21.10-to-1.21.11/00-overview.md.ft",
+            "destination": "docs/version-differences/13-1.21.10-to-1.21.11/00-overview.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/13-1.21.10-to-1.21.11/01.md.ft",
+            "destination": "docs/version-differences/13-1.21.10-to-1.21.11/01.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/13-1.21.10-to-1.21.11/02.md.ft",
+            "destination": "docs/version-differences/13-1.21.10-to-1.21.11/02.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/13-1.21.10-to-1.21.11/03.md.ft",
+            "destination": "docs/version-differences/13-1.21.10-to-1.21.11/03.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/13-1.21.10-to-1.21.11/04.md.ft",
+            "destination": "docs/version-differences/13-1.21.10-to-1.21.11/04.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/13-1.21.10-to-1.21.11/05.md.ft",
+            "destination": "docs/version-differences/13-1.21.10-to-1.21.11/05.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/13-1.21.10-to-1.21.11/06.md.ft",
+            "destination": "docs/version-differences/13-1.21.10-to-1.21.11/06.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/13-1.21.10-to-1.21.11/07.md.ft",
+            "destination": "docs/version-differences/13-1.21.10-to-1.21.11/07.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/13-1.21.10-to-1.21.11/08.md.ft",
+            "destination": "docs/version-differences/13-1.21.10-to-1.21.11/08.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/13-1.21.10-to-1.21.11/09.md.ft",
+            "destination": "docs/version-differences/13-1.21.10-to-1.21.11/09.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/13-1.21.10-to-1.21.11/README.md.ft",
+            "destination": "docs/version-differences/13-1.21.10-to-1.21.11/README.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/14-1.21.11-to-26.1/00-overview.md.ft",
+            "destination": "docs/version-differences/14-1.21.11-to-26.1/00-overview.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/14-1.21.11-to-26.1/01.md.ft",
+            "destination": "docs/version-differences/14-1.21.11-to-26.1/01.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/14-1.21.11-to-26.1/02.md.ft",
+            "destination": "docs/version-differences/14-1.21.11-to-26.1/02.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/14-1.21.11-to-26.1/03.md.ft",
+            "destination": "docs/version-differences/14-1.21.11-to-26.1/03.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/14-1.21.11-to-26.1/04.md.ft",
+            "destination": "docs/version-differences/14-1.21.11-to-26.1/04.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/14-1.21.11-to-26.1/05.md.ft",
+            "destination": "docs/version-differences/14-1.21.11-to-26.1/05.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/14-1.21.11-to-26.1/06.md.ft",
+            "destination": "docs/version-differences/14-1.21.11-to-26.1/06.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/14-1.21.11-to-26.1/07.md.ft",
+            "destination": "docs/version-differences/14-1.21.11-to-26.1/07.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/14-1.21.11-to-26.1/08.md.ft",
+            "destination": "docs/version-differences/14-1.21.11-to-26.1/08.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/14-1.21.11-to-26.1/09.md.ft",
+            "destination": "docs/version-differences/14-1.21.11-to-26.1/09.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/14-1.21.11-to-26.1/10.md.ft",
+            "destination": "docs/version-differences/14-1.21.11-to-26.1/10.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/14-1.21.11-to-26.1/11.md.ft",
+            "destination": "docs/version-differences/14-1.21.11-to-26.1/11.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/14-1.21.11-to-26.1/12.md.ft",
+            "destination": "docs/version-differences/14-1.21.11-to-26.1/12.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/14-1.21.11-to-26.1/13.md.ft",
+            "destination": "docs/version-differences/14-1.21.11-to-26.1/13.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/14-1.21.11-to-26.1/14.md.ft",
+            "destination": "docs/version-differences/14-1.21.11-to-26.1/14.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/14-1.21.11-to-26.1/README.md.ft",
+            "destination": "docs/version-differences/14-1.21.11-to-26.1/README.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/licenses/LICENSE-CHAMPIONASH5357.txt.ft",
+            "destination": "docs/version-differences/licenses/LICENSE-CHAMPIONASH5357.txt",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/version-differences/README.md.ft",
+            "destination": "docs/version-differences/README.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/gradle/target-conventions/base.gradle.ft",
+            "destination": "gradle/target-conventions/base.gradle",
+            "reformat": false
+        },
+        {
+            "template": "assets/gradle/target-conventions/fabric.gradle.ft",
+            "destination": "gradle/target-conventions/fabric.gradle",
+            "reformat": false
+        },
+        {
+            "template": "assets/gradle/target-conventions/forge.gradle.ft",
+            "destination": "gradle/target-conventions/forge.gradle",
+            "reformat": false
+        },
+        {
+            "template": "assets/gradle/target-conventions/neoforge.gradle.ft",
+            "destination": "gradle/target-conventions/neoforge.gradle",
+            "reformat": false
+        },
+        {
+            "template": "assets/gradle/target-conventions/publish.gradle.ft",
+            "destination": "gradle/target-conventions/publish.gradle",
+            "reformat": false
+        },
+        {
+            "template": "assets/gradle/wrapper/gradle-wrapper.properties.ft",
+            "destination": "gradle/wrapper/gradle-wrapper.properties",
+            "reformat": false
+        },
+        {
+            "template": "assets/gradlew.ft",
+            "destination": "gradlew",
+            "reformat": false
+        },
+        {
+            "template": "assets/gradlew.bat.ft",
+            "destination": "gradlew.bat",
+            "reformat": false
+        },
+        {
+            "template": "assets/integrations/skills/kltyton-temple/SKILL.md.ft",
+            "destination": "integrations/skills/kltyton-temple/SKILL.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/LICENSE.ft",
+            "destination": "LICENSE",
+            "reformat": false
+        },
+        {
+            "template": "assets/loaders/fabric/src/main/java/io/github/kltyton/temple/TempleFabric.java.ft",
+            "destination": "loaders/fabric/src/main/java/${BUILD_COORDS.groupId.replace(\".\", \"/\")}/TempleFabric.java",
+            "reformat": false
+        },
+        {
+            "template": "assets/loaders/forge/src/main/java/io/github/kltyton/temple/TempleForge.java.ft",
+            "destination": "loaders/forge/src/main/java/${BUILD_COORDS.groupId.replace(\".\", \"/\")}/TempleForge.java",
+            "reformat": false
+        },
+        {
+            "template": "assets/loaders/neoforge/src/main/java/io/github/kltyton/temple/TempleNeoForge.java.ft",
+            "destination": "loaders/neoforge/src/main/java/${BUILD_COORDS.groupId.replace(\".\", \"/\")}/TempleNeoForge.java",
+            "reformat": false
+        },
+        {
+            "template": "assets/README.md.ft",
+            "destination": "README.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/settings.gradle.ft",
+            "destination": "settings.gradle",
+            "reformat": false
+        },
+        {
+            "template": "assets/targets/fabric-1.20.1/build.gradle.ft",
+            "destination": "targets/fabric-1.20.1/build.gradle",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1201' || $TARGET_PROFILE == 'fabric-1.20.1'"
+        },
+        {
+            "template": "assets/targets/fabric-1.20.1/gradle/wrapper/gradle-wrapper.properties.ft",
+            "destination": "targets/fabric-1.20.1/gradle/wrapper/gradle-wrapper.properties",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1201' || $TARGET_PROFILE == 'fabric-1.20.1'"
+        },
+        {
+            "template": "assets/targets/fabric-1.20.1/gradle.properties.ft",
+            "destination": "targets/fabric-1.20.1/gradle.properties",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1201' || $TARGET_PROFILE == 'fabric-1.20.1'"
+        },
+        {
+            "template": "assets/targets/fabric-1.20.1/gradlew.ft",
+            "destination": "targets/fabric-1.20.1/gradlew",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1201' || $TARGET_PROFILE == 'fabric-1.20.1'"
+        },
+        {
+            "template": "assets/targets/fabric-1.20.1/gradlew.bat.ft",
+            "destination": "targets/fabric-1.20.1/gradlew.bat",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1201' || $TARGET_PROFILE == 'fabric-1.20.1'"
+        },
+        {
+            "template": "assets/targets/fabric-1.20.1/settings.gradle.ft",
+            "destination": "targets/fabric-1.20.1/settings.gradle",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1201' || $TARGET_PROFILE == 'fabric-1.20.1'"
+        },
+        {
+            "template": "assets/targets/fabric-1.20.1/src/main/resources/fabric.mod.json.ft",
+            "destination": "targets/fabric-1.20.1/src/main/resources/fabric.mod.json",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1201' || $TARGET_PROFILE == 'fabric-1.20.1'"
+        },
+        {
+            "template": "assets/targets/fabric-1.21.1/build.gradle.ft",
+            "destination": "targets/fabric-1.21.1/build.gradle",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1211' || $TARGET_PROFILE == 'fabric-1.21.1'"
+        },
+        {
+            "template": "assets/targets/fabric-1.21.1/gradle/wrapper/gradle-wrapper.properties.ft",
+            "destination": "targets/fabric-1.21.1/gradle/wrapper/gradle-wrapper.properties",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1211' || $TARGET_PROFILE == 'fabric-1.21.1'"
+        },
+        {
+            "template": "assets/targets/fabric-1.21.1/gradle.properties.ft",
+            "destination": "targets/fabric-1.21.1/gradle.properties",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1211' || $TARGET_PROFILE == 'fabric-1.21.1'"
+        },
+        {
+            "template": "assets/targets/fabric-1.21.1/gradlew.ft",
+            "destination": "targets/fabric-1.21.1/gradlew",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1211' || $TARGET_PROFILE == 'fabric-1.21.1'"
+        },
+        {
+            "template": "assets/targets/fabric-1.21.1/gradlew.bat.ft",
+            "destination": "targets/fabric-1.21.1/gradlew.bat",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1211' || $TARGET_PROFILE == 'fabric-1.21.1'"
+        },
+        {
+            "template": "assets/targets/fabric-1.21.1/settings.gradle.ft",
+            "destination": "targets/fabric-1.21.1/settings.gradle",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1211' || $TARGET_PROFILE == 'fabric-1.21.1'"
+        },
+        {
+            "template": "assets/targets/fabric-1.21.1/src/main/resources/fabric.mod.json.ft",
+            "destination": "targets/fabric-1.21.1/src/main/resources/fabric.mod.json",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1211' || $TARGET_PROFILE == 'fabric-1.21.1'"
+        },
+        {
+            "template": "assets/targets/fabric-26.1.2/build.gradle.ft",
+            "destination": "targets/fabric-26.1.2/build.gradle",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc2612' || $TARGET_PROFILE == 'fabric-26.1.2'"
+        },
+        {
+            "template": "assets/targets/fabric-26.1.2/gradle/wrapper/gradle-wrapper.properties.ft",
+            "destination": "targets/fabric-26.1.2/gradle/wrapper/gradle-wrapper.properties",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc2612' || $TARGET_PROFILE == 'fabric-26.1.2'"
+        },
+        {
+            "template": "assets/targets/fabric-26.1.2/gradle.properties.ft",
+            "destination": "targets/fabric-26.1.2/gradle.properties",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc2612' || $TARGET_PROFILE == 'fabric-26.1.2'"
+        },
+        {
+            "template": "assets/targets/fabric-26.1.2/gradlew.ft",
+            "destination": "targets/fabric-26.1.2/gradlew",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc2612' || $TARGET_PROFILE == 'fabric-26.1.2'"
+        },
+        {
+            "template": "assets/targets/fabric-26.1.2/gradlew.bat.ft",
+            "destination": "targets/fabric-26.1.2/gradlew.bat",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc2612' || $TARGET_PROFILE == 'fabric-26.1.2'"
+        },
+        {
+            "template": "assets/targets/fabric-26.1.2/settings.gradle.ft",
+            "destination": "targets/fabric-26.1.2/settings.gradle",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc2612' || $TARGET_PROFILE == 'fabric-26.1.2'"
+        },
+        {
+            "template": "assets/targets/fabric-26.1.2/src/main/resources/fabric.mod.json.ft",
+            "destination": "targets/fabric-26.1.2/src/main/resources/fabric.mod.json",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc2612' || $TARGET_PROFILE == 'fabric-26.1.2'"
+        },
+        {
+            "template": "assets/targets/forge-1.18.2/build.gradle.ft",
+            "destination": "targets/forge-1.18.2/build.gradle",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'forge-1.18.2'"
+        },
+        {
+            "template": "assets/targets/forge-1.18.2/gradle/wrapper/gradle-wrapper.properties.ft",
+            "destination": "targets/forge-1.18.2/gradle/wrapper/gradle-wrapper.properties",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'forge-1.18.2'"
+        },
+        {
+            "template": "assets/targets/forge-1.18.2/gradle.properties.ft",
+            "destination": "targets/forge-1.18.2/gradle.properties",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'forge-1.18.2'"
+        },
+        {
+            "template": "assets/targets/forge-1.18.2/gradlew.ft",
+            "destination": "targets/forge-1.18.2/gradlew",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'forge-1.18.2'"
+        },
+        {
+            "template": "assets/targets/forge-1.18.2/gradlew.bat.ft",
+            "destination": "targets/forge-1.18.2/gradlew.bat",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'forge-1.18.2'"
+        },
+        {
+            "template": "assets/targets/forge-1.18.2/settings.gradle.ft",
+            "destination": "targets/forge-1.18.2/settings.gradle",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'forge-1.18.2'"
+        },
+        {
+            "template": "assets/targets/forge-1.18.2/src/main/resources/META-INF/mods.toml.ft",
+            "destination": "targets/forge-1.18.2/src/main/resources/META-INF/mods.toml",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'forge-1.18.2'"
+        },
+        {
+            "template": "assets/targets/forge-1.19.2/build.gradle.ft",
+            "destination": "targets/forge-1.19.2/build.gradle",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'forge-1.19.2'"
+        },
+        {
+            "template": "assets/targets/forge-1.19.2/gradle/wrapper/gradle-wrapper.properties.ft",
+            "destination": "targets/forge-1.19.2/gradle/wrapper/gradle-wrapper.properties",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'forge-1.19.2'"
+        },
+        {
+            "template": "assets/targets/forge-1.19.2/gradle.properties.ft",
+            "destination": "targets/forge-1.19.2/gradle.properties",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'forge-1.19.2'"
+        },
+        {
+            "template": "assets/targets/forge-1.19.2/gradlew.ft",
+            "destination": "targets/forge-1.19.2/gradlew",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'forge-1.19.2'"
+        },
+        {
+            "template": "assets/targets/forge-1.19.2/gradlew.bat.ft",
+            "destination": "targets/forge-1.19.2/gradlew.bat",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'forge-1.19.2'"
+        },
+        {
+            "template": "assets/targets/forge-1.19.2/settings.gradle.ft",
+            "destination": "targets/forge-1.19.2/settings.gradle",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'forge-1.19.2'"
+        },
+        {
+            "template": "assets/targets/forge-1.19.2/src/main/resources/META-INF/mods.toml.ft",
+            "destination": "targets/forge-1.19.2/src/main/resources/META-INF/mods.toml",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'forge-1.19.2'"
+        },
+        {
+            "template": "assets/targets/forge-1.20.1/build.gradle.ft",
+            "destination": "targets/forge-1.20.1/build.gradle",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1201' || $TARGET_PROFILE == 'forge-1.20.1'"
+        },
+        {
+            "template": "assets/targets/forge-1.20.1/gradle/wrapper/gradle-wrapper.properties.ft",
+            "destination": "targets/forge-1.20.1/gradle/wrapper/gradle-wrapper.properties",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1201' || $TARGET_PROFILE == 'forge-1.20.1'"
+        },
+        {
+            "template": "assets/targets/forge-1.20.1/gradle.properties.ft",
+            "destination": "targets/forge-1.20.1/gradle.properties",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1201' || $TARGET_PROFILE == 'forge-1.20.1'"
+        },
+        {
+            "template": "assets/targets/forge-1.20.1/gradlew.ft",
+            "destination": "targets/forge-1.20.1/gradlew",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1201' || $TARGET_PROFILE == 'forge-1.20.1'"
+        },
+        {
+            "template": "assets/targets/forge-1.20.1/gradlew.bat.ft",
+            "destination": "targets/forge-1.20.1/gradlew.bat",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1201' || $TARGET_PROFILE == 'forge-1.20.1'"
+        },
+        {
+            "template": "assets/targets/forge-1.20.1/settings.gradle.ft",
+            "destination": "targets/forge-1.20.1/settings.gradle",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1201' || $TARGET_PROFILE == 'forge-1.20.1'"
+        },
+        {
+            "template": "assets/targets/forge-1.20.1/src/main/resources/META-INF/mods.toml.ft",
+            "destination": "targets/forge-1.20.1/src/main/resources/META-INF/mods.toml",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1201' || $TARGET_PROFILE == 'forge-1.20.1'"
+        },
+        {
+            "template": "assets/targets/neoforge-1.21.1/build.gradle.ft",
+            "destination": "targets/neoforge-1.21.1/build.gradle",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1211' || $TARGET_PROFILE == 'neoforge-1.21.1'"
+        },
+        {
+            "template": "assets/targets/neoforge-1.21.1/gradle/wrapper/gradle-wrapper.properties.ft",
+            "destination": "targets/neoforge-1.21.1/gradle/wrapper/gradle-wrapper.properties",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1211' || $TARGET_PROFILE == 'neoforge-1.21.1'"
+        },
+        {
+            "template": "assets/targets/neoforge-1.21.1/gradle.properties.ft",
+            "destination": "targets/neoforge-1.21.1/gradle.properties",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1211' || $TARGET_PROFILE == 'neoforge-1.21.1'"
+        },
+        {
+            "template": "assets/targets/neoforge-1.21.1/gradlew.ft",
+            "destination": "targets/neoforge-1.21.1/gradlew",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1211' || $TARGET_PROFILE == 'neoforge-1.21.1'"
+        },
+        {
+            "template": "assets/targets/neoforge-1.21.1/gradlew.bat.ft",
+            "destination": "targets/neoforge-1.21.1/gradlew.bat",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1211' || $TARGET_PROFILE == 'neoforge-1.21.1'"
+        },
+        {
+            "template": "assets/targets/neoforge-1.21.1/settings.gradle.ft",
+            "destination": "targets/neoforge-1.21.1/settings.gradle",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1211' || $TARGET_PROFILE == 'neoforge-1.21.1'"
+        },
+        {
+            "template": "assets/targets/neoforge-1.21.1/src/main/resources/META-INF/neoforge.mods.toml.ft",
+            "destination": "targets/neoforge-1.21.1/src/main/resources/META-INF/neoforge.mods.toml",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1211' || $TARGET_PROFILE == 'neoforge-1.21.1'"
+        },
+        {
+            "template": "assets/targets/neoforge-26.1.2/build.gradle.ft",
+            "destination": "targets/neoforge-26.1.2/build.gradle",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc2612' || $TARGET_PROFILE == 'neoforge-26.1.2'"
+        },
+        {
+            "template": "assets/targets/neoforge-26.1.2/gradle/wrapper/gradle-wrapper.properties.ft",
+            "destination": "targets/neoforge-26.1.2/gradle/wrapper/gradle-wrapper.properties",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc2612' || $TARGET_PROFILE == 'neoforge-26.1.2'"
+        },
+        {
+            "template": "assets/targets/neoforge-26.1.2/gradle.properties.ft",
+            "destination": "targets/neoforge-26.1.2/gradle.properties",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc2612' || $TARGET_PROFILE == 'neoforge-26.1.2'"
+        },
+        {
+            "template": "assets/targets/neoforge-26.1.2/gradlew.ft",
+            "destination": "targets/neoforge-26.1.2/gradlew",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc2612' || $TARGET_PROFILE == 'neoforge-26.1.2'"
+        },
+        {
+            "template": "assets/targets/neoforge-26.1.2/gradlew.bat.ft",
+            "destination": "targets/neoforge-26.1.2/gradlew.bat",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc2612' || $TARGET_PROFILE == 'neoforge-26.1.2'"
+        },
+        {
+            "template": "assets/targets/neoforge-26.1.2/settings.gradle.ft",
+            "destination": "targets/neoforge-26.1.2/settings.gradle",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc2612' || $TARGET_PROFILE == 'neoforge-26.1.2'"
+        },
+        {
+            "template": "assets/targets/neoforge-26.1.2/src/main/resources/META-INF/neoforge.mods.toml.ft",
+            "destination": "targets/neoforge-26.1.2/src/main/resources/META-INF/neoforge.mods.toml",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc2612' || $TARGET_PROFILE == 'neoforge-26.1.2'"
+        },
+        {
+            "template": "assets/targets/neoforge-26.2.0/build.gradle.ft",
+            "destination": "targets/neoforge-26.2.0/build.gradle",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'neoforge-26.2.0'"
+        },
+        {
+            "template": "assets/targets/neoforge-26.2.0/gradle/wrapper/gradle-wrapper.properties.ft",
+            "destination": "targets/neoforge-26.2.0/gradle/wrapper/gradle-wrapper.properties",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'neoforge-26.2.0'"
+        },
+        {
+            "template": "assets/targets/neoforge-26.2.0/gradle.properties.ft",
+            "destination": "targets/neoforge-26.2.0/gradle.properties",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'neoforge-26.2.0'"
+        },
+        {
+            "template": "assets/targets/neoforge-26.2.0/gradlew.ft",
+            "destination": "targets/neoforge-26.2.0/gradlew",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'neoforge-26.2.0'"
+        },
+        {
+            "template": "assets/targets/neoforge-26.2.0/gradlew.bat.ft",
+            "destination": "targets/neoforge-26.2.0/gradlew.bat",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'neoforge-26.2.0'"
+        },
+        {
+            "template": "assets/targets/neoforge-26.2.0/settings.gradle.ft",
+            "destination": "targets/neoforge-26.2.0/settings.gradle",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'neoforge-26.2.0'"
+        },
+        {
+            "template": "assets/targets/neoforge-26.2.0/src/main/resources/META-INF/neoforge.mods.toml.ft",
+            "destination": "targets/neoforge-26.2.0/src/main/resources/META-INF/neoforge.mods.toml",
+            "reformat": false,
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'neoforge-26.2.0'"
+        },
+        {
+            "template": "assets/project.properties.ft",
+            "destination": "gradle.properties",
+            "reformat": false
+        },
+        {
+            "template": "assets/wrapper.base64.ft",
+            "destination": "gradle/wrapper/kltyton-wrapper.base64",
+            "reformat": false
+        },
+        {
+            "template": "assets/wrapper.base64.ft",
+            "destination": "targets/fabric-1.20.1/gradle/wrapper/kltyton-wrapper.base64",
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1201' || $TARGET_PROFILE == 'fabric-1.20.1'",
+            "reformat": false
+        },
+        {
+            "template": "assets/wrapper.base64.ft",
+            "destination": "targets/fabric-1.21.1/gradle/wrapper/kltyton-wrapper.base64",
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1211' || $TARGET_PROFILE == 'fabric-1.21.1'",
+            "reformat": false
+        },
+        {
+            "template": "assets/wrapper.base64.ft",
+            "destination": "targets/fabric-26.1.2/gradle/wrapper/kltyton-wrapper.base64",
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc2612' || $TARGET_PROFILE == 'fabric-26.1.2'",
+            "reformat": false
+        },
+        {
+            "template": "assets/wrapper.base64.ft",
+            "destination": "targets/forge-1.18.2/gradle/wrapper/kltyton-wrapper.base64",
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'forge-1.18.2'",
+            "reformat": false
+        },
+        {
+            "template": "assets/wrapper.base64.ft",
+            "destination": "targets/forge-1.19.2/gradle/wrapper/kltyton-wrapper.base64",
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'forge-1.19.2'",
+            "reformat": false
+        },
+        {
+            "template": "assets/wrapper.base64.ft",
+            "destination": "targets/forge-1.20.1/gradle/wrapper/kltyton-wrapper.base64",
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1201' || $TARGET_PROFILE == 'forge-1.20.1'",
+            "reformat": false
+        },
+        {
+            "template": "assets/wrapper.base64.ft",
+            "destination": "targets/neoforge-1.21.1/gradle/wrapper/kltyton-wrapper.base64",
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1211' || $TARGET_PROFILE == 'neoforge-1.21.1'",
+            "reformat": false
+        },
+        {
+            "template": "assets/wrapper.base64.ft",
+            "destination": "targets/neoforge-26.1.2/gradle/wrapper/kltyton-wrapper.base64",
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc2612' || $TARGET_PROFILE == 'neoforge-26.1.2'",
+            "reformat": false
+        },
+        {
+            "template": "assets/wrapper.base64.ft",
+            "destination": "targets/neoforge-26.2.0/gradle/wrapper/kltyton-wrapper.base64",
+            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'neoforge-26.2.0'",
+            "reformat": false
+        }
+    ],
+    "finalizers": [
+        {
+            "type": "import_gradle_project"
+        },
+        {
+            "type": "run_gradle_tasks",
+            "tasks": [
+                "setupProject"
+            ]
+        }
+    ]
+}

@@ -1,26 +1,13 @@
-# 共享源码与目标隔离
+# 原生 Gradle 与源层
 
-每个目标是独立 Gradle 工程，使用自己的 Wrapper、运行 JDK、编译 JDK、Minecraft 与 Loader。根目录负责管理目标，IDE 一次导入一个所选目标。共享源码作为该目标的 source roots 编译，不是先构建一个 Java 8 common JAR 再塞入全部产物。
+根工程的 buildSrc 提供 io.github.kltyton.temple 插件。IDEA 直接导入根工程，按 Loader/Minecraft 分组注册目标任务；Gradle面板是正式用户入口，没有 Python 执行链。
 
-`shared_sources` 显式列出从低到高的共享层。默认是 common、versions/<minecraft>、loaders/<loader>，最后加入 target 自身。不含 Loader 的共同算法及 Minecraft 逻辑进入 common；只有同一版本可共用的 API 适配进入 versions；入口与 Loader 协议进入 loaders；同时受版本和 Loader 影响的边界进入 target。版本文件夹按需创建，不生成空包。
+每个目标保留独立 Wrapper、运行 JDK、编译 JDK、映射与依赖。目标任务用对应 JavaLauncher 启动自己的 GradleWrapperMain，避免 Windows shell 转义与不同 Gradle 版本混用。Foojay1.0.0 是必要的构建工具链 resolver，自动提供目标所需 JDK；不添加模组运行时库。
 
-共享接口可以含该版本存在的 Minecraft 类型。实现若存在版本差异，给接口和实现分别命名，使每个目标恰好编译一份实现；不要用同名类覆盖、反射或运行时版本猜测替代编译时边界。客户端类仍放客户端边界，共同入口不能加载客户端类。
+根模型一次 includeBuild 一个目标。无活动状态时自动选择已有目标并准备 BuildInfo 源；select_<id> 同步 Wrapper 和活动目标，刷新 Gradle 后切换IDE类型解析。目标上的源码层在真实MC类路径中编译，版本 API 差异用独立源层处理。
 
-所有目标从根属性生成 BuildInfo 常量；入口的 @Mod 和元数据由同一个 mod_id 派生。初始化改变 Java 包路径，手工改 group 后也应同步源码包。无需手动逐个修改注解中的字符串。
+common → version → loader → target 是源码归属层级；同名Java文件不能覆盖。资源按 target > loader > version > common 选择一个输出。人工/编辑器资源保持原维护方式，datagen输出位于target/src/generated/resources。
 
-## 参考方案与取舍
+[MultiLoader 源配置](https://github.com/jaredlll08/MultiLoader-Template/blob/d6b81d85d63566cbe5e67fd2f246f1441cccf686/buildSrc/src/main/groovy/multiloader-loader.gradle)提供“目标环境重新编译共享源”的参考；[Architectury](https://docs.architectury.dev/plugin/introduction/)提供可选 common/API 转换方案；[Stonecutter](https://codeberg.org/stonecutter/stonecutter/src/branch/0.10/README.md)提供注释预处理与活动版本管理。模板不声称安装这些运行时组件，也不强制迁移既有管线。
 
-- [MultiLoader 1.20.1 的共享 Java 配置](https://github.com/jaredlll08/MultiLoader-Template/blob/d6b81d85d63566cbe5e67fd2f246f1441cccf686/buildSrc/src/main/groovy/multiloader-loader.gradle) 将 commonJava 源码加入各 Loader 编译任务。这里采用其“在目标环境重新编译共享源”的原则；跨 MC 的目标继续隔离。
-- [Architectury Plugin](https://docs.architectury.dev/plugin/introduction/) 提供 common module 与平台转换。需要其 API 的项目可以在对应目标明确引入；本模板不让所有项目被迫增加运行时 Architectury 依赖。
-- [Stonecutter 官方源码](https://codeberg.org/stonecutter/stonecutter/src/branch/0.10/README.md) 使用源码注释中的条件、替换和 swap 指令做预处理，并提供活动版本管理。这里采用一个活动目标供 IDE 解析的工作方式，同时用独立版本源层表达较大的 API 差异；没有安装或仿造 Stonecutter。已有注释预处理项目可继续保留其管线。
-- [上游 SighsTemple](https://github.com/Tower-of-Sighs/SighsTemple/tree/1183529ad80dfecbaa1a559f9d4c68ce2255007e) 的独立目标、Wrapper 和发布插件保留。其独立 Java 8 common 限制改为目标编译共享源。
-
-不同 Gradle 与 Java 版本不能靠一个同时加载全部插件的根工程兼容。`select` 同步根 Wrapper 配置并只 includeBuild 一个目标，避免 IDE 解析不相干版本；CLI 批量构建则启动各目标的真实 Wrapper。
-
-## 资源与依赖
-
-资源按 target > loader > version > common 覆盖，输出同一文件路径一次。datagen 输出进入 target/src/generated/resources；手工与编辑器导出资源保持原目录，不做无授权迁移。对同一目标的手工与 datagen 重复路径应明确唯一维护方式。
-
-Fabric 旧版本地 mod JAR 使用 modImplementation，新版未混淆环境使用 implementation；本地 JAR 不自动嵌入发行包，也不自动推断传递依赖。需要嵌套依赖、Mixin、AW、AT 或兼容模块时，按当前 Loader 的合法能力单独接入。
-
-Maven、CurseForge、Modrinth 指向同一个 productionTask：优先 remapJar、其次 reobfJar、否则 jar。Maven 模组 publication 是明确的发行文件 publication，不把开发组件或 Minecraft/Loader 的开发类路径作为默认运行依赖发布。
+Minecraft Development 集成使用已安装插件支持的 .mcdev.template.json、Local模板仓库和原生表单。模板文件经其Velocity引擎生成；Gradle代码用字面量块保护，项目身份在原生字段中填入。Wrapper二进制以已知模板资产编码，在初次设置时解码为真实JAR，不依赖外部脚本。整个集成仍在开发控制面之外，不进入发行模组。

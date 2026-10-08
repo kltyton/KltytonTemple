@@ -1,0 +1,31 @@
+#[[---
+name: kltyton-temple
+description: Create or maintain KltytonTemple Minecraft multiversion and multiloader projects through native IDEA Gradle tasks or its Minecraft Development project wizard.
+---
+
+# KltytonTemple
+
+Locate the checkout containing buildSrc and targets. Import its root Gradle project into IntelliJ IDEA. No Python or MCP daemon is required.
+
+Read the user's active development/acceptance contract, project rules, root identity, and the selected target's actual Gradle properties, Wrapper, source layers and metadata. Do not infer versions from folder names.
+
+## Native operations
+
+Task suffixes replace hyphens and dots with underscores: forge-1.20.1 becomes forge_1_20_1. IDEA groups operations by Loader and Minecraft version.
+
+- select_<suffix> prepares the root composite model and identity source; refresh Gradle afterward.
+- build_<suffix>, runClient_<suffix>, runServer_<suffix>, runDatagen_<suffix> use the target's own Wrapper and required Java toolchain.
+- verify_<suffix> inspects an existing production JAR without rebuilding.
+- createProject and addTarget open visual forms. Preserve existing directories and unrelated resources.
+- publish_<platform>_<suffix> opens a credential and confirmation form; execute only under explicit upload authorization.
+
+New projects may also use IDEA New Project > Minecraft > KltytonTemple, from the repository's integrations/minecraft-development/templates local template source. These are the installed Minecraft Development plugin's public extension assets, not a replacement plugin.
+
+## Source boundaries
+
+common, version and Loader layers compile within the selected target's real Minecraft classpath. Keep client-only code isolated, metadata in targets, handwritten resources in their existing location and generated resources in target/src/generated/resources. Do not force an existing Stonecutter/Architectury pipeline to migrate.
+
+For consumers, preserve mod_java_package/mod_entry_class, source paths, Loader/Java/Wrapper/dependency pins and custom hooks. Adapt only authorized entrypoints before game changes. A copied new-target blueprint is not verified support.
+
+Finish authorized production changes before the permitted verification batch. Do not add Gradle, tests, clients or datagen during a source-only phase. Report real surface evidence separately from build/static checks. This Skill does not authorize commits, pushes, PRs, platform uploads, plugin replacement, account changes or external messages.
+]]#
