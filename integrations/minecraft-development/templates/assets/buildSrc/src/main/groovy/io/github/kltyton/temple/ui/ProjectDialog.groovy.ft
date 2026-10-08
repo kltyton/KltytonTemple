@@ -3,6 +3,8 @@
 
 import io.github.kltyton.temple.workspace.ProjectCreation
 import io.github.kltyton.temple.workspace.ProjectFiles
+import io.github.kltyton.temple.workspace.TargetPlan
+import groovy.json.JsonSlurper
 import java.awt.BorderLayout
 import java.awt.GridLayout
 import javax.swing.*
@@ -21,23 +23,23 @@ final class ProjectDialog {
                                      mod_description:'描述', directory:'新工程目录']
         JPanel properties = new JPanel(new GridLayout(0, 2, 12, 8))
         fields.each { name, field -> properties.add(new JLabel(labels[name])); properties.add(field) }
-        Map<String, JCheckBox> choices = ProjectFiles.targets(root).collectEntries {
-            [(it.id): new JCheckBox(it.id, true)]
-        }
-        JPanel targets = new JPanel(new GridLayout(0, 2, 8, 4))
-        choices.values().each { targets.add(it) }
+        TargetSelectionPanel targets = new TargetSelectionPanel(
+                { text -> new JsonSlurper().parseText(text) } as java.util.function.Function,
+                [], { selections -> } as java.util.function.Consumer)
         JPanel form = new JPanel(new BorderLayout(0, 12))
         form.add(properties, BorderLayout.NORTH)
         form.add(targets, BorderLayout.CENTER)
         while (JOptionPane.showConfirmDialog(null, form, 'KltytonTemple · 创建新项目',
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
             try {
-                List<String> selected = choices.findAll { it.value.selected }.keySet().toList()
-                if (selected.empty) { throw new IllegalArgumentException('至少选择一个目标') }
+                List<Map<String, String>> selected = targets.selections()
+                if (selected.empty) { throw new IllegalArgumentException('至少添加一个目标') }
                 Properties identity = new Properties()
                 fields.findAll { it.key != 'directory' }.each { name, field -> identity.setProperty(name, field.text.trim()) }
                 if (!fields.directory.text.trim()) { throw new IllegalArgumentException('请选择新工程目录') }
-                File created = ProjectCreation.create(root, new File(fields.directory.text.trim()), identity, selected)
+                File created = ProjectCreation.create(root, new File(fields.directory.text.trim()), identity,
+                        selected.collect { it.blueprint }.unique())
+                TargetPlan.apply(created.toPath(), selected, true)
                 JOptionPane.showMessageDialog(null, "已创建 ${created}。在 IDEA 中打开目录即可。")
                 return
             } catch (IllegalArgumentException | IOException problem) {

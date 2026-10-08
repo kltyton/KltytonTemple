@@ -1,0 +1,21 @@
+plugins { id 'java' }
+group = 'io.github.kltyton.temple'
+version = '1.1.0'
+
+def ideaHome = providers.gradleProperty('ideaHome').orElse(providers.environmentVariable('IDEA_HOME'))
+def minecraftDevHome = providers.gradleProperty('minecraftDevHome')
+sourceSets.main.java.srcDir('../shared/src/main/java')
+dependencies {
+    compileOnly fileTree(ideaHome.get() + '/lib') { include '*.jar' }
+    compileOnly fileTree(ideaHome.get() + '/plugins/gradle-plugin/lib') { include '*.jar' }
+    compileOnly fileTree(ideaHome.get() + '/plugins/java/lib') { include '*.jar' }
+    compileOnly fileTree(minecraftDevHome.get() + '/lib') { include '*.jar' }
+}
+java { toolchain.languageVersion = JavaLanguageVersion.of(25) }
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
+tasks.register('buildPlugin', Zip) {
+    dependsOn jar
+    archiveFileName = "KltytonTemple-IDEA-${version}.zip"
+    destinationDirectory = layout.buildDirectory.dir('distributions')
+    into('KltytonTemple/lib') { from tasks.named('jar') }
+}

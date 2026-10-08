@@ -1,5 +1,6 @@
 #set($END_BLOCK = ']]#')
 #[[loader=forge
+datagen_task=runData
 minecraft_version=1.18.2
 minecraft_version_range=[1.18.2]
 loader_version=40.2.21

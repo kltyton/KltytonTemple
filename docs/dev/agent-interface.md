@@ -4,7 +4,7 @@
 
 Root listTargets 返回目标事实；writeCiMatrix 输出启用目标；buildAllTargets 依赖各目标 build_<id>。Task ID 中的短横线和点统一替换为下划线。例如 forge-1.20.1 对应 build_forge_1_20_1、select_forge_1_20_1、runClient_forge_1_20_1、verify_forge_1_20_1。
 
-select_<id> 同步根 Wrapper 分发配置、活动目标和身份源码；重新加载 Gradle 后，IDE 使用正确的目标模型。build/run 通过该目标自己的 GradleWrapperMain 和 Java 工具链运行，不把不同 Wrapper 当作同一个根 Gradle 子工程。
+select_<id> 保存根任务的默认目标，不改变根 Wrapper 或其他目标的导入。build/run 使用目标自己的 GradleWrapperMain 和 Java 工具链。IDEA 目标关联由 KltytonTemple 扩展负责；全部目标作为独立 Gradle 工程同步。
 
 所有构建、运行、资源生成、发布仍受用户当前合同约束。createProject/addTarget 是可视化表单；发布表单仅把凭据交给本轮子进程，确认后才上传。listTargets、任务规划与 JAR 检查均不证明游戏运行或视觉行为通过。
 

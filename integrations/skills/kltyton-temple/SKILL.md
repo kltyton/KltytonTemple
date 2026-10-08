@@ -1,30 +1,39 @@
 ---
 name: kltyton-temple
-description: Create or maintain KltytonTemple Minecraft multiversion and multiloader projects through native IDEA Gradle tasks or its Minecraft Development project wizard.
+description: Create, maintain, or migrate Minecraft projects to KltytonTemple, including official MDKs, MultiLoader, Stonecutter, Architectury and SighsTemple.
 ---
 
 # KltytonTemple
 
-Locate the checkout containing buildSrc and targets. Import its root Gradle project into IntelliJ IDEA. No Python or MCP daemon is required.
+Locate the template checkout containing buildSrc, targets and integrations. Read the active edit and acceptance contract before running anything. This interface needs no MCP service or Python runtime.
 
-Read the user's active development/acceptance contract, project rules, root identity, and the selected target's actual Gradle properties, Wrapper, source layers and metadata. Do not infer versions from folder names.
+## Select the work
 
-## Native operations
+For a new project, use the Minecraft Development wizard or the native Gradle createProject form. The target selector reads official catalogs; it does not upgrade existing target pins. Adding a catalog version is scaffolding, not proof of compatibility.
 
-Task suffixes replace hyphens and dots with underscores: forge-1.20.1 becomes forge_1_20_1. IDEA groups operations by Loader and Minecraft version.
+For migration, read [migration.md](references/migration.md). Identify the actual build system first and preserve its required transforms and task dependencies. Use the repository's Chinese or English prompt when the developer needs a copyable request:
+- ../../prompts/migrate.zh-CN.md
+- ../../prompts/migrate.en.md
 
-- select_<suffix> prepares the root composite model and identity source; refresh Gradle afterward.
-- build_<suffix>, runClient_<suffix>, runServer_<suffix>, runDatagen_<suffix> use the target's own Wrapper and required Java toolchain.
-- verify_<suffix> inspects an existing production JAR without rebuilding.
-- createProject and addTarget open visual forms. Preserve existing directories and unrelated resources.
-- publish_<platform>_<suffix> opens a credential and confirmation form; execute only under explicit upload authorization.
+## Target facts
 
-New projects may also use IDEA New Project > Minecraft > KltytonTemple, from the repository's integrations/minecraft-development/templates local template source. These are the installed Minecraft Development plugin's public extension assets, not a replacement plugin.
+Read root identity and every relevant target's properties, Wrapper, settings/build, source paths and Loader metadata. Keep mod_java_package and mod_entry_class when a consumer separates its Java namespace from Maven coordinates.
 
-## Source boundaries
+Target IDs use loader-Minecraft; task suffixes replace hyphens and dots with underscores. Targets are independent Gradle projects, preserving their Wrapper and Gradle JDK. Default selection affects root task aliases, not IDE module inclusion.
 
-common, version and Loader layers compile within the selected target's real Minecraft classpath. Keep client-only code isolated, metadata in targets, handwritten resources in their existing location and generated resources in target/src/generated/resources. Do not force an existing Stonecutter/Architectury pipeline to migrate.
+- listTargets reports configured target facts.
+- select_<suffix> sets the default target.
+- build_<suffix>, runClient_<suffix>, runServer_<suffix>, runDatagen_<suffix> execute the target's own Wrapper.
+- verify_<suffix> inspects an existing release JAR without building.
+- createProject/addTarget open version forms.
+- publish_<platform>_<suffix> opens a publishing form and needs upload authorization.
 
-For consumers, preserve mod_java_package/mod_entry_class, source paths, Loader/Java/Wrapper/dependency pins and custom hooks. Adapt only authorized entrypoints before game changes. A copied new-target blueprint is not verified support.
+## Preserve consumer behavior
 
-Finish authorized production changes before the permitted verification batch. Do not add Gradle, tests, clients or datagen during a source-only phase. Report real surface evidence separately from build/static checks. This Skill does not authorize commits, pushes, PRs, platform uploads, plugin replacement, account changes or external messages.
+Shared code must compile against each target's actual Minecraft environment. Keep client-only classes isolated. Preserve handwritten resources, generated-resource ownership, registry order, Mixin/refmap, AT/AW/ClassTweaker, optional compatibility boundaries, dependencies and publishing artifacts.
+
+The IDEA extension's temple_idea_project=true marker enables automatic target linking. Keep it off for a consumer whose current contract prohibits IDE/Gradle import or runtime validation.
+
+Do not rewrite game code or remove a preprocessor just to match the template directory diagram. Do not edit the reference template as the migration output. A copied blueprint is not accepted support.
+
+Finish production edits before the authorized verification batch. Report source, IDE import, build, JAR and game evidence separately. This Skill does not authorize commits, remote writes, uploads, account changes or messages.

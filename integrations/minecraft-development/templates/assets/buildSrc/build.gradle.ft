@@ -4,6 +4,8 @@
     id 'java-gradle-plugin'
 }
 
+sourceSets.main.java.srcDir('../integrations/shared/src/main/java')
+
 dependencies {
     implementation localGroovy()
 }

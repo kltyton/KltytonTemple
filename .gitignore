@@ -5,6 +5,9 @@ runs/
 out/
 *.iml
 .idea/
+.classpath
+.project
+.settings/
 .temple/
 temple.local.properties
 __pycache__/

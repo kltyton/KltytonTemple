@@ -1,0 +1,126 @@
+#set($END_BLOCK = ']]#')
+#[[# Minecraft Development：安装与创建工程
+
+[English](Minecraft-Development.en.md) · [Wiki](Home.zh-CN.md)
+
+本教程使用 IntelliJ IDEA 2026.2.3、Minecraft Development 2026.2-1.8.22 和 KltytonTemple 1.1.0。其他 IDEA 版本需使用对应版本的扩展；当前 ZIP 的兼容范围为 IDEA 262。
+
+KltytonTemple 是 Minecraft Development 的附加扩展。原有 Forge、Fabric、NeoForge、MultiLoader、Architectury 模板仍可使用。
+
+## 1. 准备
+
+- 已安装 Minecraft Development，并启用 IDEA 的 Gradle 支持。
+- IDEA 中注册 Java 21；涉及 Minecraft 26.x 的目标还需要 Java 25。
+- KltytonTemple 仓库已经下载到本机。下面的“模板目录”指这个仓库，不是准备新建的模组目录。
+
+扩展源代码在 `integrations/idea-plugin`，本地生成的安装包在：
+
+```text
+integrations/idea-plugin/build/distributions/KltytonTemple-IDEA-1.1.0.zip
+```
+
+需要自行构建扩展时，使用模板的 Java 25 Wrapper。两个参数分别指向 IDEA 安装目录和 Minecraft Development 插件目录：
+
+```sh
+./targets/neoforge-26.1.2/gradlew -p integrations/idea-plugin buildPlugin \
+  -PideaHome=<IDEA安装目录> \
+  -PminecraftDevHome=<Minecraft Development插件目录>
+```
+
+Windows 使用该目录内的 `gradlew.bat`。构建的是 IDEA 扩展，不会编译游戏目标。
+
+## 2. 安装 KltytonTemple 扩展
+
+1. 打开 IDEA 的“设置”。
+2. 进入左侧“插件”，选择“已安装”页签。
+3. 点击页签右侧的齿轮，选择“从磁盘安装插件”。
+4. 选择上面的 `KltytonTemple-IDEA-1.1.0.zip`。选择 ZIP 本身，不需要解压，也不要选择 Minecraft Development 的 JAR。
+5. 按 IDEA 提示应用。若明确要求重启，先保存正在编辑的工程，再重启。
+6. 在已安装列表中搜索 `KltytonTemple`，确认扩展启用。
+
+KltytonTemple 需要 Minecraft Development。依赖未安装或被禁用时，先恢复该依赖，再启用 KltytonTemple。
+
+## 3. 添加模板仓库
+
+扩展提供版本选择和目标关联；模板仓库提供生成工程所需的文件。二者都需要配置。
+
+1. 打开“设置”，在设置搜索框输入 `Minecraft Development`。
+2. 进入 Minecraft Development 的设置页，找到项目创建区域的模板仓库列表。英文界面中的名称为 `Project Template Repositories`。
+3. 点击列表的“+”，添加一个仓库。
+4. 名称填写 `KltytonTemple`，Provider 选择 `Local`。
+5. 路径选择模板仓库下的 `integrations/minecraft-development/templates`。
+6. 应用设置。保留原来的 `Built In` 仓库；不需要删掉原模板。
+
+路径应指向包含 `.mcdev.template.json` 和 `assets` 的目录。例如模板仓库在 `D:/Projects/KltytonTemple`，则填写：
+
+```text
+D:/Projects/KltytonTemple/integrations/minecraft-development/templates
+```
+
+不要填仓库根目录、`assets` 子目录或将来新工程的位置。已经有同一路径的 Local 条目时，检查现有条目即可，不要重复添加。
+
+## 4. 创建工程
+
+1. 使用“文件 → 新建 → 项目”。
+2. 左侧选择 `Minecraft`。选择新版向导；不要选择 `Minecraft (Old Wizard)`。
+3. 选择 Mod 组和 `KltytonTemple` 模板。
+4. 填写工程名称和位置。这是新工程的目录，与前面的模板目录分开。
+5. 填写 Mod ID、显示名称、作者、描述、许可证及构建坐标。
+6. Gradle 根控制工程使用 Java 21。各目标的游戏编译 Java 和 Gradle Java 独立维护。
+
+Mod ID 用小写字母、数字和下划线，如 `temple_demo`。Java 包名使用自己的命名空间，如 `io.github.kltyton.templedemo`。不要保留示例 group 或把模板自己的 modid 当成产品 ID。
+
+## 5. 选择版本和加载器
+
+版本区域先加载官方目录。下载完成后：
+
+1. 在 `Minecraft` 下拉列表选择版本。
+2. `Loader` 只列出该版本有可用构建蓝图和官方数据的加载器。
+3. 在 `Loader version` 选择版本；Fabric 还要选择 `Fabric API`。
+4. Java 要求自动显示，无需手填 Java 或 Gradle 数字。
+5. 点击 `Add target`，把这个组合加入下方表格。
+6. 同一个 Minecraft 需要第二个加载器时，切换 Loader 后再添加。
+7. 多版本工程重复上述步骤。表格中的每一行就是一个目标。
+8. 删除某行时选中它，再使用 `Remove selected`。至少保留一个目标。
+
+例如要维护 Fabric 和 NeoForge 的 1.21.1：先添加 `1.21.1 + fabric`，再添加 `1.21.1 + neoforge`。这会生成两个独立目标，而不是两个共用依赖的假模块。
+
+`Refresh versions` 重新下载目录，不会改写已加入表格的组合。当前目录提供正式版本，构建蓝图从 Minecraft 1.18.2 起；Forge 新旧构建世代分别处理。九个基线样例不是可选版本总数。
+
+## 6. 导入全部 Gradle 目标
+
+创建后打开新工程，等待根 Gradle 工程加载。扩展读取 `temple_idea_project=true` 与目标配置，把每个目标关联为独立 Gradle 工程。
+
+在 Gradle 窗口使用“同步所有 Gradle 项目”。同步结束后应同时看到根工程和各目标；每个 `targets/<loader>-<minecraft>` 都应具有对应模块和源码类路径。
+
+选择默认目标不会取消其他目标的关联。`select_<target>` 只控制根级 `build`、`runClient` 等简写的执行对象。
+
+每个目标使用自己的 Wrapper 和 Gradle Java。Java 21 与 Java 25 可以同时出现在同一工程中；不要为了同步把所有目标的 Wrapper 或 Java 改成同一个版本。
+
+## 7. 日常开发
+
+完整任务和配置见 [README](../../README.md)。Gradle 窗口和命令行执行的是同一组任务。
+
+- 构建指定目标：`build_<target>`。
+- 检查已有发行包：`verify_<target>`。
+- 客户端、服务器、datagen：使用对应目标任务，并按工程当前验收范围执行。
+- 添加目标：根任务 `addTarget`，使用相同的版本表格。
+- 发布：对应平台任务打开表单，凭据只交给当前发布进程。
+
+共享源码不等于共享游戏 API。升级目标之后，仍要处理对应版本的代码差异。
+
+## 8. 常见问题
+
+| 现象 | 检查位置 |
+| --- | --- |
+| 新建项目里没有 KltytonTemple | 扩展是否启用；Local 路径是否直接包含描述符 |
+| 提示未知 `kltyton_targets` 属性 | KltytonTemple 扩展未加载或版本不匹配 |
+| 版本目录下载失败 | 当前网络、IDEA 代理及官方仓库连接；使用 Refresh versions |
+| 某个 Loader 不在列表 | 官方数据与蓝图范围是否覆盖该 Minecraft |
+| 添加时提示目标已存在 | 修改现有目标配置或选择其他组合，不覆盖旧目标 |
+| 只看到根/buildSrc 模块 | 检查 marker、扩展与目标关联，然后同步全部工程 |
+| 某目标同步失败 | 读取该目标第一段错误，核对它的 JDK、Wrapper、仓库和依赖 |
+| 新版本生成后不能编译 | 检查该版本 API 和构建插件适配，生成成功不等于代码跨版本兼容 |
+
+本机扩展安装由开发者完成；九目标同步和向导下拉功能已由开发者手动确认。游戏启动和每个新增版本组合的构建仍需各自验收。
+]]#

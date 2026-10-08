@@ -19,7 +19,7 @@ final class ProjectCreation {
         List<File> files = ProjectFiles.distributableFiles(template)
         Set<String> roots = ['buildSrc', 'common', 'versions', 'loaders', 'targets', 'gradle', 'integrations', 'docs', '.github'] as Set
         Set<String> rootFiles = ['build.gradle', 'settings.gradle', 'gradle.properties', 'gradlew', 'gradlew.bat',
-                                  'LICENSE', 'README.md', '.gitignore', '.gitattributes'] as Set
+                                  'LICENSE', 'README.md', 'README.en.md', '.gitignore', '.gitattributes'] as Set
         files = files.findAll { File file ->
             String relative = base.relativize(file.toPath()).toString().replace('\\', '/')
             String first = relative.tokenize('/')[0]
@@ -29,10 +29,11 @@ final class ProjectCreation {
         output.mkdirs()
         files.each { File source ->
             String relative = base.relativize(source.toPath()).toString().replace('\\', '/')
-            relative = relative.replace(oldPackage.replace('.', '/'), newPackage.replace('.', '/'))
+            boolean gameSource = relative.tokenize('/')[0] in ['common', 'versions', 'loaders', 'targets']
+            if (gameSource) { relative = relative.replace(oldPackage.replace('.', '/'), newPackage.replace('.', '/')) }
             File target = new File(output, relative)
             target.parentFile.mkdirs()
-            if (source.name.endsWith('.java')) {
+            if (source.name.endsWith('.java') && gameSource) {
                 target.setText(source.getText('UTF-8').replace(oldPackage, newPackage), 'UTF-8')
             } else { ProjectFiles.copy(source, target) }
         }
@@ -41,7 +42,18 @@ final class ProjectCreation {
         old.remove('publish_modrinth_project_id')
         old.setProperty('temple_default_target', selected.first())
         ProjectFiles.write(new File(output, 'gradle.properties'), old)
-        ProjectFiles.select(output, ProjectFiles.targets(output).find { it.id == selected.first() })
+        ['fabric-1.20.1', 'fabric-26.1.2', 'forge-1.20.1', 'neoforge-1.21.1', 'neoforge-26.1.2'].each { name ->
+            File blueprint = new File(template, "targets/${name}")
+            if (blueprint.isDirectory()) {
+                ProjectFiles.distributableFiles(blueprint).each { source ->
+                    ProjectFiles.copy(source, new File(output, "gradle/target-blueprints/${name}/" +
+                            blueprint.toPath().relativize(source.toPath()).toString()))
+                }
+            }
+        }
+        File state = new File(output, '.temple/active-target')
+        state.parentFile.mkdirs()
+        state.setText(selected.first() + '\n', 'UTF-8')
         output
     }
 

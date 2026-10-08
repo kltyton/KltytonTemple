@@ -47,8 +47,8 @@ final class TemplePlugin implements Plugin<Project> {
         }
         project.tasks.register('prepareIde') {
             group = 'temple'
-            description = '准备当前目标的身份源码；初次导入也会自动准备。'
-            doLast { ProjectFiles.prepareIdentity(root, current) }
+            description = '准备全部目标的身份源码。'
+            doLast { targets.each { ProjectFiles.prepareIdentity(root, it) } }
         }
         project.tasks.register('setupTargetWrappers') {
             group = 'temple'
@@ -70,7 +70,7 @@ final class TemplePlugin implements Plugin<Project> {
         }
         project.tasks.register('selectTarget') {
             group = 'temple'
-            description = '请展开目标分组，双击 select_<目标>，随后刷新 Gradle。'
+            description = '显示根任务当前使用的默认目标。'
             doLast { project.logger.lifecycle("当前目标 ${current.id}；每个目标分组均提供 select 任务。") }
         }
         registerDialog(project, toolchains, 'createProject', ProjectDialog, null)
@@ -90,14 +90,16 @@ final class TemplePlugin implements Plugin<Project> {
             buildTasks.add(buildName)
             registerTarget(project, toolchains, target, "runClient_${suffix}", 'runClient', category)
             registerTarget(project, toolchains, target, "runServer_${suffix}", 'runServer', category)
-            registerTarget(project, toolchains, target, "runDatagen_${suffix}",
-                    target.loader == 'fabric' ? 'runDatagen' : 'runData', category)
+            String datagenTask = target.properties.getProperty('datagen_task')
+            if (datagenTask) {
+                registerTarget(project, toolchains, target, "runDatagen_${suffix}", datagenTask, category)
+            }
             project.tasks.register("select_${suffix}") {
                 group = category
-                description = "选择 ${target.id} 作为 IDEA 的源码与依赖模型。"
+                description = "将 ${target.id} 设为根级任务的默认目标。"
                 doLast {
                     ProjectFiles.select(root, target)
-                    project.logger.lifecycle("已选择 ${target.id}。点击 Gradle 刷新；Gradle JVM 使用 Java ${target.gradleJavaVersion}。")
+                    project.logger.lifecycle("默认目标：${target.id}；全部目标仍作为独立 Gradle 工程导入。")
                 }
             }
             project.tasks.register("verify_${suffix}") {
@@ -117,8 +119,10 @@ final class TemplePlugin implements Plugin<Project> {
         project.tasks.named('build') { dependsOn "build_${current.taskSuffix()}" }
         registerTarget(project, toolchains, current, 'runClient', 'runClient', 'temple')
         registerTarget(project, toolchains, current, 'runServer', 'runServer', 'temple')
-        registerTarget(project, toolchains, current, 'runDatagen',
-                current.loader == 'fabric' ? 'runDatagen' : 'runData', 'temple')
+        String currentDatagen = current.properties.getProperty('datagen_task')
+        if (currentDatagen) {
+            registerTarget(project, toolchains, current, 'runDatagen', currentDatagen, 'temple')
+        }
         project.tasks.register('verifyAllDistributions') {
             group = 'verification'
             doLast { targets.each { project.logger.lifecycle(JsonOutput.toJson(DistributionInspector.verify(root, it))) } }
@@ -172,6 +176,7 @@ final class TemplePlugin implements Plugin<Project> {
             }.unique())
             mainClass.set(entry.name)
             jvmArgs '-Djava.awt.headless=false'
+            jvmArgs '-Djava.net.useSystemProxies=true'
             args project.rootDir.absolutePath
             doFirst {
                 def runtime = javaLauncher.get()

@@ -1,5 +1,6 @@
 #set($END_BLOCK = ']]#')
 #[[loader=neoforge
+datagen_task=runData
 minecraft_version=26.1.2
 minecraft_version_range=[26.1.2]
 loader_version=26.1.2.84

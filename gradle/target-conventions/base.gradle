@@ -13,6 +13,7 @@ if (!(mod_id ==~ /[a-z][a-z0-9_]{1,63}/) || !(mod_group_id ==~ /[a-z][a-z0-9_]*(
 }
 group = mod_group_id
 version = mod_version
+def javaPackage = findProperty('mod_java_package') ?: mod_group_id
 base.archivesName = "${mod_id}-${loader}-${minecraft_version}"
 java {
     toolchain.languageVersion = JavaLanguageVersion.of(java_version as int)
@@ -44,19 +45,22 @@ sourceSets {
 }
 def constantsDirectory = layout.buildDirectory.dir('generated/sources/temple')
 def generateConstants = tasks.register('generateTempleConstants') {
-    inputs.properties([mod_id: mod_id, mod_group_id: mod_group_id])
+    inputs.properties([mod_id: mod_id, mod_java_package: javaPackage])
     outputs.dir(constantsDirectory)
     doLast {
-        def destination = constantsDirectory.get().file(mod_group_id.replace('.', '/') + '/BuildInfo.java').asFile
+        def destination = constantsDirectory.get().file(javaPackage.replace('.', '/') + '/BuildInfo.java').asFile
         destination.parentFile.mkdirs()
-        destination.setText("package ${mod_group_id};\n\npublic final class BuildInfo {\n" +
+        destination.setText("package ${javaPackage};\n\npublic final class BuildInfo {\n" +
                 "    public static final String MOD_ID = ${JsonOutput.toJson(mod_id)};\n" +
                 "    private BuildInfo() {}\n}\n", 'UTF-8')
     }
 }
 sourceSets.main.java.srcDir(constantsDirectory)
 tasks.named('compileJava') { dependsOn generateConstants }
-tasks.named('sourcesJar') { dependsOn generateConstants }
+tasks.named('sourcesJar', Jar) {
+    dependsOn generateConstants
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
 tasks.named('processResources', ProcessResources) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     def raw = [mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,

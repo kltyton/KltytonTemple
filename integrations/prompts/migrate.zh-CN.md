@@ -1,0 +1,45 @@
+# 迁移到 KltytonTemple
+
+把下面的提示词交给能读取本地工程的 AI，填写路径、修改范围和验收合同。
+
+```text
+请将现有 Minecraft 模组工程迁移到 KltytonTemple 的构建与工程入口。
+
+原工程：<绝对路径>
+KltytonTemple：<绝对路径或固定提交链接>
+输出位置：<原地迁移或新目录>
+允许修改：<具体文件或目录>
+验收合同：<目标、任务、次数和禁止项>
+
+先读取工程规则、Git 状态、settings/build/gradle.properties、Wrapper、
+Loader 元数据、源码层、访问配置、datagen、运行和发布配置。
+确认所有版本、加载器、Java、映射、包名及 modid，不凭目录名推断。
+
+识别原工程使用官方 MDK、MultiLoader、Stonecutter、Architectury、
+SighsTemple，还是这些方案的组合。
+读取 KltytonTemple 的 integrations/skills/kltyton-temple/SKILL.md，
+再读取其中匹配原工程的迁移参考。
+
+完成以下迁移：
+- 保留每个已有目标的 Wrapper、运行/编译 Java、映射、Loader/API
+  和构建插件版本，不顺手升级或添加发布目标。
+- 接入原生 Gradle 任务，让全部目标独立关联到 IDEA；
+  默认目标只决定根级 build/runClient 等任务的执行对象。
+- 保留游戏源码、资源、注册、网络、Mixin/refmap、AT/AW/ClassTweaker、
+  datagen、可选依赖、运行配置及发布链路。
+- 优先保留原路径，用 shared_sources 或现有任务产物接入。
+  Stonecutter 的预处理仍须参与每个目标的真实编译，
+  Architectury 的 common 转换、expect/actual 和运行时依赖仍须生效。
+- 保留 modid、group、包名、入口类和版权，不留下示例命名空间、
+  模板 modid 或模板平台项目 ID。
+- 新目录拒绝覆盖；原地迁移保留用户改动、私有配置、存档和本地依赖。
+  不创建未要求的备份。
+- 先完成生产迁移，再严格按验收合同执行检查。
+  source-only 阶段不运行 Gradle、测试、datagen 或客户端。
+- 报告目标矩阵、原路径到新入口的映射、改动文件、实际命令和结果。
+  分开报告源码完成、IDE 导入、构建、发行包及游戏验收。
+
+遇到能力缺口，先指出具体调用链或任务依赖，再做最小适配。
+不以删功能、吞异常、禁用依赖或只改版本字符串完成迁移。
+提交、推送、PR、外部发布和联系其他智能体仅按本次明确授权执行。
+```

@@ -35,26 +35,9 @@
             "default": "My Mod"
         },
         {
-            "name": "TARGET_PROFILE",
-            "type": "string",
-            "label": "\u7248\u672c\u4e0e\u52a0\u8f7d\u5668",
-            "options": {
-                "all": "\u5168\u90e8\u7248\u672c\u4e0e\u52a0\u8f7d\u5668",
-                "mc1201": "fabric-1.20.1 + forge-1.20.1",
-                "mc1211": "fabric-1.21.1 + neoforge-1.21.1",
-                "mc2612": "fabric-26.1.2 + neoforge-26.1.2",
-                "fabric-1.20.1": "fabric-1.20.1",
-                "fabric-1.21.1": "fabric-1.21.1",
-                "fabric-26.1.2": "fabric-26.1.2",
-                "forge-1.18.2": "forge-1.18.2",
-                "forge-1.19.2": "forge-1.19.2",
-                "forge-1.20.1": "forge-1.20.1",
-                "neoforge-1.21.1": "neoforge-1.21.1",
-                "neoforge-26.1.2": "neoforge-26.1.2",
-                "neoforge-26.2.0": "neoforge-26.2.0"
-            },
-            "default": "all",
-            "forceDropdown": true
+            "name": "TARGET_PLAN",
+            "type": "kltyton_targets",
+            "label": "Minecraft / Loader"
         },
         {
             "name": "AUTHORS",
@@ -193,6 +176,36 @@
             "reformat": false
         },
         {
+            "template": "assets/docs/wiki/Home.en.md.ft",
+            "destination": "docs/wiki/Home.en.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/wiki/Home.zh-CN.md.ft",
+            "destination": "docs/wiki/Home.zh-CN.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/wiki/Migration.en.md.ft",
+            "destination": "docs/wiki/Migration.en.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/wiki/Migration.zh-CN.md.ft",
+            "destination": "docs/wiki/Migration.zh-CN.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/wiki/Minecraft-Development.en.md.ft",
+            "destination": "docs/wiki/Minecraft-Development.en.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/wiki/Minecraft-Development.zh-CN.md.ft",
+            "destination": "docs/wiki/Minecraft-Development.zh-CN.md",
+            "reformat": false
+        },
+        {
             "template": "assets/gradle/target-conventions/base.gradle.ft",
             "destination": "gradle/target-conventions/base.gradle",
             "reformat": false
@@ -205,6 +218,11 @@
         {
             "template": "assets/gradle/target-conventions/forge.gradle.ft",
             "destination": "gradle/target-conventions/forge.gradle",
+            "reformat": false
+        },
+        {
+            "template": "assets/gradle/target-conventions/forgegradle.gradle.ft",
+            "destination": "gradle/target-conventions/forgegradle.gradle",
             "reformat": false
         },
         {
@@ -233,6 +251,36 @@
             "reformat": false
         },
         {
+            "template": "assets/integrations/prompts/migrate.en.md.ft",
+            "destination": "integrations/prompts/migrate.en.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/integrations/prompts/migrate.zh-CN.md.ft",
+            "destination": "integrations/prompts/migrate.zh-CN.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/integrations/shared/src/main/java/io/github/kltyton/temple/catalog/VersionCatalog.java.ft",
+            "destination": "integrations/shared/src/main/java/io/github/kltyton/temple/catalog/VersionCatalog.java",
+            "reformat": false
+        },
+        {
+            "template": "assets/integrations/shared/src/main/java/io/github/kltyton/temple/ui/TargetSelectionPanel.java.ft",
+            "destination": "integrations/shared/src/main/java/io/github/kltyton/temple/ui/TargetSelectionPanel.java",
+            "reformat": false
+        },
+        {
+            "template": "assets/integrations/shared/src/main/java/io/github/kltyton/temple/workspace/TargetPlan.java.ft",
+            "destination": "integrations/shared/src/main/java/io/github/kltyton/temple/workspace/TargetPlan.java",
+            "reformat": false
+        },
+        {
+            "template": "assets/integrations/skills/kltyton-temple/references/migration.md.ft",
+            "destination": "integrations/skills/kltyton-temple/references/migration.md",
+            "reformat": false
+        },
+        {
             "template": "assets/integrations/skills/kltyton-temple/SKILL.md.ft",
             "destination": "integrations/skills/kltyton-temple/SKILL.md",
             "reformat": false
@@ -258,6 +306,11 @@
             "reformat": false
         },
         {
+            "template": "assets/README.en.md.ft",
+            "destination": "README.en.md",
+            "reformat": false
+        },
+        {
             "template": "assets/README.md.ft",
             "destination": "README.md",
             "reformat": false
@@ -269,381 +322,556 @@
         },
         {
             "template": "assets/targets/fabric-1.20.1/build.gradle.ft",
+            "destination": "gradle/target-blueprints/fabric-1.20.1/build.gradle",
+            "reformat": false
+        },
+        {
+            "template": "assets/targets/fabric-1.20.1/build.gradle.ft",
             "destination": "targets/fabric-1.20.1/build.gradle",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1201' || $TARGET_PROFILE == 'fabric-1.20.1'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"fabric-1.20.1\"')"
+        },
+        {
+            "template": "assets/targets/fabric-1.20.1/gradle/wrapper/gradle-wrapper.properties.ft",
+            "destination": "gradle/target-blueprints/fabric-1.20.1/gradle/wrapper/gradle-wrapper.properties",
+            "reformat": false
         },
         {
             "template": "assets/targets/fabric-1.20.1/gradle/wrapper/gradle-wrapper.properties.ft",
             "destination": "targets/fabric-1.20.1/gradle/wrapper/gradle-wrapper.properties",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1201' || $TARGET_PROFILE == 'fabric-1.20.1'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"fabric-1.20.1\"')"
+        },
+        {
+            "template": "assets/targets/fabric-1.20.1/gradle.properties.ft",
+            "destination": "gradle/target-blueprints/fabric-1.20.1/gradle.properties",
+            "reformat": false
         },
         {
             "template": "assets/targets/fabric-1.20.1/gradle.properties.ft",
             "destination": "targets/fabric-1.20.1/gradle.properties",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1201' || $TARGET_PROFILE == 'fabric-1.20.1'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"fabric-1.20.1\"')"
+        },
+        {
+            "template": "assets/targets/fabric-1.20.1/gradlew.ft",
+            "destination": "gradle/target-blueprints/fabric-1.20.1/gradlew",
+            "reformat": false
         },
         {
             "template": "assets/targets/fabric-1.20.1/gradlew.ft",
             "destination": "targets/fabric-1.20.1/gradlew",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1201' || $TARGET_PROFILE == 'fabric-1.20.1'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"fabric-1.20.1\"')"
+        },
+        {
+            "template": "assets/targets/fabric-1.20.1/gradlew.bat.ft",
+            "destination": "gradle/target-blueprints/fabric-1.20.1/gradlew.bat",
+            "reformat": false
         },
         {
             "template": "assets/targets/fabric-1.20.1/gradlew.bat.ft",
             "destination": "targets/fabric-1.20.1/gradlew.bat",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1201' || $TARGET_PROFILE == 'fabric-1.20.1'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"fabric-1.20.1\"')"
+        },
+        {
+            "template": "assets/targets/fabric-1.20.1/settings.gradle.ft",
+            "destination": "gradle/target-blueprints/fabric-1.20.1/settings.gradle",
+            "reformat": false
         },
         {
             "template": "assets/targets/fabric-1.20.1/settings.gradle.ft",
             "destination": "targets/fabric-1.20.1/settings.gradle",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1201' || $TARGET_PROFILE == 'fabric-1.20.1'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"fabric-1.20.1\"')"
+        },
+        {
+            "template": "assets/targets/fabric-1.20.1/src/main/resources/fabric.mod.json.ft",
+            "destination": "gradle/target-blueprints/fabric-1.20.1/src/main/resources/fabric.mod.json",
+            "reformat": false
         },
         {
             "template": "assets/targets/fabric-1.20.1/src/main/resources/fabric.mod.json.ft",
             "destination": "targets/fabric-1.20.1/src/main/resources/fabric.mod.json",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1201' || $TARGET_PROFILE == 'fabric-1.20.1'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"fabric-1.20.1\"')"
         },
         {
             "template": "assets/targets/fabric-1.21.1/build.gradle.ft",
             "destination": "targets/fabric-1.21.1/build.gradle",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1211' || $TARGET_PROFILE == 'fabric-1.21.1'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"fabric-1.21.1\"')"
         },
         {
             "template": "assets/targets/fabric-1.21.1/gradle/wrapper/gradle-wrapper.properties.ft",
             "destination": "targets/fabric-1.21.1/gradle/wrapper/gradle-wrapper.properties",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1211' || $TARGET_PROFILE == 'fabric-1.21.1'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"fabric-1.21.1\"')"
         },
         {
             "template": "assets/targets/fabric-1.21.1/gradle.properties.ft",
             "destination": "targets/fabric-1.21.1/gradle.properties",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1211' || $TARGET_PROFILE == 'fabric-1.21.1'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"fabric-1.21.1\"')"
         },
         {
             "template": "assets/targets/fabric-1.21.1/gradlew.ft",
             "destination": "targets/fabric-1.21.1/gradlew",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1211' || $TARGET_PROFILE == 'fabric-1.21.1'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"fabric-1.21.1\"')"
         },
         {
             "template": "assets/targets/fabric-1.21.1/gradlew.bat.ft",
             "destination": "targets/fabric-1.21.1/gradlew.bat",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1211' || $TARGET_PROFILE == 'fabric-1.21.1'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"fabric-1.21.1\"')"
         },
         {
             "template": "assets/targets/fabric-1.21.1/settings.gradle.ft",
             "destination": "targets/fabric-1.21.1/settings.gradle",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1211' || $TARGET_PROFILE == 'fabric-1.21.1'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"fabric-1.21.1\"')"
         },
         {
             "template": "assets/targets/fabric-1.21.1/src/main/resources/fabric.mod.json.ft",
             "destination": "targets/fabric-1.21.1/src/main/resources/fabric.mod.json",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1211' || $TARGET_PROFILE == 'fabric-1.21.1'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"fabric-1.21.1\"')"
+        },
+        {
+            "template": "assets/targets/fabric-26.1.2/build.gradle.ft",
+            "destination": "gradle/target-blueprints/fabric-26.1.2/build.gradle",
+            "reformat": false
         },
         {
             "template": "assets/targets/fabric-26.1.2/build.gradle.ft",
             "destination": "targets/fabric-26.1.2/build.gradle",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc2612' || $TARGET_PROFILE == 'fabric-26.1.2'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"fabric-26.1.2\"')"
+        },
+        {
+            "template": "assets/targets/fabric-26.1.2/gradle/wrapper/gradle-wrapper.properties.ft",
+            "destination": "gradle/target-blueprints/fabric-26.1.2/gradle/wrapper/gradle-wrapper.properties",
+            "reformat": false
         },
         {
             "template": "assets/targets/fabric-26.1.2/gradle/wrapper/gradle-wrapper.properties.ft",
             "destination": "targets/fabric-26.1.2/gradle/wrapper/gradle-wrapper.properties",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc2612' || $TARGET_PROFILE == 'fabric-26.1.2'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"fabric-26.1.2\"')"
+        },
+        {
+            "template": "assets/targets/fabric-26.1.2/gradle.properties.ft",
+            "destination": "gradle/target-blueprints/fabric-26.1.2/gradle.properties",
+            "reformat": false
         },
         {
             "template": "assets/targets/fabric-26.1.2/gradle.properties.ft",
             "destination": "targets/fabric-26.1.2/gradle.properties",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc2612' || $TARGET_PROFILE == 'fabric-26.1.2'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"fabric-26.1.2\"')"
+        },
+        {
+            "template": "assets/targets/fabric-26.1.2/gradlew.ft",
+            "destination": "gradle/target-blueprints/fabric-26.1.2/gradlew",
+            "reformat": false
         },
         {
             "template": "assets/targets/fabric-26.1.2/gradlew.ft",
             "destination": "targets/fabric-26.1.2/gradlew",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc2612' || $TARGET_PROFILE == 'fabric-26.1.2'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"fabric-26.1.2\"')"
+        },
+        {
+            "template": "assets/targets/fabric-26.1.2/gradlew.bat.ft",
+            "destination": "gradle/target-blueprints/fabric-26.1.2/gradlew.bat",
+            "reformat": false
         },
         {
             "template": "assets/targets/fabric-26.1.2/gradlew.bat.ft",
             "destination": "targets/fabric-26.1.2/gradlew.bat",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc2612' || $TARGET_PROFILE == 'fabric-26.1.2'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"fabric-26.1.2\"')"
+        },
+        {
+            "template": "assets/targets/fabric-26.1.2/settings.gradle.ft",
+            "destination": "gradle/target-blueprints/fabric-26.1.2/settings.gradle",
+            "reformat": false
         },
         {
             "template": "assets/targets/fabric-26.1.2/settings.gradle.ft",
             "destination": "targets/fabric-26.1.2/settings.gradle",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc2612' || $TARGET_PROFILE == 'fabric-26.1.2'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"fabric-26.1.2\"')"
+        },
+        {
+            "template": "assets/targets/fabric-26.1.2/src/main/resources/fabric.mod.json.ft",
+            "destination": "gradle/target-blueprints/fabric-26.1.2/src/main/resources/fabric.mod.json",
+            "reformat": false
         },
         {
             "template": "assets/targets/fabric-26.1.2/src/main/resources/fabric.mod.json.ft",
             "destination": "targets/fabric-26.1.2/src/main/resources/fabric.mod.json",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc2612' || $TARGET_PROFILE == 'fabric-26.1.2'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"fabric-26.1.2\"')"
         },
         {
             "template": "assets/targets/forge-1.18.2/build.gradle.ft",
             "destination": "targets/forge-1.18.2/build.gradle",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'forge-1.18.2'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"forge-1.18.2\"')"
         },
         {
             "template": "assets/targets/forge-1.18.2/gradle/wrapper/gradle-wrapper.properties.ft",
             "destination": "targets/forge-1.18.2/gradle/wrapper/gradle-wrapper.properties",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'forge-1.18.2'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"forge-1.18.2\"')"
         },
         {
             "template": "assets/targets/forge-1.18.2/gradle.properties.ft",
             "destination": "targets/forge-1.18.2/gradle.properties",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'forge-1.18.2'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"forge-1.18.2\"')"
         },
         {
             "template": "assets/targets/forge-1.18.2/gradlew.ft",
             "destination": "targets/forge-1.18.2/gradlew",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'forge-1.18.2'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"forge-1.18.2\"')"
         },
         {
             "template": "assets/targets/forge-1.18.2/gradlew.bat.ft",
             "destination": "targets/forge-1.18.2/gradlew.bat",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'forge-1.18.2'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"forge-1.18.2\"')"
         },
         {
             "template": "assets/targets/forge-1.18.2/settings.gradle.ft",
             "destination": "targets/forge-1.18.2/settings.gradle",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'forge-1.18.2'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"forge-1.18.2\"')"
         },
         {
             "template": "assets/targets/forge-1.18.2/src/main/resources/META-INF/mods.toml.ft",
             "destination": "targets/forge-1.18.2/src/main/resources/META-INF/mods.toml",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'forge-1.18.2'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"forge-1.18.2\"')"
         },
         {
             "template": "assets/targets/forge-1.19.2/build.gradle.ft",
             "destination": "targets/forge-1.19.2/build.gradle",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'forge-1.19.2'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"forge-1.19.2\"')"
         },
         {
             "template": "assets/targets/forge-1.19.2/gradle/wrapper/gradle-wrapper.properties.ft",
             "destination": "targets/forge-1.19.2/gradle/wrapper/gradle-wrapper.properties",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'forge-1.19.2'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"forge-1.19.2\"')"
         },
         {
             "template": "assets/targets/forge-1.19.2/gradle.properties.ft",
             "destination": "targets/forge-1.19.2/gradle.properties",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'forge-1.19.2'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"forge-1.19.2\"')"
         },
         {
             "template": "assets/targets/forge-1.19.2/gradlew.ft",
             "destination": "targets/forge-1.19.2/gradlew",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'forge-1.19.2'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"forge-1.19.2\"')"
         },
         {
             "template": "assets/targets/forge-1.19.2/gradlew.bat.ft",
             "destination": "targets/forge-1.19.2/gradlew.bat",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'forge-1.19.2'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"forge-1.19.2\"')"
         },
         {
             "template": "assets/targets/forge-1.19.2/settings.gradle.ft",
             "destination": "targets/forge-1.19.2/settings.gradle",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'forge-1.19.2'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"forge-1.19.2\"')"
         },
         {
             "template": "assets/targets/forge-1.19.2/src/main/resources/META-INF/mods.toml.ft",
             "destination": "targets/forge-1.19.2/src/main/resources/META-INF/mods.toml",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'forge-1.19.2'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"forge-1.19.2\"')"
+        },
+        {
+            "template": "assets/targets/forge-1.20.1/build.gradle.ft",
+            "destination": "gradle/target-blueprints/forge-1.20.1/build.gradle",
+            "reformat": false
         },
         {
             "template": "assets/targets/forge-1.20.1/build.gradle.ft",
             "destination": "targets/forge-1.20.1/build.gradle",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1201' || $TARGET_PROFILE == 'forge-1.20.1'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"forge-1.20.1\"')"
+        },
+        {
+            "template": "assets/targets/forge-1.20.1/gradle/wrapper/gradle-wrapper.properties.ft",
+            "destination": "gradle/target-blueprints/forge-1.20.1/gradle/wrapper/gradle-wrapper.properties",
+            "reformat": false
         },
         {
             "template": "assets/targets/forge-1.20.1/gradle/wrapper/gradle-wrapper.properties.ft",
             "destination": "targets/forge-1.20.1/gradle/wrapper/gradle-wrapper.properties",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1201' || $TARGET_PROFILE == 'forge-1.20.1'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"forge-1.20.1\"')"
+        },
+        {
+            "template": "assets/targets/forge-1.20.1/gradle.properties.ft",
+            "destination": "gradle/target-blueprints/forge-1.20.1/gradle.properties",
+            "reformat": false
         },
         {
             "template": "assets/targets/forge-1.20.1/gradle.properties.ft",
             "destination": "targets/forge-1.20.1/gradle.properties",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1201' || $TARGET_PROFILE == 'forge-1.20.1'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"forge-1.20.1\"')"
+        },
+        {
+            "template": "assets/targets/forge-1.20.1/gradlew.ft",
+            "destination": "gradle/target-blueprints/forge-1.20.1/gradlew",
+            "reformat": false
         },
         {
             "template": "assets/targets/forge-1.20.1/gradlew.ft",
             "destination": "targets/forge-1.20.1/gradlew",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1201' || $TARGET_PROFILE == 'forge-1.20.1'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"forge-1.20.1\"')"
+        },
+        {
+            "template": "assets/targets/forge-1.20.1/gradlew.bat.ft",
+            "destination": "gradle/target-blueprints/forge-1.20.1/gradlew.bat",
+            "reformat": false
         },
         {
             "template": "assets/targets/forge-1.20.1/gradlew.bat.ft",
             "destination": "targets/forge-1.20.1/gradlew.bat",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1201' || $TARGET_PROFILE == 'forge-1.20.1'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"forge-1.20.1\"')"
+        },
+        {
+            "template": "assets/targets/forge-1.20.1/settings.gradle.ft",
+            "destination": "gradle/target-blueprints/forge-1.20.1/settings.gradle",
+            "reformat": false
         },
         {
             "template": "assets/targets/forge-1.20.1/settings.gradle.ft",
             "destination": "targets/forge-1.20.1/settings.gradle",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1201' || $TARGET_PROFILE == 'forge-1.20.1'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"forge-1.20.1\"')"
+        },
+        {
+            "template": "assets/targets/forge-1.20.1/src/main/resources/META-INF/mods.toml.ft",
+            "destination": "gradle/target-blueprints/forge-1.20.1/src/main/resources/META-INF/mods.toml",
+            "reformat": false
         },
         {
             "template": "assets/targets/forge-1.20.1/src/main/resources/META-INF/mods.toml.ft",
             "destination": "targets/forge-1.20.1/src/main/resources/META-INF/mods.toml",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1201' || $TARGET_PROFILE == 'forge-1.20.1'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"forge-1.20.1\"')"
+        },
+        {
+            "template": "assets/targets/neoforge-1.21.1/build.gradle.ft",
+            "destination": "gradle/target-blueprints/neoforge-1.21.1/build.gradle",
+            "reformat": false
         },
         {
             "template": "assets/targets/neoforge-1.21.1/build.gradle.ft",
             "destination": "targets/neoforge-1.21.1/build.gradle",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1211' || $TARGET_PROFILE == 'neoforge-1.21.1'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-1.21.1\"')"
+        },
+        {
+            "template": "assets/targets/neoforge-1.21.1/gradle/wrapper/gradle-wrapper.properties.ft",
+            "destination": "gradle/target-blueprints/neoforge-1.21.1/gradle/wrapper/gradle-wrapper.properties",
+            "reformat": false
         },
         {
             "template": "assets/targets/neoforge-1.21.1/gradle/wrapper/gradle-wrapper.properties.ft",
             "destination": "targets/neoforge-1.21.1/gradle/wrapper/gradle-wrapper.properties",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1211' || $TARGET_PROFILE == 'neoforge-1.21.1'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-1.21.1\"')"
+        },
+        {
+            "template": "assets/targets/neoforge-1.21.1/gradle.properties.ft",
+            "destination": "gradle/target-blueprints/neoforge-1.21.1/gradle.properties",
+            "reformat": false
         },
         {
             "template": "assets/targets/neoforge-1.21.1/gradle.properties.ft",
             "destination": "targets/neoforge-1.21.1/gradle.properties",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1211' || $TARGET_PROFILE == 'neoforge-1.21.1'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-1.21.1\"')"
+        },
+        {
+            "template": "assets/targets/neoforge-1.21.1/gradlew.ft",
+            "destination": "gradle/target-blueprints/neoforge-1.21.1/gradlew",
+            "reformat": false
         },
         {
             "template": "assets/targets/neoforge-1.21.1/gradlew.ft",
             "destination": "targets/neoforge-1.21.1/gradlew",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1211' || $TARGET_PROFILE == 'neoforge-1.21.1'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-1.21.1\"')"
+        },
+        {
+            "template": "assets/targets/neoforge-1.21.1/gradlew.bat.ft",
+            "destination": "gradle/target-blueprints/neoforge-1.21.1/gradlew.bat",
+            "reformat": false
         },
         {
             "template": "assets/targets/neoforge-1.21.1/gradlew.bat.ft",
             "destination": "targets/neoforge-1.21.1/gradlew.bat",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1211' || $TARGET_PROFILE == 'neoforge-1.21.1'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-1.21.1\"')"
+        },
+        {
+            "template": "assets/targets/neoforge-1.21.1/settings.gradle.ft",
+            "destination": "gradle/target-blueprints/neoforge-1.21.1/settings.gradle",
+            "reformat": false
         },
         {
             "template": "assets/targets/neoforge-1.21.1/settings.gradle.ft",
             "destination": "targets/neoforge-1.21.1/settings.gradle",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1211' || $TARGET_PROFILE == 'neoforge-1.21.1'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-1.21.1\"')"
+        },
+        {
+            "template": "assets/targets/neoforge-1.21.1/src/main/resources/META-INF/neoforge.mods.toml.ft",
+            "destination": "gradle/target-blueprints/neoforge-1.21.1/src/main/resources/META-INF/neoforge.mods.toml",
+            "reformat": false
         },
         {
             "template": "assets/targets/neoforge-1.21.1/src/main/resources/META-INF/neoforge.mods.toml.ft",
             "destination": "targets/neoforge-1.21.1/src/main/resources/META-INF/neoforge.mods.toml",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1211' || $TARGET_PROFILE == 'neoforge-1.21.1'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-1.21.1\"')"
+        },
+        {
+            "template": "assets/targets/neoforge-26.1.2/build.gradle.ft",
+            "destination": "gradle/target-blueprints/neoforge-26.1.2/build.gradle",
+            "reformat": false
         },
         {
             "template": "assets/targets/neoforge-26.1.2/build.gradle.ft",
             "destination": "targets/neoforge-26.1.2/build.gradle",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc2612' || $TARGET_PROFILE == 'neoforge-26.1.2'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.1.2\"')"
+        },
+        {
+            "template": "assets/targets/neoforge-26.1.2/gradle/wrapper/gradle-wrapper.properties.ft",
+            "destination": "gradle/target-blueprints/neoforge-26.1.2/gradle/wrapper/gradle-wrapper.properties",
+            "reformat": false
         },
         {
             "template": "assets/targets/neoforge-26.1.2/gradle/wrapper/gradle-wrapper.properties.ft",
             "destination": "targets/neoforge-26.1.2/gradle/wrapper/gradle-wrapper.properties",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc2612' || $TARGET_PROFILE == 'neoforge-26.1.2'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.1.2\"')"
+        },
+        {
+            "template": "assets/targets/neoforge-26.1.2/gradle.properties.ft",
+            "destination": "gradle/target-blueprints/neoforge-26.1.2/gradle.properties",
+            "reformat": false
         },
         {
             "template": "assets/targets/neoforge-26.1.2/gradle.properties.ft",
             "destination": "targets/neoforge-26.1.2/gradle.properties",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc2612' || $TARGET_PROFILE == 'neoforge-26.1.2'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.1.2\"')"
+        },
+        {
+            "template": "assets/targets/neoforge-26.1.2/gradlew.ft",
+            "destination": "gradle/target-blueprints/neoforge-26.1.2/gradlew",
+            "reformat": false
         },
         {
             "template": "assets/targets/neoforge-26.1.2/gradlew.ft",
             "destination": "targets/neoforge-26.1.2/gradlew",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc2612' || $TARGET_PROFILE == 'neoforge-26.1.2'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.1.2\"')"
+        },
+        {
+            "template": "assets/targets/neoforge-26.1.2/gradlew.bat.ft",
+            "destination": "gradle/target-blueprints/neoforge-26.1.2/gradlew.bat",
+            "reformat": false
         },
         {
             "template": "assets/targets/neoforge-26.1.2/gradlew.bat.ft",
             "destination": "targets/neoforge-26.1.2/gradlew.bat",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc2612' || $TARGET_PROFILE == 'neoforge-26.1.2'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.1.2\"')"
+        },
+        {
+            "template": "assets/targets/neoforge-26.1.2/settings.gradle.ft",
+            "destination": "gradle/target-blueprints/neoforge-26.1.2/settings.gradle",
+            "reformat": false
         },
         {
             "template": "assets/targets/neoforge-26.1.2/settings.gradle.ft",
             "destination": "targets/neoforge-26.1.2/settings.gradle",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc2612' || $TARGET_PROFILE == 'neoforge-26.1.2'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.1.2\"')"
+        },
+        {
+            "template": "assets/targets/neoforge-26.1.2/src/main/resources/META-INF/neoforge.mods.toml.ft",
+            "destination": "gradle/target-blueprints/neoforge-26.1.2/src/main/resources/META-INF/neoforge.mods.toml",
+            "reformat": false
         },
         {
             "template": "assets/targets/neoforge-26.1.2/src/main/resources/META-INF/neoforge.mods.toml.ft",
             "destination": "targets/neoforge-26.1.2/src/main/resources/META-INF/neoforge.mods.toml",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc2612' || $TARGET_PROFILE == 'neoforge-26.1.2'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.1.2\"')"
         },
         {
             "template": "assets/targets/neoforge-26.2.0/build.gradle.ft",
             "destination": "targets/neoforge-26.2.0/build.gradle",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'neoforge-26.2.0'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.2.0\"')"
         },
         {
             "template": "assets/targets/neoforge-26.2.0/gradle/wrapper/gradle-wrapper.properties.ft",
             "destination": "targets/neoforge-26.2.0/gradle/wrapper/gradle-wrapper.properties",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'neoforge-26.2.0'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.2.0\"')"
         },
         {
             "template": "assets/targets/neoforge-26.2.0/gradle.properties.ft",
             "destination": "targets/neoforge-26.2.0/gradle.properties",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'neoforge-26.2.0'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.2.0\"')"
         },
         {
             "template": "assets/targets/neoforge-26.2.0/gradlew.ft",
             "destination": "targets/neoforge-26.2.0/gradlew",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'neoforge-26.2.0'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.2.0\"')"
         },
         {
             "template": "assets/targets/neoforge-26.2.0/gradlew.bat.ft",
             "destination": "targets/neoforge-26.2.0/gradlew.bat",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'neoforge-26.2.0'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.2.0\"')"
         },
         {
             "template": "assets/targets/neoforge-26.2.0/settings.gradle.ft",
             "destination": "targets/neoforge-26.2.0/settings.gradle",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'neoforge-26.2.0'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.2.0\"')"
         },
         {
             "template": "assets/targets/neoforge-26.2.0/src/main/resources/META-INF/neoforge.mods.toml.ft",
             "destination": "targets/neoforge-26.2.0/src/main/resources/META-INF/neoforge.mods.toml",
             "reformat": false,
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'neoforge-26.2.0'"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.2.0\"')"
         },
         {
             "template": "assets/project.properties.ft",
@@ -658,59 +886,62 @@
         {
             "template": "assets/wrapper.base64.ft",
             "destination": "targets/fabric-1.20.1/gradle/wrapper/kltyton-wrapper.base64",
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1201' || $TARGET_PROFILE == 'fabric-1.20.1'",
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"fabric-1.20.1\"')",
             "reformat": false
         },
         {
             "template": "assets/wrapper.base64.ft",
             "destination": "targets/fabric-1.21.1/gradle/wrapper/kltyton-wrapper.base64",
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1211' || $TARGET_PROFILE == 'fabric-1.21.1'",
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"fabric-1.21.1\"')",
             "reformat": false
         },
         {
             "template": "assets/wrapper.base64.ft",
             "destination": "targets/fabric-26.1.2/gradle/wrapper/kltyton-wrapper.base64",
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc2612' || $TARGET_PROFILE == 'fabric-26.1.2'",
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"fabric-26.1.2\"')",
             "reformat": false
         },
         {
             "template": "assets/wrapper.base64.ft",
             "destination": "targets/forge-1.18.2/gradle/wrapper/kltyton-wrapper.base64",
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'forge-1.18.2'",
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"forge-1.18.2\"')",
             "reformat": false
         },
         {
             "template": "assets/wrapper.base64.ft",
             "destination": "targets/forge-1.19.2/gradle/wrapper/kltyton-wrapper.base64",
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'forge-1.19.2'",
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"forge-1.19.2\"')",
             "reformat": false
         },
         {
             "template": "assets/wrapper.base64.ft",
             "destination": "targets/forge-1.20.1/gradle/wrapper/kltyton-wrapper.base64",
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1201' || $TARGET_PROFILE == 'forge-1.20.1'",
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"forge-1.20.1\"')",
             "reformat": false
         },
         {
             "template": "assets/wrapper.base64.ft",
             "destination": "targets/neoforge-1.21.1/gradle/wrapper/kltyton-wrapper.base64",
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc1211' || $TARGET_PROFILE == 'neoforge-1.21.1'",
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-1.21.1\"')",
             "reformat": false
         },
         {
             "template": "assets/wrapper.base64.ft",
             "destination": "targets/neoforge-26.1.2/gradle/wrapper/kltyton-wrapper.base64",
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'mc2612' || $TARGET_PROFILE == 'neoforge-26.1.2'",
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.1.2\"')",
             "reformat": false
         },
         {
             "template": "assets/wrapper.base64.ft",
             "destination": "targets/neoforge-26.2.0/gradle/wrapper/kltyton-wrapper.base64",
-            "condition": "$TARGET_PROFILE == 'all' || $TARGET_PROFILE == 'neoforge-26.2.0'",
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.2.0\"')",
             "reformat": false
         }
     ],
     "finalizers": [
+        {
+            "type": "kltyton_targets"
+        },
         {
             "type": "import_gradle_project"
         },

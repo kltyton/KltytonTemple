@@ -1,13 +1,13 @@
 # 开发与迁移
 
-直接导入 IDEA 的 Gradle 工程。选择目标、构建、运行和发布均在任务树完成；配置和源码仍使用 IDEA 编辑器，不需要终端脚本。
+目标操作使用原生 Gradle 任务；命令与参数见 README。IDEA 安装及向导步骤见 docs/wiki/Minecraft-Development.zh-CN.md。
 
 1. 读取原工程 settings/build/gradle.properties、元数据、源层、Mixin/AT/AW 与依赖。
 2. 保留版本/Loader/Java/Wrapper pins 和游戏源码，接入 buildSrc 插件及根任务。目标事实以 targets/<id>/gradle.properties 为准。
-3. 根目录默认导入一个可用目标；双击 select_<id> 再点 Gradle 刷新切换类型解析。
+3. 启用 IDEA 扩展的独立目标关联；默认目标只影响根任务，不限制导入矩阵。
 4. 先完成授权生产批次。已有验收合同未授权时，不点构建、datagen、客户端或服务器任务。
 5. 构建成功、真实 JAR、客户端/服务器、玩法/视觉和远端发布分别报告。
 
-createProject 拒绝已有目录并过滤本机配置、Git/IDE/运行缓存、私人代理记录和本地 libs。addTarget 不猜“最新版”，所填依赖必须与目标匹配。涉及不同 MDK 世代时，需要真实构建适配而不只是改版本字符串。
+createProject 拒绝已有目录并过滤本机配置、Git/IDE/运行缓存、私人记录和本地 libs。addTarget 从官方目录选择依赖。涉及不同 MDK 世代时，保留相应构建管线，新增组合仍需实际构建验收。
 
 共同代码在 common；版本/Loader 专属行为在各源层。保留人工/编辑器资源的维护方式。迁移原生产工程、删除旧结构、提交、推送、平台上传仍需对应用户授权。

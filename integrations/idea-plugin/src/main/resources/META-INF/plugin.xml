@@ -1,0 +1,19 @@
+<idea-plugin>
+    <id>io.github.kltyton.temple.idea</id>
+    <name>KltytonTemple</name>
+    <version>1.1.0</version>
+    <vendor url="https://github.com/kltyton/KltytonTemple">kltyton</vendor>
+    <description>Multi-version Minecraft project creation and independent Gradle target linking.</description>
+    <idea-version since-build="262" until-build="262.*"/>
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.java</depends>
+    <depends>org.jetbrains.plugins.gradle</depends>
+    <depends>com.demonwav.minecraft-dev</depends>
+    <extensions defaultExtensionNs="com.demonwav.minecraft-dev">
+        <creatorPropertyType type="kltyton_targets" implementation="io.github.kltyton.temple.idea.TargetsProperty$Factory"/>
+        <creatorFinalizer type="kltyton_targets" implementation="io.github.kltyton.temple.idea.TargetsFinalizer"/>
+    </extensions>
+    <extensions defaultExtensionNs="com.intellij">
+        <postStartupActivity implementation="io.github.kltyton.temple.idea.TempleProjectActivity"/>
+    </extensions>
+</idea-plugin>

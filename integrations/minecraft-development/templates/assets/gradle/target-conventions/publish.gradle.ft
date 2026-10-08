@@ -12,14 +12,17 @@ def verifyDistribution = tasks.register('verifyDistribution') {
     group = 'verification'
     dependsOn productionTask
     inputs.file(productionFile)
-    inputs.properties([mod_id: mod_id, mod_group_id: mod_group_id, loader: loader, minecraft_version: minecraft_version])
+    def javaPackage = findProperty('mod_java_package') ?: mod_group_id
+    def entryClass = findProperty('mod_entry_class') ?: "${javaPackage}.TempleCommon"
+    inputs.properties([mod_id: mod_id, mod_java_package: javaPackage, mod_entry_class: entryClass,
+                       loader: loader, minecraft_version: minecraft_version])
     outputs.file(artifactRecord)
     doLast {
         def artifact = productionFile.get().asFile
         def metadata = loader == 'fabric' ? 'fabric.mod.json' :
                 (loader == 'forge' ? 'META-INF/mods.toml' : 'META-INF/neoforge.mods.toml')
-        def required = [metadata, mod_group_id.replace('.', '/') + '/BuildInfo.class',
-                        mod_group_id.replace('.', '/') + '/TempleCommon.class']
+        def required = [metadata, javaPackage.replace('.', '/') + '/BuildInfo.class',
+                        entryClass.replace('.', '/') + '.class']
         new ZipFile(artifact).withCloseable { zip ->
             required.each { name ->
                 if (zip.getEntry(name) == null) {

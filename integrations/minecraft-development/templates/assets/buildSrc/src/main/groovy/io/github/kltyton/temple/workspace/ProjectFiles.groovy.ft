@@ -118,8 +118,6 @@ final class ProjectFiles {
         File state = new File(root, '.temple/active-target')
         state.parentFile.mkdirs()
         state.setText(target.id + '\n', 'UTF-8')
-        Files.copy(new File(target.directory, 'gradle/wrapper/gradle-wrapper.properties').toPath(),
-                new File(root, 'gradle/wrapper/gradle-wrapper.properties').toPath(), StandardCopyOption.REPLACE_EXISTING)
     }
 }
 ]]#

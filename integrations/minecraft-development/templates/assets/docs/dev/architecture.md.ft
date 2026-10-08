@@ -5,11 +5,11 @@
 
 每个目标保留独立 Wrapper、运行 JDK、编译 JDK、映射与依赖。目标任务用对应 JavaLauncher 启动自己的 GradleWrapperMain，避免 Windows shell 转义与不同 Gradle 版本混用。Foojay1.0.0 是必要的构建工具链 resolver，自动提供目标所需 JDK；不添加模组运行时库。
 
-根模型一次 includeBuild 一个目标。无活动状态时自动选择已有目标并准备 BuildInfo 源；select_<id> 同步 Wrapper 和活动目标，刷新 Gradle 后切换IDE类型解析。目标上的源码层在真实MC类路径中编译，版本 API 差异用独立源层处理。
+根工程只提供构建入口，不把不同 Wrapper 的目标合成同一个 Gradle 构建。IDEA 扩展读取 temple_idea_project=true，独立关联全部目标。select_<id> 只保存默认目标，根 Wrapper 不随选择改变。BuildInfo 按 mod_java_package 生成，未单独配置包名时使用 mod_group_id。
 
 common → version → loader → target 是源码归属层级；同名Java文件不能覆盖。资源按 target > loader > version > common 选择一个输出。人工/编辑器资源保持原维护方式，datagen输出位于target/src/generated/resources。
 
 [MultiLoader 源配置](https://github.com/jaredlll08/MultiLoader-Template/blob/d6b81d85d63566cbe5e67fd2f246f1441cccf686/buildSrc/src/main/groovy/multiloader-loader.gradle)提供“目标环境重新编译共享源”的参考；[Architectury](https://docs.architectury.dev/plugin/introduction/)提供可选 common/API 转换方案；[Stonecutter](https://codeberg.org/stonecutter/stonecutter/src/branch/0.10/README.md)提供注释预处理与活动版本管理。模板不声称安装这些运行时组件，也不强制迁移既有管线。
 
-Minecraft Development 集成使用已安装插件支持的 .mcdev.template.json、Local模板仓库和原生表单。模板文件经其Velocity引擎生成；Gradle代码用字面量块保护，项目身份在原生字段中填入。Wrapper二进制以已知模板资产编码，在初次设置时解码为真实JAR，不依赖外部脚本。整个集成仍在开发控制面之外，不进入发行模组。
+Minecraft Development 集成使用其 .mcdev.template.json、Local 仓库和公开扩展点。KltytonTemple 扩展增加官方版本下拉和目标表格。模板文件经 Velocity 生成，Gradle 代码用字面量块保护；Wrapper 二进制使用模板资产编码，初次导入时解码为 JAR。IDEA 扩展及构建控制代码不进入模组发行包。
 ]]#

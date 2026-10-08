@@ -1,0 +1,11 @@
+# KltytonTemple Wiki
+
+[中文](Home.zh-CN.md)
+
+- [Minecraft Development: installation and project creation](Minecraft-Development.en.md)
+- [Migrate an existing project](Migration.en.md)
+- [Tasks and configuration](../../README.en.md)
+- [Build architecture](../dev/architecture.md)
+- [Publishing](../PUBLISHING.md)
+
+Start with the Minecraft Development guide for a new project. For an existing mod, read migration guidance first and preserve its target pins and game behavior.

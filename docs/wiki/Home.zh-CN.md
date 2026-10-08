@@ -1,0 +1,11 @@
+# KltytonTemple Wiki
+
+[English](Home.en.md)
+
+- [Minecraft Development：安装、配置和创建工程](Minecraft-Development.zh-CN.md)
+- [现有工程迁移](Migration.zh-CN.md)
+- [命令和参数](../../README.md)
+- [构建架构](../dev/architecture.md)
+- [发布](../PUBLISHING.md)
+
+第一次使用，从 Minecraft Development 教程开始。已有模组工程先读迁移指南，保留现有版本配置和游戏行为。

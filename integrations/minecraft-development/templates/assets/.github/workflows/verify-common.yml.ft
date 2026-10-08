@@ -8,6 +8,7 @@ on:
       - 'loaders/**'
       - 'targets/**'
       - 'buildSrc/**'
+      - 'integrations/shared/**'
       - 'gradle/**'
       - 'gradle.properties'
       - 'settings.gradle'
@@ -33,7 +34,7 @@ jobs:
           java-version: '21'
       - uses: gradle/actions/setup-gradle@v4
       - id: targets
-        run: sh gradlew -PtempleControlOnly=true writeCiMatrix --console=plain
+        run: sh gradlew writeCiMatrix --console=plain
   build:
     needs: discover
     runs-on: ${{ matrix.os }}
@@ -57,7 +58,7 @@ jobs:
           suffix="${{ matrix.target }}"
           suffix=${suffix//-/_}
           suffix=${suffix//./_}
-          sh gradlew -PtempleControlOnly=true "build_$suffix" "verify_$suffix" --console=plain -Dorg.gradle.java.installations.fromEnv=JAVA_HOME_17_X64,JAVA_HOME_21_X64,JAVA_HOME_25_X64
+          sh gradlew "build_$suffix" "verify_$suffix" --console=plain -Dorg.gradle.java.installations.fromEnv=JAVA_HOME_17_X64,JAVA_HOME_21_X64,JAVA_HOME_25_X64
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.target }}-${{ matrix.os }}
