@@ -1,84 +1,79 @@
-# SighsTemple
+# KltytonTemple
 
-空白的 `common + targets/<loader>-<minecraft-version>` Minecraft 开发模板。
+基于 [SighsTemple](https://github.com/Tower-of-Sighs/SighsTemple) 的 Minecraft 多版本、多加载器开发模板。保留 MIT 许可与上游版权。模板工具使用 Python 3.11+ 标准库，无需额外 Python 依赖，也没有运行时模板库。
 
-默认包名与 Gradle group 为 `cc.sighs.temple`，默认 mod id 为 `temple`。
+`common` 可以直接使用 Minecraft API：共享源码在每个目标自己的 Minecraft、映射、Loader 和 Java 环境内重新编译。默认提供 Forge 1.18.2 / 1.19.2 / 1.20.1，Fabric 1.20.1 / 1.21.1 / 26.1.2，NeoForge 1.21.1 / 26.1.2 / 26.2.0。实际版本、依赖和 JDK 以目标 `gradle.properties` 与 Wrapper 为准。
 
-快速迁移请对 AI 这么说：
-
-“使用 https://github.com/Tower-of-Sighs/SighsTemple 框架来重构本项目，第一步先将当前mc版本的所有源码及资源迁移至common部分，第二步将明确查询源码证实了存在明显版本差异的内容转移到targets中的对应版本下，第三步搭建spi模式，将targets中的内容抽象化，只保留具体实现差异，共通逻辑迁移回common部分，第四步将当前targets下的主版本内容移植到全部所有版本。”
-
-## IDEA
-
-直接打开任意 `targets/<loader>-<version>/` 目录。IDEA 会导入当前 target 与可编辑的 `../../common` 源码模块，只下载该 target 的加载器和 Minecraft 依赖。
-
-## Target
-
-| Target | JDK | 构建命令 |
-| --- | --- | --- |
-| `forge-1.20.1` | JDK 21 | `targets\forge-1.20.1\.\gradlew.bat clean build` |
-| `fabric-1.20.1` | JDK 21 | `targets\fabric-1.20.1\.\gradlew.bat clean build` |
-| `neoforge-1.21.1` | JDK 21 | `targets\neoforge-1.21.1\.\gradlew.bat clean build` |
-| `neoforge-26.1` | JDK 25 | `targets\neoforge-26.1\.\gradlew.bat clean build` |
-
-根项目默认只同步 `common`。使用 JDK 21 时可选择性构建前三个 target：
+## 从模板创建项目
 
 ```powershell
-.\gradlew.bat '-Ptarget=forge-1.20.1' build
-.\gradlew.bat '-Ptarget=fabric-1.20.1' build
-.\gradlew.bat '-Ptarget=neoforge-1.21.1' build
-.\gradlew.bat -PallTargets=true build
+python temple.py init G:/projects/MyMod --mod-id my_mod --name "My Mod" --group io.github.yourname.mymod --authors yourname --target forge-1.20.1 --target fabric-1.20.1
 ```
 
-`neoforge-26.1` 因 JDK 25 要求独立构建。
+目标目录必须不存在。初始化同时配置模组 ID、元数据、Java 包路径、Gradle group 与作者；没有指定 `--target` 时包含模板的全部目标。不会复制 Git 历史、IDE/运行/构建缓存、本地配置、私有 libs JAR 或本地代理记录。
 
-## 结构
+## 在 IDEA 中开发
 
-- `common/`: 不依赖 Minecraft 或任意 loader 的共享 Java 代码。
-- `targets/*`: loader 和版本专属入口、metadata、资源及 API 适配。
-
-## 共享资源
-
-将所有加载器和版本共用的资源放在 `common/src/main/resources/`。构建任意 target 时，该目录会与 target 自己的 `src/main/resources/` 合并并写入最终 jar。
-
-加载器 metadata 仍必须保留在 target 中：Fabric 使用 `fabric.mod.json`，Forge 使用 `META-INF/mods.toml`，NeoForge 使用 `META-INF/neoforge.mods.toml`。
-
-## 本地依赖
-
-每个 target 都会自动将自身 `libs/` 目录中的 `*.jar` 作为 `implementation` 依赖。将 jar 放入对应目录后不需要在 `build.gradle` 中逐条声明；`*-sources.jar` 和 `*-javadoc.jar` 会被忽略。
-
-```text
-targets/forge-1.20.1/libs/
-targets/fabric-1.20.1/libs/
-targets/neoforge-1.21.1/libs/
-targets/neoforge-26.1/libs/
+```powershell
+python temple.py select --target forge-1.20.1 --json
 ```
 
-本地 jar 的传递依赖无法自动推导。若某个 jar 还依赖其他库，需要将这些库也放入同一个 `libs/` 目录，或按常规方式声明依赖。
+然后在 IDEA 打开项目根目录或刷新 Gradle。根目录只导入所选目标的 composite build，共享源码直接作为该目标的 source roots，因此可编辑并获得该版本的类型解析。切换目标后重新加载 Gradle，并按输出设置 Gradle JVM；`select` 会把根 Wrapper 的 distribution 配置同步到该目标的已固定版本。
 
-## 发布
+也可以直接打开目标目录；`python temple.py ide --target fabric-1.21.1 --json` 返回目录与 JDK，不修改选择。
 
-每个 target 都提供 `publishMods`，可手动发布其自身的产物至 CurseForge 与 Modrinth。两个平台的项目 ID 是所有 target 共用的非敏感信息，在根 `gradle.properties` 中取消注释并填写：
+## 构建与运行
+
+```powershell
+python temple.py list --json
+python temple.py doctor --json
+python temple.py build --target forge-1.20.1
+python temple.py build
+python temple.py verify --target forge-1.20.1 --json
+python temple.py run --target forge-1.20.1 --side client
+```
+
+`build` 未指定目标时构建全部目标，各自调用自己的 Wrapper；一个目标失败后仍构建其余目标，最后汇总真实退出码。每次不自动 clean、不自动重试。运行客户端或服务器必须显式指定一个目标。命令的 `--plan` 不执行 Gradle。
+
+Gradle 运行 JDK 与游戏字节码 JDK 分开配置。设置 `JAVA_21_HOME`、`JAVA_25_HOME`，旧版编译还需 JDK 17。也可以在忽略的 `temple.local.properties` 中填写：
 
 ```properties
-publish_curseforge_project_id=你的CurseForge项目ID
-publish_modrinth_project_id=你的Modrinth项目ID
+java.17.home=F:/Java/jdk17
+java.21.home=F:/Java/jdk21
+java.25.home=F:/Java/jdk25
+gradle_user_home=E:/.gradle
+temp_dir=E:/work-temp/MyMod
+project_cache_dir=E:/work-cache/MyMod
 ```
 
-token 只从环境变量读取，不要写入仓库。PowerShell 示例：
+路径使用正斜杠。未设置临时目录时 CLI 使用项目内 `.temple/tmp`；它只影响本次进程和子进程。JSON 构建请提供 `--log-dir`，使 stdout 保持可解析。
+
+## 代码与资源归属
+
+```text
+common/src/                  跨版本和加载器共享的源码、资源
+versions/<mc>/src/           同一 MC 版本的共享差异，按需创建
+loaders/<loader>/src/        Loader 入口及其共享适配
+targets/<loader>-<mc>/       独立 Wrapper、依赖、元数据和交叉差异
+gradle/target-conventions/   构建与发布约定
+tools/temple/                目标管理、初始化、构建调用与 JAR 检查
+integrations/skills/         可分发的接入 Skill
+```
+
+Java 源码合并，不进行同名类覆盖；重复路径由 doctor 报错、编译器也会拒绝。资源覆盖顺序是 target > loader > version > common，输出每条路径仅保留一个文件。Loader 元数据留在 target；人工资源仍放 src/main/resources，datagen 结果放目标 src/generated/resources。
+
+## 增加目标
 
 ```powershell
-$env:CURSEFORGE_TOKEN = '...'
-$env:MODRINTH_TOKEN = '...'
-$env:PUBLISH_CHANGELOG = '本次版本的更新说明' # 可选
-
-cd targets\forge-1.20.1
-.\gradlew.bat publishMods
+python temple.py add-target --from fabric-1.21.1 --minecraft 1.21.4 --loader-version 0.16.14 --java 21 --gradle-java 21 --property fabric_api_version=填入匹配版本
 ```
 
-将目录替换为其他 target 即可单独发布对应加载器和 Minecraft 版本。Fabric 会上传重映射后的 jar；Forge 与 NeoForge 上传各自的最终 jar。
+显式选择已有目标作为蓝图，提供真实依赖版本；CLI 不猜测“最新版”。新版本仍需核对 Loader、插件、映射、Java 与 API 差异并按项目合同构建。创建目录不等于宣称该版本已兼容。旧版 1.7.10、1.12.2 等不同 MDK 不应通过更改版本号假装迁移成功。
 
-## 版本参考
+## 接入智能体与发布
 
-- [Minecraft 1.20.1、1.21.1、26.1 完整迁移差异参考](docs/version-differences/README.md)
-- [多版本日常维护工作流](docs/MAINTENANCE_WORKFLOW.md)
+Skill 位于 [integrations/skills/kltyton-temple/SKILL.md](integrations/skills/kltyton-temple/SKILL.md)，可由支持 GitHub 路径安装的 Skill 安装器安装，或由用户复制到其技能目录。它调用同一 CLI 的 JSON 接口；无需常驻 MCP。仓库内 Skill 是正式产品，私人会话规则仍留本地。
+
+[架构与选型](docs/dev/architecture.md) · [操作与迁移](docs/MAINTENANCE_WORKFLOW.md) · [Agent 接口](docs/dev/agent-interface.md) · [发布](docs/PUBLISHING.md) · [CI](docs/CI_TARGET_DISCOVERY.md)
+
+上游 [版本差异资料](docs/version-differences/README.md) 保留为参考材料；它不是本模板的目标支持或验收清单。

@@ -1,38 +1,23 @@
-def targetBuilds = [
-        'forge-1.20.1'    : [directory: 'targets/forge-1.20.1', task: 'buildForge1201'],
-        'fabric-1.20.1'   : [directory: 'targets/fabric-1.20.1', task: 'buildFabric1201'],
-        'neoforge-1.21.1' : [directory: 'targets/neoforge-1.21.1', task: 'buildNeoForge1211']
-]
-
-def selectedTarget = providers.gradleProperty('target').orNull
-def buildAllTargets = providers.gradleProperty('allTargets').map { it.toBoolean() }.orElse(false)
-
-if (selectedTarget != null && !targetBuilds.containsKey(selectedTarget)) {
-    throw new GradleException("Unknown target '${selectedTarget}'. Available targets: ${targetBuilds.keySet().join(', ')}")
+def python = providers.environmentVariable('TEMPLE_PYTHON').getOrElse('python')
+def requested = providers.gradleProperty('target').orNull
+if (requested == null && file('.temple/active-target').exists()) {
+    requested = file('.temple/active-target').getText('UTF-8').trim()
 }
-
-targetBuilds.each { targetName, targetBuild ->
-    tasks.register(targetBuild.task, Exec) {
-        group = 'build'
-        description = "Builds ${targetName} in its independent Gradle project."
-        workingDir rootDir
-        commandLine 'cmd', '/c', 'gradlew.bat', '-p', targetBuild.directory.replace('/', '\\'), 'build', '--console', 'plain', '--no-daemon'
-    }
+tasks.register('listTargets', Exec) {
+    group = 'temple'
+    commandLine python, 'temple.py', 'list', '--json'
 }
-
-tasks.register('build') {
+tasks.register('build', Exec) {
     group = 'build'
-    description = 'Builds common and an optionally selected JDK 21 target.'
-    dependsOn ':common:build'
-
-    if (selectedTarget != null) {
-        dependsOn tasks.named(targetBuilds[selectedTarget].task)
-    }
-
-    if (buildAllTargets.get()) {
-        targetBuilds.values().each { targetBuild ->
-            dependsOn tasks.named(targetBuild.task)
-        }
-    }
+    description = 'Builds selected independent targets using their own Wrapper and configured JDK.'
+    def arguments = [python, 'temple.py', 'build']
+    if (requested != null) { arguments.addAll('--target', requested) }
+    commandLine arguments
 }
-
+tasks.register('runClient', Exec) {
+    group = 'temple'
+    doFirst {
+        if (requested == null) { throw new GradleException('Specify -Ptarget=<loader>-<minecraft>.') }
+    }
+    commandLine python, 'temple.py', 'run', '--target', requested ?: '', '--side', 'client'
+}

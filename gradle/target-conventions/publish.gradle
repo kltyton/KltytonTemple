@@ -1,109 +1,108 @@
-// Applied from an individual target project, not from the aggregate root project.
+import groovy.json.JsonOutput
+import java.util.zip.ZipFile
+
 apply plugin: 'maven-publish'
 
-repositories {
-    flatDir {
-        dirs layout.projectDirectory.dir('libs')
+def productionTask = tasks.findByName('remapJar') != null ? tasks.named('remapJar') :
+        (tasks.findByName('reobfJar') != null ? tasks.named('reobfJar') : tasks.named('jar', Jar))
+def productionFile = productionTask.flatMap { it.archiveFile }
+def artifactRecord = layout.buildDirectory.file('temple/artifact.properties')
+def verifyDistribution = tasks.register('verifyDistribution') {
+    group = 'verification'
+    dependsOn productionTask
+    inputs.file(productionFile)
+    inputs.properties([mod_id: mod_id, mod_group_id: mod_group_id, loader: loader, minecraft_version: minecraft_version])
+    outputs.file(artifactRecord)
+    doLast {
+        def artifact = productionFile.get().asFile
+        def metadata = loader == 'fabric' ? 'fabric.mod.json' :
+                (loader == 'forge' ? 'META-INF/mods.toml' : 'META-INF/neoforge.mods.toml')
+        def required = [metadata, mod_group_id.replace('.', '/') + '/BuildInfo.class',
+                        mod_group_id.replace('.', '/') + '/TempleCommon.class']
+        new ZipFile(artifact).withCloseable { zip ->
+            required.each { name ->
+                if (zip.getEntry(name) == null) {
+                    throw new GradleException("Missing ${name} in ${artifact}")
+                }
+            }
+            def text = zip.getInputStream(zip.getEntry(metadata)).getText('UTF-8')
+            if (text.contains('${')) {
+                throw new GradleException("Unexpanded metadata in ${artifact}")
+            }
+        }
+        def record = artifactRecord.get().asFile
+        record.parentFile.mkdirs()
+        record.setText("artifact=${artifact.absolutePath.replace('\\', '/')}\n", 'UTF-8')
     }
 }
+tasks.named('build') { dependsOn verifyDistribution }
 
-dependencies {
-    implementation fileTree(dir: file('libs'), include: ['*.jar'], exclude: ['*-sources.jar', '*-javadoc.jar'])
+def platform = providers.gradleProperty('publish_platform').getOrElse('none')
+if (!(platform in ['none', 'modrinth', 'curseforge', 'both', 'maven'])) {
+    throw new GradleException("Unknown publish_platform: ${platform}")
 }
-
-sourceSets.main.resources.srcDir project(':common').file('src/main/resources')
-
-def publishLoader = project.projectDir.name.tokenize('-').first()
-def publishMinecraftVersion = [
-        forge    : providers.gradleProperty('forge_minecraft_version'),
-        fabric   : providers.gradleProperty('fabric_minecraft_version'),
-        neoforge : providers.gradleProperty('neoforge_121_minecraft_version')
-                .orElse(providers.gradleProperty('neoforge_261_minecraft_version'))
-][publishLoader]
-
-def publishFile = tasks.findByName('remapJar') != null ?
-        tasks.named('remapJar').flatMap { it.archiveFile } :
-        tasks.named('jar', Jar).flatMap { it.archiveFile }
-def curseforgeProjectId = providers.provider { findProperty('publish_curseforge_project_id')?.toString() }
-        .orElse(providers.environmentVariable('CURSEFORGE_PROJECT_ID'))
-def modrinthProjectId = providers.provider { findProperty('publish_modrinth_project_id')?.toString() }
-        .orElse(providers.environmentVariable('MODRINTH_PROJECT_ID'))
-
 publishMods {
-    file = publishFile
-    changelog = providers.environmentVariable('PUBLISH_CHANGELOG').getOrElse('See the project changelog for details.')
+    file = productionFile
+    changelog = providers.environmentVariable('PUBLISH_CHANGELOG').getOrElse('See the project changelog.')
     type = STABLE
-    modLoaders.add(publishLoader)
-
-    curseforge {
-        projectId = curseforgeProjectId
-        accessToken = providers.environmentVariable('CURSEFORGE_TOKEN')
-        minecraftVersions.add(publishMinecraftVersion)
-        client = true
-        server = true
+    modLoaders.add(loader)
+    if (platform in ['curseforge', 'both']) {
+        curseforge {
+            projectId = providers.environmentVariable('CURSEFORGE_PROJECT_ID')
+                    .orElse(providers.provider { findProperty('publish_curseforge_project_id')?.toString() })
+            accessToken = providers.environmentVariable('CURSEFORGE_TOKEN')
+            minecraftVersions.add(minecraft_version)
+            client = true
+            server = true
+        }
     }
-
-    modrinth {
-        projectId = modrinthProjectId
-        accessToken = providers.environmentVariable('MODRINTH_TOKEN')
-        minecraftVersions.add(publishMinecraftVersion)
-    }
-}
-
-tasks.named('publishMods').configure {
-    doFirst {
-        def missing = [
-                'publish_curseforge_project_id (or CURSEFORGE_PROJECT_ID)': curseforgeProjectId,
-                'publish_modrinth_project_id (or MODRINTH_PROJECT_ID)'    : modrinthProjectId,
-                'CURSEFORGE_TOKEN'                                        : providers.environmentVariable('CURSEFORGE_TOKEN'),
-                'MODRINTH_TOKEN'                                          : providers.environmentVariable('MODRINTH_TOKEN')
-        ].findAll { _, value -> !value.present || value.get().trim().isEmpty() }.keySet()
-
-        if (!missing.isEmpty()) {
-            throw new GradleException("Cannot publish mods; missing: ${missing.join(', ')}")
+    if (platform in ['modrinth', 'both']) {
+        modrinth {
+            projectId = providers.environmentVariable('MODRINTH_PROJECT_ID')
+                    .orElse(providers.provider { findProperty('publish_modrinth_project_id')?.toString() })
+            accessToken = providers.environmentVariable('MODRINTH_TOKEN')
+            minecraftVersions.add(minecraft_version)
         }
     }
 }
-
+tasks.named('publishMods') {
+    dependsOn verifyDistribution
+    doFirst {
+        if (platform in ['none', 'maven']) {
+            throw new GradleException('Select -Ppublish_platform=modrinth, curseforge or both before uploading.')
+        }
+    }
+}
 publishing {
     publications {
-        mavenJava(MavenPublication) {
-            from components.java
-
+        mod(MavenPublication) {
+            artifact(productionFile) { builtBy verifyDistribution }
+            artifact(tasks.named('sourcesJar'))
             groupId = project.group.toString()
             artifactId = base.archivesName.get()
             version = project.version.toString()
-
-            // Loader and Minecraft dependencies are supplied by the game runtime,
-            // so the published mod POM must not expose the target build classpath.
-            pom.withXml {
-                def dependenciesNode = asNode().getAt('dependencies')[0]
-                if (dependenciesNode != null) {
-                    dependenciesNode.children().toList().each { dependency ->
-                        dependenciesNode.remove(dependency)
-                    }
+        }
+    }
+    repositories {
+        def address = providers.environmentVariable('TEMPLE_MAVEN_URL')
+        if (address.present) {
+            maven {
+                name = 'remote'
+                url = uri(address.get())
+                credentials {
+                    username = providers.environmentVariable('MAVEN_USERNAME').orNull
+                    password = providers.environmentVariable('MAVEN_PASSWORD').orNull
                 }
             }
         }
     }
-
-    repositories {
-        def isSnapshot = project.version.toString().toLowerCase().contains('snapshot')
-        def publishUrl = isSnapshot ?
-                'https://maven.sighs.cc/repository/maven-snapshots/' :
-                'https://maven.sighs.cc/repository/maven-releases/'
-
-        maven {
-            name = 'remoteRepo'
-            url = uri(publishUrl)
-            credentials {
-                username = System.getenv('SIGHS_PUBLISH_USER')
-                password = System.getenv('SIGHS_PUBLISH_PASSWORD')
-            }
+}
+tasks.named('publish') {
+    dependsOn verifyDistribution
+    doFirst {
+        if (!providers.environmentVariable('TEMPLE_MAVEN_URL').present) {
+            throw new GradleException('Set TEMPLE_MAVEN_URL before Maven publishing.')
         }
     }
 }
-
-tasks.withType(GenerateModuleMetadata).configureEach {
-    enabled = false
-}
+tasks.withType(GenerateModuleMetadata).configureEach { enabled = false }

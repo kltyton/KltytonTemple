@@ -1,7 +1,15 @@
 .gradle/
 build/
 run/
+runs/
 out/
 *.iml
 .idea/
-
+.temple/
+temple.local.properties
+__pycache__/
+*.pyc
+.env
+.env.*
+*.local.json
+targets/*/libs/*.jar

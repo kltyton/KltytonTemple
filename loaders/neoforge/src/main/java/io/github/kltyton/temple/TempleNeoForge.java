@@ -1,0 +1,10 @@
+package io.github.kltyton.temple;
+
+import net.neoforged.fml.common.Mod;
+
+@Mod(BuildInfo.MOD_ID)
+public final class TempleNeoForge {
+    public TempleNeoForge() {
+        TempleCommon.initialize();
+    }
+}

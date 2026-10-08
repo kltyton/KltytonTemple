@@ -1,4 +1,11 @@
-rootProject.name = 'SighsTemple'
-
-include 'common'
-
+def identity = new Properties()
+file('gradle.properties').withReader('UTF-8') { identity.load(it) }
+rootProject.name = identity.getProperty('mod_name', 'KltytonTemple')
+def active = file('.temple/active-target')
+if (active.exists()) {
+    def target = active.getText('UTF-8').trim()
+    if (!(target ==~ /(forge|fabric|neoforge)-[0-9]+(\.[0-9]+)*/) || !file("targets/${target}").isDirectory()) {
+        throw new GradleException("Invalid active target: ${target}")
+    }
+    includeBuild("targets/${target}")
+}
