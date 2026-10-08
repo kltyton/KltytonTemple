@@ -15,6 +15,8 @@ Start with the active target's sources and shared resources in common/src. Compa
 
 Extract algorithms, business rules, state and resource handling into one common implementation. Differing imports or a few API calls do not justify copying a whole class. Use small typed SPI boundaries for the actual API/type/lifecycle differences, with concrete implementations in versions/<minecraft>/src, loaders/<loader>/src or target src. Identical file hashes help find immediate merges; they do not identify all shareable logic.
 
+For each SPI extraction, map the original inputs, outputs, side effects and consumers. Rendering boundaries must retain native material attributes, colors, lighting, normals and layer identity. Persistence and networking boundaries retain fields and round-trip semantics. Shared algorithms are complete only when every platform consumer preserves that contract; defaults must not hide discarded data.
+
 Wire every target to the same common sources and the necessary variant implementations. Update resource, access-hook, Mixin, producer and publishing paths. Inspect consumers and remaining duplicate methods before declaring source migration complete. Remove obsolete copied sources and build entry points after their contents and callers are accounted for; preserve user data and required producer pipelines.
 
 ## Official Loader templates

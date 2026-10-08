@@ -37,6 +37,11 @@ Required outcome:
   resource handling in common. Use small, typed SPI boundaries for differing
   API calls, types and lifecycle hooks. Do not duplicate a large class because
   a few API calls differ, or decide sharing solely from identical file hashes.
+- Inventory each extracted SPI's inputs, outputs and consumers, preserving
+  data and side effects. Render adapters retain native materials, colors,
+  lighting, normals and layer identity; persistence and networking retain
+  fields and round-trip semantics. Do not hide missing data with defaults
+  or leave platform consumers incomplete after extracting shared algorithms.
 - Every existing target compiles the same common sources. Point shared_sources
   at the migrated layers and update source/resource paths, access hooks,
   Mixins, producer dependencies and publishing paths. Merge remaining shared
