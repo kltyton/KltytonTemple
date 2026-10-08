@@ -1,3 +1,4 @@
+#set($END_BLOCK = ']]#')
 #[[buildscript {
     repositories {
         gradlePluginPortal()

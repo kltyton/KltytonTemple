@@ -25,14 +25,19 @@ final class MinecraftTemplates {
                                   'LICENSE', 'README.md', '.gitignore', '.gitattributes'] as Set
         ProjectFiles.distributableFiles(root).each { File source ->
             String relative = root.toPath().relativize(source.toPath()).toString().replace('\\', '/')
-            if (relative == 'gradle.properties' || relative.startsWith('integrations/minecraft-development/') ||
+            if (relative == 'gradle.properties' || relative.startsWith('docs/version-differences/') ||
+                    relative.startsWith('docs/licenses/') || relative.startsWith('integrations/minecraft-development/') ||
                     !(relative.tokenize('/')[0] in roots || relative in rootFiles) || source.name.endsWith('.jar')) { return }
             String destination = relative
             String content = source.getText('UTF-8')
+            if (relative == 'README.md') {
+                content = content.replace('docs/version-differences/README.md',
+                        'https://github.com/Tower-of-Sighs/SighsTemple/blob/main/docs/version-differences/README.md')
+            }
             if (source.name.endsWith('.java')) {
                 destination = relative.replace(original.replace('.', '/'), '${BUILD_COORDS.groupId.replace(".", "/")}')
                 content = literalParts(content, original, '${BUILD_COORDS.groupId}')
-            } else { content = '#[[' + content + ']]#' }
+            } else { content = literal(content) }
             File asset = new File(assets, relative + '.ft')
             asset.parentFile.mkdirs()
             asset.setText(content, 'UTF-8')
@@ -85,7 +90,17 @@ final class MinecraftTemplates {
         new File(output, '.mcdev.template.json').setText(JsonOutput.prettyPrint(JsonOutput.toJson(descriptor)), 'UTF-8')
     }
 
+    private static String literal(String text) {
+        '#set($END_BLOCK = \'\u005d\u005d#\')\n' + literalBody(text)
+    }
+
+    private static String literalBody(String text) {
+        text.split(java.util.regex.Pattern.quote(']]#'), -1)
+                .collect { '#[[' + it + ']]#' }.join('\$END_BLOCK')
+    }
+
     private static String literalParts(String text, String original, String expression) {
-        text.split(java.util.regex.Pattern.quote(original), -1).collect { '#[[' + it + ']]#' }.join(expression)
+        '#set($END_BLOCK = \'\u005d\u005d#\')\n' +
+                text.split(java.util.regex.Pattern.quote(original), -1).collect { literalBody(it) }.join(expression)
     }
 }

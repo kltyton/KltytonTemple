@@ -1,3 +1,4 @@
+#set($END_BLOCK = ']]#')
 #[[package io.github.kltyton.temple.workspace
 
 import java.nio.file.Path

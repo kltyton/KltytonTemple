@@ -1,3 +1,4 @@
+#set($END_BLOCK = ']]#')
 #[[Describe the concrete behavior and affected target IDs.
 
 Record checks actually executed and identify unverified runtime, visual, server or publishing behavior. Include the production JAR evidence when changing resources, mappings or packaging.

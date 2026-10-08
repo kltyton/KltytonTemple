@@ -1,3 +1,4 @@
+#set($END_BLOCK = ']]#')
 #[[apply from: file('../../gradle/target-conventions/base.gradle')
 
 legacyForge {

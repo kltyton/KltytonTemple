@@ -1,3 +1,4 @@
+#set($END_BLOCK = ']]#')
 #[[# KltytonTemple
 
 直接在 IntelliJ IDEA 打开工程目录，导入 Gradle 即可。全部日常操作都在右侧 Gradle 面板，无需 Python、命令行参数或额外 MCP。模板基于 [SighsTemple](https://github.com/Tower-of-Sighs/SighsTemple)，保留 MIT 许可与上游版权。
@@ -41,5 +42,5 @@ Java 同名源文件不覆盖；资源优先级 target > loader > version > comm
 
 [架构](docs/dev/architecture.md) · [迁移](docs/MAINTENANCE_WORKFLOW.md) · [发布](docs/PUBLISHING.md) · [CI](docs/CI_TARGET_DISCOVERY.md) · [接入 Skill](integrations/skills/kltyton-temple/SKILL.md)
 
-[上游版本差异资料](docs/version-differences/README.md) 仅作参考，不作为当前目标支持或验收清单。
+[上游版本差异资料](https://github.com/Tower-of-Sighs/SighsTemple/blob/main/docs/version-differences/README.md) 仅作参考，不作为当前目标支持或验收清单。
 ]]#

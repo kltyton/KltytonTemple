@@ -1,3 +1,4 @@
+#set($END_BLOCK = ']]#')
 #[[# 原生 Gradle 与源层
 
 根工程的 buildSrc 提供 io.github.kltyton.temple 插件。IDEA 直接导入根工程，按 Loader/Minecraft 分组注册目标任务；Gradle面板是正式用户入口，没有 Python 执行链。

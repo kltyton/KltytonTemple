@@ -1,3 +1,4 @@
+#set($END_BLOCK = ']]#')
 #[[MIT License
 
 Copyright (c) 2026 Tower of Sighs

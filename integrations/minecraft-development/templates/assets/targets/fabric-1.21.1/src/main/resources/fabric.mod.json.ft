@@ -1,3 +1,4 @@
+#set($END_BLOCK = ']]#')
 #[[{
   "schemaVersion": 1,
   "id": "${mod_id}",

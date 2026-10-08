@@ -1,3 +1,4 @@
+#set($END_BLOCK = ']]#')
 #[[# CI
 
 根 writeCiMatrix 读取目标 gradle.properties，输出启用目标的 Windows/Linux 矩阵。不额外维护 ci.properties，不调用 Python。

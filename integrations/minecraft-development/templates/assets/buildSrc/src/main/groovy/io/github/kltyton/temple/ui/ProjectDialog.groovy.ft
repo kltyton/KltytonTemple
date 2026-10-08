@@ -1,3 +1,4 @@
+#set($END_BLOCK = ']]#')
 #[[package io.github.kltyton.temple.ui
 
 import io.github.kltyton.temple.workspace.ProjectCreation

@@ -1,3 +1,4 @@
+#set($END_BLOCK = ']]#')
 #[[---
 name: kltyton-temple
 description: Create or maintain KltytonTemple Minecraft multiversion and multiloader projects through native IDEA Gradle tasks or its Minecraft Development project wizard.

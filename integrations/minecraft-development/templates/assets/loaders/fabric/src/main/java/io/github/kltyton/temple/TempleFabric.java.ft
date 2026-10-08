@@ -1,3 +1,4 @@
+#set($END_BLOCK = ']]#')
 #[[package ]]#${BUILD_COORDS.groupId}#[[;
 
 import net.fabricmc.api.ModInitializer;

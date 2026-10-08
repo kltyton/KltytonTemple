@@ -1,3 +1,4 @@
+#set($END_BLOCK = ']]#')
 #[[loader=fabric
 minecraft_version=26.1.2
 minecraft_version_range=[26.1.2]

@@ -1,3 +1,4 @@
+#set($END_BLOCK = ']]#')
 #[[.gradle/
 build/
 run/

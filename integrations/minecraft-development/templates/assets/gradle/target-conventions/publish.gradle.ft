@@ -1,3 +1,4 @@
+#set($END_BLOCK = ']]#')
 #[[import groovy.json.JsonOutput
 import java.util.zip.ZipFile
 

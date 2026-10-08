@@ -1,3 +1,4 @@
+#set($END_BLOCK = ']]#')
 #[[# 可视化发布
 
 先在所需目标分组点 build_<id>，再点 verify_<id> 检查实际发行 JAR。发布任务分别为 publish_modrinth_<id>、publish_curseforge_<id>、publish_maven_<id>。

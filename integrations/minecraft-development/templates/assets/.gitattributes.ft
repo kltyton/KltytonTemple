@@ -1,3 +1,4 @@
+#set($END_BLOCK = ']]#')
 #[[# Auto detect text files and perform LF normalization
 * text=auto
 ]]#
