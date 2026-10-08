@@ -3,7 +3,7 @@
 
 [中文](Minecraft-Development.zh-CN.md) · [Wiki](Home.en.md)
 
-This guide uses IntelliJ IDEA 2026.2.3, Minecraft Development 2026.2-1.8.22 and KltytonTemple 1.1.0. The current ZIP targets IDEA build 262. Other IDEA releases need a matching extension build.
+This guide targets IntelliJ IDEA 2026.2.3, Minecraft Development 2026.2-1.8.22 and KltytonTemple 1.1.1. The current ZIP targets IDEA build 262. Other IDEA releases need a matching extension build.
 
 KltytonTemple adds to Minecraft Development. Its existing Forge, Fabric, NeoForge, MultiLoader and Architectury templates remain available.
 
@@ -14,7 +14,7 @@ Install and enable Minecraft Development and Gradle support. Register JDK 21 in 
 The extension source is in `integrations/idea-plugin`. Its build creates:
 
 ```text
-integrations/idea-plugin/build/distributions/KltytonTemple-IDEA-1.1.0.zip
+integrations/idea-plugin/build/distributions/KltytonTemple-IDEA-1.1.1.zip
 ```
 
 To build it yourself, use the template's Java 25 Wrapper and specify the IDEA installation and Minecraft Development plugin directories:
@@ -32,7 +32,7 @@ On Windows, use that directory's `gradlew.bat`. This builds the extension, not a
 1. Open IDEA Settings.
 2. Select Plugins, then Installed.
 3. Open the gear menu beside the tabs and choose Install Plugin from Disk.
-4. Select `KltytonTemple-IDEA-1.1.0.zip` itself. Do not extract it or select Minecraft Development's JAR.
+4. Select `KltytonTemple-IDEA-1.1.1.zip` itself. Do not extract it or select Minecraft Development's JAR.
 5. Apply the change. If IDEA explicitly requires a restart, save current work before restarting.
 6. Search Installed for KltytonTemple and confirm it is enabled.
 
@@ -89,6 +89,8 @@ Refresh versions downloads the catalog again without rewriting rows already sele
 
 Open the generated project and allow the root Gradle model to load. With `temple_idea_project=true`, the extension links every configured target as an independent Gradle project.
 
+For an existing project, set `temple_idea_project=true` in the root `gradle.properties`. Version 1.1.1 watches both this marker and target configuration changes. Reopen the project after installing or updating the extension to load its current linking listener.
+
 Use Sync All Gradle Projects. After completion, the root and all target projects should be present, with matching source modules and classpaths.
 
 Selecting a default target does not unlink the others. `select_<target>` changes only the root build/runClient aliases.
@@ -120,5 +122,5 @@ Shared sources still need to match each Minecraft API.
 | One target fails to sync | First error for that target; JDK, Wrapper, repositories and dependencies |
 | Generated target does not compile | Matching APIs and build plugins; creation is not cross-version acceptance |
 
-The developer installed the extension and manually confirmed the nine-target sync and wizard dropdowns. Game startup and newly selected version combinations still need their own acceptance.
+Check actual target modules and their source classpaths after synchronization. Game startup and newly selected version combinations still need their own acceptance.
 ]]#

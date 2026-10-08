@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>io.github.kltyton.temple.idea</id>
     <name>KltytonTemple</name>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
     <vendor url="https://github.com/kltyton/KltytonTemple">kltyton</vendor>
     <description>Multi-version Minecraft project creation and independent Gradle target linking.</description>
     <idea-version since-build="262" until-build="262.*"/>

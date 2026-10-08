@@ -1,6 +1,6 @@
 plugins { id 'java' }
 group = 'io.github.kltyton.temple'
-version = '1.1.0'
+version = '1.1.1'
 
 def ideaHome = providers.gradleProperty('ideaHome').orElse(providers.environmentVariable('IDEA_HOME'))
 def minecraftDevHome = providers.gradleProperty('minecraftDevHome')

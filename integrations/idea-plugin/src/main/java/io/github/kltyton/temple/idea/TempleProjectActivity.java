@@ -25,11 +25,15 @@ public final class TempleProjectActivity implements StartupActivity.DumbAware {
     @Override
     public void runActivity(Project project) {
         linkTargets(project);
-        project.getMessageBus().connect(project).subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
+        ApplicationManager.getApplication().getMessageBus().connect(project)
+                .subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
             @Override
             public void after(List<? extends VFileEvent> events) {
                 String root = project.getBasePath();
-                if (root != null && events.stream().anyMatch(event -> event.getPath().startsWith(root + "/targets/") && event.getPath().endsWith("/gradle.properties")))
+                if (root != null && events.stream().anyMatch(event ->
+                        event.getPath().equals(root + "/gradle.properties") ||
+                        (event.getPath().startsWith(root + "/targets/") &&
+                                event.getPath().endsWith("/gradle.properties"))))
                     ApplicationManager.getApplication().invokeLater(() -> linkTargets(project));
             }
         });

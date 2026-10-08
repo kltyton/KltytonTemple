@@ -50,6 +50,10 @@ public final class TargetsProperty extends CreatorProperty<String> {
                 targets -> value.set(json.toJson(targets)));
         panel.row("", row -> {
             row.cell(selection).resizableColumn().align(Align.FILL)
+                    .validationRequestor((kotlin.jvm.functions.Function0<Unit> requestor) -> {
+                        value.afterPropagation(requestor);
+                        return Unit.INSTANCE;
+                    })
                     .validationOnApply((builder, component) -> selection.selections().isEmpty() ? new ValidationInfo("Select at least one target", selection) : null);
             return Unit.INSTANCE;
         });

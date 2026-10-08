@@ -2,7 +2,7 @@
 
 [English](Minecraft-Development.en.md) · [Wiki](Home.zh-CN.md)
 
-本教程使用 IntelliJ IDEA 2026.2.3、Minecraft Development 2026.2-1.8.22 和 KltytonTemple 1.1.0。其他 IDEA 版本需使用对应版本的扩展；当前 ZIP 的兼容范围为 IDEA 262。
+本教程对应 IntelliJ IDEA 2026.2.3、Minecraft Development 2026.2-1.8.22 和 KltytonTemple 1.1.1。其他 IDEA 版本需使用对应版本的扩展；当前 ZIP 的兼容范围为 IDEA 262。
 
 KltytonTemple 是 Minecraft Development 的附加扩展。原有 Forge、Fabric、NeoForge、MultiLoader、Architectury 模板仍可使用。
 
@@ -15,7 +15,7 @@ KltytonTemple 是 Minecraft Development 的附加扩展。原有 Forge、Fabric�
 扩展源代码在 `integrations/idea-plugin`，本地生成的安装包在：
 
 ```text
-integrations/idea-plugin/build/distributions/KltytonTemple-IDEA-1.1.0.zip
+integrations/idea-plugin/build/distributions/KltytonTemple-IDEA-1.1.1.zip
 ```
 
 需要自行构建扩展时，使用模板的 Java 25 Wrapper。两个参数分别指向 IDEA 安装目录和 Minecraft Development 插件目录：
@@ -33,7 +33,7 @@ Windows 使用该目录内的 `gradlew.bat`。构建的是 IDEA 扩展，不会�
 1. 打开 IDEA 的“设置”。
 2. 进入左侧“插件”，选择“已安装”页签。
 3. 点击页签右侧的齿轮，选择“从磁盘安装插件”。
-4. 选择上面的 `KltytonTemple-IDEA-1.1.0.zip`。选择 ZIP 本身，不需要解压，也不要选择 Minecraft Development 的 JAR。
+4. 选择上面的 `KltytonTemple-IDEA-1.1.1.zip`。选择 ZIP 本身，不需要解压，也不要选择 Minecraft Development 的 JAR。
 5. 按 IDEA 提示应用。若明确要求重启，先保存正在编辑的工程，再重启。
 6. 在已安装列表中搜索 `KltytonTemple`，确认扩展启用。
 
@@ -90,6 +90,8 @@ Mod ID 用小写字母、数字和下划线，如 `temple_demo`。Java 包名使
 
 创建后打开新工程，等待根 Gradle 工程加载。扩展读取 `temple_idea_project=true` 与目标配置，把每个目标关联为独立 Gradle 工程。
 
+已有工程需在根 `gradle.properties` 中设置 `temple_idea_project=true`。1.1.1 会监听根标记和目标配置的变化；安装或更新扩展后重新打开工程，使当前工程加载新的关联监听器。
+
 在 Gradle 窗口使用“同步所有 Gradle 项目”。同步结束后应同时看到根工程和各目标；每个 `targets/<loader>-<minecraft>` 都应具有对应模块和源码类路径。
 
 选择默认目标不会取消其他目标的关联。`select_<target>` 只控制根级 `build`、`runClient` 等简写的执行对象。
@@ -121,4 +123,4 @@ Mod ID 用小写字母、数字和下划线，如 `temple_demo`。Java 包名使
 | 某目标同步失败 | 读取该目标第一段错误，核对它的 JDK、Wrapper、仓库和依赖 |
 | 新版本生成后不能编译 | 检查该版本 API 和构建插件适配，生成成功不等于代码跨版本兼容 |
 
-本机扩展安装由开发者完成；九目标同步和向导下拉功能已由开发者手动确认。游戏启动和每个新增版本组合的构建仍需各自验收。
+同步结果以实际目标模块和各自的源码类路径为准。游戏启动和每个新增版本组合的构建仍需各自验收。
