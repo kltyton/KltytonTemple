@@ -100,7 +100,7 @@ buildSrc/                  Gradle entry points
 integrations/              IDEA, wizard and migration interface
 ```
 
-`shared_sources` can preserve an existing layout. Java files with the same name do not override each other. Resource precedence is target > loader > version > common. Handwritten resources stay in `src/main/resources`; datagen output goes to each target's `src/generated/resources`.
+Maintain shared algorithms and game logic once in `common`, compiled by every target. Version and Loader layers contain actual API differences behind small SPI boundaries; avoid copying entire implementations. `shared_sources` selects each target's source layers. Java files with the same name do not override each other. Resource precedence is target > loader > version > common. Handwritten resources stay in `src/main/resources`; datagen output goes to each target's `src/generated/resources`.
 
 The IDEA extension links targets as independent Gradle projects. “Sync All Gradle Projects” includes all linked targets, each using its own Wrapper. Development integration code is not packaged in mod JARs.
 

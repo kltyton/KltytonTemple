@@ -14,7 +14,7 @@ final class MinecraftTemplates {
         Set<String> blueprints = ['fabric-1.20.1', 'fabric-26.1.2', 'forge-1.20.1',
                                    'neoforge-1.21.1', 'neoforge-26.1.2'] as Set
         List<Map<String, Object>> files = []
-        Set<String> roots = ['buildSrc', 'common', 'loaders', 'gradle', 'targets', 'integrations', 'docs', '.github'] as Set
+        Set<String> roots = ['buildSrc', 'common', 'versions', 'loaders', 'gradle', 'targets', 'integrations', 'docs', '.github'] as Set
         Set<String> rootFiles = ['build.gradle', 'settings.gradle', 'gradle.properties', 'gradlew', 'gradlew.bat',
                                   'LICENSE', 'README.md', 'README.en.md', '.gitignore', '.gitattributes'] as Set
         ProjectFiles.distributableFiles(root).each { File source ->

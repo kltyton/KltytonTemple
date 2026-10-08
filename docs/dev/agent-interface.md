@@ -8,4 +8,4 @@ select_<id> 保存根任务的默认目标，不改变根 Wrapper 或其他目�
 
 所有构建、运行、资源生成、发布仍受用户当前合同约束。createProject/addTarget 是可视化表单；发布表单仅把凭据交给本轮子进程，确认后才上传。listTargets、任务规划与 JAR 检查均不证明游戏运行或视觉行为通过。
 
-既有工程可复用同一 buildSrc 和根入口；保留其源层路径、mod_java_package/mod_entry_class、Loader/Wrapper pins 与专用构建钩子。无需改写游戏代码或手工资源。
+迁移工程使用同一 buildSrc 和根入口；保留 mod_java_package/mod_entry_class、Loader/Wrapper pins 与必要构建钩子。源码与共享资源实际迁入模板层，通用逻辑集中在 common；版本和 Loader 层通过小范围 SPI 实现真实 API 差异。源码迁移与归并按 integrations/prompts 的双语提示词和迁移 Skill 执行，手写资源保留其维护方式。

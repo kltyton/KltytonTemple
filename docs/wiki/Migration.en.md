@@ -2,7 +2,7 @@
 
 [中文](Migration.zh-CN.md) · [Wiki](Home.en.md)
 
-KltytonTemple entry points can be attached to an existing layout. Moving every game source file into a fixed directory tree is not required.
+After migration, shared logic is maintained once in `common` and used by every target. Version and Loader layers contain only necessary API implementation differences.
 
 ## Use an AI
 
@@ -30,12 +30,14 @@ Listing a Stonecutter-generated folder as a source directory does not replace it
 
 ## New entry points
 
-Existing source paths can be referenced through each target's shared_sources. Keep Loader/version boundaries and handwritten-resource ownership intact.
+Move the active target's game sources and shared resources into `common/src`, then compare all target implementations and read their matching version sources. Put evidenced API differences in version, Loader or target layers. Extract small SPI boundaries and move shared algorithms and business logic back into common; a few differing API calls do not justify copying an entire class per version.
+
+Point `shared_sources` at the migrated layers and update build, access-hook, Mixin, producer and publishing paths. Preserve handwritten-resource ownership. A shared feature should be maintained in common without duplicate edits to each version's implementation.
 
 Root tasks offer target operations and default-target aliases. IDEA links targets independently, each with its own Wrapper. Sync All does not omit other targets merely because Forge 1.20.1 is the default.
 
 ## Acceptance
 
-Finish production changes first, then run only the supplied acceptance contract. In source-only work, run no Gradle, tests, datagen or games.
+Finish production changes first, then run only the supplied acceptance contract. In source-only work, run no Gradle, tests, datagen or games, but still complete source consolidation, file migration and reference updates.
 
 Report source mapping, IDE modules, target builds, release packages and game checks separately. Keep unexecuted checks marked unverified. Remove obsolete entry points only after the replacement is accepted; preserve user work, saves, local dependencies and still-used transforms.

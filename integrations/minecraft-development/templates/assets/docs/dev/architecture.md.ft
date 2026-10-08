@@ -9,6 +9,8 @@
 
 common → version → loader → target 是源码归属层级；同名Java文件不能覆盖。资源按 target > loader > version > common 选择一个输出。人工/编辑器资源保持原维护方式，datagen输出位于target/src/generated/resources。
 
+common 保存跨目标共享的算法、业务规则和资源。代码在各目标自己的 Minecraft 类路径中编译；稳定 API 可以直接共用。只有源码证实不同的 API、类型与生命周期调用进入版本或 Loader 层，通过小范围、类型明确的 SPI 接入 common。几处调用不同的类应拆出这些调用，共通算法仍保留一份。
+
 [MultiLoader 源配置](https://github.com/jaredlll08/MultiLoader-Template/blob/d6b81d85d63566cbe5e67fd2f246f1441cccf686/buildSrc/src/main/groovy/multiloader-loader.gradle)提供“目标环境重新编译共享源”的参考；[Architectury](https://docs.architectury.dev/plugin/introduction/)提供可选 common/API 转换方案；[Stonecutter](https://codeberg.org/stonecutter/stonecutter/src/branch/0.10/README.md)提供注释预处理与活动版本管理。模板不声称安装这些运行时组件，也不强制迁移既有管线。
 
 Minecraft Development 集成使用其 .mcdev.template.json、Local 仓库和公开扩展点。KltytonTemple 扩展增加官方版本下拉和目标表格。模板文件经 Velocity 生成，Gradle 代码用字面量块保护；Wrapper 二进制使用模板资产编码，初次导入时解码为 JAR。IDEA 扩展及构建控制代码不进入模组发行包。

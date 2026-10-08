@@ -101,7 +101,7 @@ buildSrc/                  Gradle 入口
 integrations/              IDEA、向导与迁移接口
 ```
 
-已有项目可用 `shared_sources` 保留原来的目录结构。Java 同名源文件不覆盖；资源优先级为 target > loader > version > common。手写资源留在 `src/main/resources`，datagen 输出进入目标的 `src/generated/resources`。
+通用算法和业务逻辑在 `common` 中维护一份，每个目标编译这份源码。版本和 Loader 层只保留实际 API 差异；通过小范围 SPI 接入，不复制整套实现。`shared_sources` 指定各目标使用的源码层。Java 同名源文件不覆盖；资源优先级为 target > loader > version > common。手写资源留在 `src/main/resources`，datagen 输出进入目标的 `src/generated/resources`。
 
 IDEA 扩展将目标关联为独立 Gradle 工程，“同步所有 Gradle 项目”覆盖全部已关联目标，各自使用自己的 Wrapper。开发控制层不进入模组 JAR。
 

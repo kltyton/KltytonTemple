@@ -6,7 +6,15 @@ Read only the section matching the existing build. A project can combine these s
 
 Record the existing Minecraft/Loader matrix, mod identity, Java and Wrapper pins, plugin and mapping versions, actual source paths, resources and build outputs. Inspect each target's metadata and publishing project IDs. Check dirty work and local rules.
 
-Keep an explicit mapping from original modules/source sets to new target entry points. Preserve all required game code and resources. Avoid moving source trees when shared_sources can point to them.
+Map original modules and source sets to actual destination files. Preserve all game behavior and resources; migrate their maintenance locations rather than wrapping the old project trees.
+
+## Shared logic first
+
+Start with the active target's sources and shared resources in common/src. Compare all existing variants and read matching Minecraft/Loader sources before assigning a difference to a version or Loader layer.
+
+Extract algorithms, business rules, state and resource handling into one common implementation. Differing imports or a few API calls do not justify copying a whole class. Use small typed SPI boundaries for the actual API/type/lifecycle differences, with concrete implementations in versions/<minecraft>/src, loaders/<loader>/src or target src. Identical file hashes help find immediate merges; they do not identify all shareable logic.
+
+Wire every target to the same common sources and the necessary variant implementations. Update resource, access-hook, Mixin, producer and publishing paths. Inspect consumers and remaining duplicate methods before declaring source migration complete. Remove obsolete copied sources and build entry points after their contents and callers are accounted for; preserve user data and required producer pipelines.
 
 ## Official Loader templates
 
@@ -18,7 +26,7 @@ Do not replace ForgeGradle with ModDevGradle across unsupported generations. The
 
 Inspect common sources and resources, loader entry points, source-set wiring, transformed artifacts and dependency scopes. Preserve the per-loader compile environment.
 
-Direct source sharing can map to shared_sources when the current build already compiles those files in each Loader environment. Where the build consumes a transformed or shaded common artifact, retain its producer and consumer dependency rather than replacing it with file copies.
+Migrate shared game logic into common and isolate Loader API differences in their source layers. shared_sources must reference those migrated layers. Where the build consumes a transformed or shaded common artifact, retain its producer and consumer dependency rather than replacing it with file copies.
 
 ## Stonecutter
 

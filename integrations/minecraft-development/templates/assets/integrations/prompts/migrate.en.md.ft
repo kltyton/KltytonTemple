@@ -4,7 +4,8 @@
 Give this prompt to an AI that can read the project. Fill in the paths, edit scope and acceptance contract.
 
 ```text
-Migrate this Minecraft mod project's build and project entry points to KltytonTemple.
+Fully migrate this Minecraft mod project to KltytonTemple and continue development in its source layout.
+Maintain shared logic once in common; version and Loader layers contain only necessary differences.
 
 Existing project: <absolute path>
 KltytonTemple: <absolute path or pinned commit>
@@ -28,18 +29,35 @@ Required outcome:
   Default-target selection affects only root build/runClient aliases.
 - Preserve game code, assets, registries, networking, Mixin/refmap,
   AT/AW/ClassTweaker, datagen, optional dependencies, run and publishing paths.
-- Prefer existing source paths through shared_sources or existing task outputs.
-  Keep Stonecutter preprocessing in each target's real compile pipeline.
-  Keep Architectury common transformation, expect/actual and runtime linkage.
+  Preserve code contents and behavior while replacing duplicated project trees.
+- Start from the active development target and move game sources and shared
+  resources into common/src. Compare every existing version and Loader and
+  read their matching sources to identify actual API differences. Only those
+  differences belong in versions/<minecraft>/src, loaders/<loader>/src or target src.
+- Split differing classes further: keep algorithms, business rules, state and
+  resource handling in common. Use small, typed SPI boundaries for differing
+  API calls, types and lifecycle hooks. Do not duplicate a large class because
+  a few API calls differ, or decide sharing solely from identical file hashes.
+- Every existing target compiles the same common sources. Point shared_sources
+  at the migrated layers and update source/resource paths, access hooks,
+  Mixins, producer dependencies and publishing paths. Merge remaining shared
+  implementations so a common feature needs no per-version duplicate edits.
+- Preserve actual Stonecutter preprocessing and Architectury transformation,
+  expect/actual and runtime linkage. Identify their producers and consumers;
+  do not remove them or replace task dependencies with generated-directory paths.
 - Preserve mod ID, group, package, entry class and copyright. Retain no
   example namespaces, template mod IDs or template publishing project IDs.
 - Refuse existing output directories. Preserve unrelated changes, private
   configuration, saves and local dependencies. Make no unrequested backups.
 - Finish production changes before running the exact acceptance contract.
-  Run no Gradle, tests, datagen or clients during a source-only phase.
+  Run no Gradle, tests, datagen or clients during a source-only phase, but
+  still complete the actual source migration and consolidation.
 - Report the target matrix, path mapping, changed files, actual commands and
   results. Separate source completion, IDE import, builds, release-package
-  checks and game acceptance.
+  checks and game acceptance. Inspect actual common consumers, remaining
+  target differences and stale paths; visible IDE modules do not prove migration.
+  Remove obsolete duplicate sources and project entry points while preserving
+  saves, private configuration, handwritten assets and still-used artifacts.
 
 For a capability gap, identify its task dependency or call chain and implement
 the smallest suitable adaptation. Do not replace it with disabled features,
