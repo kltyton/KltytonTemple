@@ -2,12 +2,15 @@
 #[[package io.github.kltyton.temple.catalog;
 
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -21,9 +24,13 @@ public final class VersionCatalog {
     private final Function<String, Object> json;
     private final HttpClient http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(12)).build();
     private final Map<String, String> gameDocuments = new HashMap<>();
-    private final Map<String, List<String>> forge = new HashMap<>(), neo = new HashMap<>(), api = new HashMap<>();
-    private final Map<String, Integer> javaVersions = new HashMap<>();
-    private List<String> fabricLoaders = List.of();
+    private final Map<String, List<String>> forge = new HashMap<>(), neo = new HashMap<>();
+    private final Map<String, List<String>> api = new ConcurrentHashMap<>();
+    private final Map<String, Integer> javaVersions = new ConcurrentHashMap<>();
+    private final Set<String> fabricGames = new HashSet<>();
+    private final Map<String, List<String>> fabricByGame = new ConcurrentHashMap<>();
+    private final Set<String> previewVersions = ConcurrentHashMap.newKeySet();
+    private String recommendedFabricLoader;
 
     public VersionCatalog(Function<String, Object> json) {
         this.json = json;
@@ -33,7 +40,7 @@ public final class VersionCatalog {
         Map<String, String> sources = Map.of(
                 "game", "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json",
                 "loader", "https://meta.fabricmc.net/v2/versions/loader",
-                "api", "https://maven.fabricmc.net/net/fabricmc/fabric-api/fabric-api/maven-metadata.xml",
+                "fabricGame", "https://meta.fabricmc.net/v2/versions/game",
                 "forge", "https://maven.minecraftforge.net/net/minecraftforge/forge/maven-metadata.xml",
                 "neo", "https://maven.neoforged.net/releases/net/neoforged/neoforge/maven-metadata.xml");
         Map<String, CompletableFuture<String>> downloads = new HashMap<>();
@@ -43,19 +50,18 @@ public final class VersionCatalog {
         for (Object entry : (List<?>) manifest.get("versions")) {
             Map<?, ?> version = (Map<?, ?>) entry;
             String id = version.get("id").toString();
-            if ("release".equals(version.get("type")) && id.matches("[0-9]+(\\.[0-9]+)*") && compare(id, "1.18.2") >= 0)
+            if ("release".equals(version.get("type")) && id.matches("[0-9]+(\\.[0-9]+)*") && compare(id, "1.17") >= 0)
                 gameDocuments.put(id, version.get("url").toString());
         }
-        fabricLoaders = ((List<?>) json.apply(downloads.get("loader").join())).stream()
-                .map(value -> (Map<?, ?>) value).filter(value -> Boolean.TRUE.equals(value.get("stable")))
-                .map(value -> value.get("version").toString()).toList();
-        for (String version : xmlVersions(downloads.get("api").join())) {
-            int split = version.lastIndexOf('+');
-            if (split > 0) api.computeIfAbsent(version.substring(split + 1), key -> new ArrayList<>()).add(version);
-        }
+        for (Object entry : (List<?>) json.apply(downloads.get("fabricGame").join()))
+            fabricGames.add(((Map<?, ?>) entry).get("version").toString());
+        List<?> loaders = (List<?>) json.apply(downloads.get("loader").join());
+        recommendedFabricLoader = loaders.stream().map(value -> (Map<?, ?>) value)
+                .filter(value -> Boolean.TRUE.equals(value.get("stable")))
+                .map(value -> value.get("version").toString()).findFirst().orElse(null);
         for (String version : xmlVersions(downloads.get("forge").join())) {
             int split = version.indexOf('-');
-            if (split > 0 && !version.substring(split + 1).contains("-"))
+            if (split > 0)
                 forge.computeIfAbsent(version.substring(0, split), key -> new ArrayList<>()).add(version.substring(split + 1));
         }
         for (String version : xmlVersions(downloads.get("neo").join())) {
@@ -63,10 +69,10 @@ public final class VersionCatalog {
             String prefix = numeric.substring(0, numeric.lastIndexOf('.'));
             String minecraft = prefix.startsWith("26.") ? prefix : "1." + prefix;
             if (minecraft.endsWith(".0")) minecraft = minecraft.substring(0, minecraft.length() - 2);
-            if (compare(minecraft, "1.20.6") >= 0 && !version.contains("-"))
+            if (compare(minecraft, "1.20.6") >= 0)
                 neo.computeIfAbsent(minecraft, key -> new ArrayList<>()).add(version);
         }
-        for (Map<String, List<String>> map : List.of(forge, neo, api))
+        for (Map<String, List<String>> map : List.of(forge, neo))
             map.values().forEach(values -> values.sort((a, b) -> compare(b, a)));
     }
 
@@ -76,7 +82,7 @@ public final class VersionCatalog {
 
     public List<String> loaders(String minecraft) {
         List<String> result = new ArrayList<>();
-        if (!apiVersions(minecraft).isEmpty()) result.add("fabric");
+        if (fabricGames.contains(minecraft)) result.add("fabric");
         if (forge.containsKey(minecraft) && compare(minecraft, "26") < 0) result.add("forge");
         if (neo.containsKey(minecraft)) result.add("neoforge");
         return result;
@@ -84,7 +90,7 @@ public final class VersionCatalog {
 
     public List<String> loaderVersions(String loader, String minecraft) {
         return switch (loader) {
-            case "fabric" -> fabricLoaders;
+            case "fabric" -> fabricByGame.getOrDefault(minecraft, List.of());
             case "forge" -> forge.getOrDefault(minecraft, List.of());
             case "neoforge" -> neo.getOrDefault(minecraft, List.of());
             default -> throw new IllegalArgumentException("Unknown loader: " + loader);
@@ -93,6 +99,35 @@ public final class VersionCatalog {
 
     public List<String> apiVersions(String minecraft) {
         return api.getOrDefault(minecraft, List.of());
+    }
+
+    public void loadCompatibleVersions(String minecraft) {
+        if (fabricByGame.containsKey(minecraft)) return;
+        String game = URLEncoder.encode(minecraft, StandardCharsets.UTF_8);
+        String query = URLEncoder.encode("[\"" + minecraft + "\"]", StandardCharsets.UTF_8);
+        CompletableFuture<String> loader = download("https://meta.fabricmc.net/v2/versions/loader/" + game);
+        CompletableFuture<String> apiVersions = download("https://api.modrinth.com/v2/project/fabric-api/version?include_changelog=false&game_versions=" + query);
+        CompletableFuture.allOf(loader, apiVersions).join();
+        List<String> compatible = ((List<?>) json.apply(loader.join())).stream()
+                .map(value -> (Map<?, ?>) ((Map<?, ?>) value).get("loader"))
+                .map(value -> value.get("version").toString()).distinct().toList();
+        List<String> apiChoices = new ArrayList<>();
+        for (Object item : (List<?>) json.apply(apiVersions.join())) {
+            Map<?, ?> release = (Map<?, ?>) item;
+            String version = release.get("version_number").toString();
+            apiChoices.add(version);
+            if (!"release".equals(release.get("version_type"))) previewVersions.add(version);
+        }
+        fabricByGame.put(minecraft, compatible);
+        api.put(minecraft, apiChoices.stream().distinct().toList());
+    }
+
+    public boolean preview(String version) {
+        return previewVersions.contains(version) || version.matches("(?i).*(?:alpha|beta|snapshot|[.-]rc|[.-]pre).*");
+    }
+
+    public String recommendedFabricLoader() {
+        return recommendedFabricLoader;
     }
 
     public int javaVersion(String minecraft) {
@@ -106,7 +141,8 @@ public final class VersionCatalog {
     }
 
     private CompletableFuture<String> download(String url) {
-        HttpRequest request = HttpRequest.newBuilder(URI.create(url)).timeout(Duration.ofSeconds(30)).GET().build();
+        HttpRequest request = HttpRequest.newBuilder(URI.create(url)).header("User-Agent", "KltytonTemple/1.2.0 (github.com/kltyton/KltytonTemple)")
+                .timeout(Duration.ofSeconds(30)).GET().build();
         return http.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> {
             if (response.statusCode() != 200)
                 throw new IllegalStateException("HTTP " + response.statusCode() + ": " + url);

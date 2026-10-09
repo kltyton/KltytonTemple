@@ -13,3 +13,5 @@ common 保存跨目标共享的算法、业务规则和资源。代码在各目�
 [MultiLoader 源配置](https://github.com/jaredlll08/MultiLoader-Template/blob/d6b81d85d63566cbe5e67fd2f246f1441cccf686/buildSrc/src/main/groovy/multiloader-loader.gradle)提供“目标环境重新编译共享源”的参考；[Architectury](https://docs.architectury.dev/plugin/introduction/)提供可选 common/API 转换方案；[Stonecutter](https://codeberg.org/stonecutter/stonecutter/src/branch/0.10/README.md)提供注释预处理与活动版本管理。模板不声称安装这些运行时组件，也不强制迁移既有管线。
 
 Minecraft Development 集成使用其 .mcdev.template.json、Local 仓库和公开扩展点。KltytonTemple 扩展增加官方版本下拉和目标表格。模板文件经 Velocity 生成，Gradle 代码用字面量块保护；Wrapper 二进制使用模板资产编码，初次导入时解码为 JAR。IDEA 扩展及构建控制代码不进入模组发行包。
+
+Gradle 新建表单和 Minecraft Development 导出共用 ProjectFiles.projectFiles 的文件选择规则。新工程包含共享构建代码、目标蓝图及迁移文档，排除 IDE 插件开发工程、向导资产、私人配置和 Eclipse 元数据。版本目录按实际差异建立，每个 Minecraft 版本只维护一份；旧工程目录与缓存不属于迁移后的结构。

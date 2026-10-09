@@ -30,7 +30,7 @@
         {
             "name": "MOD_NAME",
             "type": "string",
-            "label": "Mod \u540d\u79f0",
+            "label": "Mod \u540d\u79f0 / Mod name",
             "inheritFrom": "PROJECT_NAME",
             "default": "My Mod"
         },
@@ -42,19 +42,19 @@
         {
             "name": "AUTHORS",
             "type": "string",
-            "label": "\u4f5c\u8005",
+            "label": "\u4f5c\u8005 / Authors",
             "default": "kltyton"
         },
         {
             "name": "LICENSE",
             "type": "string",
-            "label": "\u8bb8\u53ef\u8bc1",
+            "label": "\u8bb8\u53ef\u8bc1 / License",
             "default": "MIT"
         },
         {
             "name": "DESCRIPTION",
             "type": "string",
-            "label": "\u63cf\u8ff0",
+            "label": "\u63cf\u8ff0 / Description",
             "default": "A Minecraft mod."
         },
         {
@@ -113,6 +113,11 @@
         {
             "template": "assets/buildSrc/src/main/groovy/io/github/kltyton/temple/integration/MinecraftTemplates.groovy.ft",
             "destination": "buildSrc/src/main/groovy/io/github/kltyton/temple/integration/MinecraftTemplates.groovy",
+            "reformat": false
+        },
+        {
+            "template": "assets/buildSrc/src/main/groovy/io/github/kltyton/temple/ui/DialogForm.groovy.ft",
+            "destination": "buildSrc/src/main/groovy/io/github/kltyton/temple/ui/DialogForm.groovy",
             "reformat": false
         },
         {
@@ -271,6 +276,11 @@
             "reformat": false
         },
         {
+            "template": "assets/integrations/shared/src/main/java/io/github/kltyton/temple/ui/UiText.java.ft",
+            "destination": "integrations/shared/src/main/java/io/github/kltyton/temple/ui/UiText.java",
+            "reformat": false
+        },
+        {
             "template": "assets/integrations/shared/src/main/java/io/github/kltyton/temple/workspace/TargetPlan.java.ft",
             "destination": "integrations/shared/src/main/java/io/github/kltyton/temple/workspace/TargetPlan.java",
             "reformat": false
@@ -399,9 +409,19 @@
         },
         {
             "template": "assets/targets/fabric-1.21.1/build.gradle.ft",
+            "destination": "gradle/target-blueprints/fabric-1.21.1/build.gradle",
+            "reformat": false
+        },
+        {
+            "template": "assets/targets/fabric-1.21.1/build.gradle.ft",
             "destination": "targets/fabric-1.21.1/build.gradle",
             "reformat": false,
             "condition": "$TARGET_PLAN.contains('\"blueprint\":\"fabric-1.21.1\"')"
+        },
+        {
+            "template": "assets/targets/fabric-1.21.1/gradle/wrapper/gradle-wrapper.properties.ft",
+            "destination": "gradle/target-blueprints/fabric-1.21.1/gradle/wrapper/gradle-wrapper.properties",
+            "reformat": false
         },
         {
             "template": "assets/targets/fabric-1.21.1/gradle/wrapper/gradle-wrapper.properties.ft",
@@ -411,9 +431,19 @@
         },
         {
             "template": "assets/targets/fabric-1.21.1/gradle.properties.ft",
+            "destination": "gradle/target-blueprints/fabric-1.21.1/gradle.properties",
+            "reformat": false
+        },
+        {
+            "template": "assets/targets/fabric-1.21.1/gradle.properties.ft",
             "destination": "targets/fabric-1.21.1/gradle.properties",
             "reformat": false,
             "condition": "$TARGET_PLAN.contains('\"blueprint\":\"fabric-1.21.1\"')"
+        },
+        {
+            "template": "assets/targets/fabric-1.21.1/gradlew.ft",
+            "destination": "gradle/target-blueprints/fabric-1.21.1/gradlew",
+            "reformat": false
         },
         {
             "template": "assets/targets/fabric-1.21.1/gradlew.ft",
@@ -423,15 +453,30 @@
         },
         {
             "template": "assets/targets/fabric-1.21.1/gradlew.bat.ft",
+            "destination": "gradle/target-blueprints/fabric-1.21.1/gradlew.bat",
+            "reformat": false
+        },
+        {
+            "template": "assets/targets/fabric-1.21.1/gradlew.bat.ft",
             "destination": "targets/fabric-1.21.1/gradlew.bat",
             "reformat": false,
             "condition": "$TARGET_PLAN.contains('\"blueprint\":\"fabric-1.21.1\"')"
         },
         {
             "template": "assets/targets/fabric-1.21.1/settings.gradle.ft",
+            "destination": "gradle/target-blueprints/fabric-1.21.1/settings.gradle",
+            "reformat": false
+        },
+        {
+            "template": "assets/targets/fabric-1.21.1/settings.gradle.ft",
             "destination": "targets/fabric-1.21.1/settings.gradle",
             "reformat": false,
             "condition": "$TARGET_PLAN.contains('\"blueprint\":\"fabric-1.21.1\"')"
+        },
+        {
+            "template": "assets/targets/fabric-1.21.1/src/main/resources/fabric.mod.json.ft",
+            "destination": "gradle/target-blueprints/fabric-1.21.1/src/main/resources/fabric.mod.json",
+            "reformat": false
         },
         {
             "template": "assets/targets/fabric-1.21.1/src/main/resources/fabric.mod.json.ft",
@@ -518,9 +563,19 @@
         },
         {
             "template": "assets/targets/forge-1.18.2/build.gradle.ft",
+            "destination": "gradle/target-blueprints/forge-1.18.2/build.gradle",
+            "reformat": false
+        },
+        {
+            "template": "assets/targets/forge-1.18.2/build.gradle.ft",
             "destination": "targets/forge-1.18.2/build.gradle",
             "reformat": false,
             "condition": "$TARGET_PLAN.contains('\"blueprint\":\"forge-1.18.2\"')"
+        },
+        {
+            "template": "assets/targets/forge-1.18.2/gradle/wrapper/gradle-wrapper.properties.ft",
+            "destination": "gradle/target-blueprints/forge-1.18.2/gradle/wrapper/gradle-wrapper.properties",
+            "reformat": false
         },
         {
             "template": "assets/targets/forge-1.18.2/gradle/wrapper/gradle-wrapper.properties.ft",
@@ -530,9 +585,19 @@
         },
         {
             "template": "assets/targets/forge-1.18.2/gradle.properties.ft",
+            "destination": "gradle/target-blueprints/forge-1.18.2/gradle.properties",
+            "reformat": false
+        },
+        {
+            "template": "assets/targets/forge-1.18.2/gradle.properties.ft",
             "destination": "targets/forge-1.18.2/gradle.properties",
             "reformat": false,
             "condition": "$TARGET_PLAN.contains('\"blueprint\":\"forge-1.18.2\"')"
+        },
+        {
+            "template": "assets/targets/forge-1.18.2/gradlew.ft",
+            "destination": "gradle/target-blueprints/forge-1.18.2/gradlew",
+            "reformat": false
         },
         {
             "template": "assets/targets/forge-1.18.2/gradlew.ft",
@@ -542,9 +607,19 @@
         },
         {
             "template": "assets/targets/forge-1.18.2/gradlew.bat.ft",
+            "destination": "gradle/target-blueprints/forge-1.18.2/gradlew.bat",
+            "reformat": false
+        },
+        {
+            "template": "assets/targets/forge-1.18.2/gradlew.bat.ft",
             "destination": "targets/forge-1.18.2/gradlew.bat",
             "reformat": false,
             "condition": "$TARGET_PLAN.contains('\"blueprint\":\"forge-1.18.2\"')"
+        },
+        {
+            "template": "assets/targets/forge-1.18.2/settings.gradle.ft",
+            "destination": "gradle/target-blueprints/forge-1.18.2/settings.gradle",
+            "reformat": false
         },
         {
             "template": "assets/targets/forge-1.18.2/settings.gradle.ft",
@@ -554,9 +629,19 @@
         },
         {
             "template": "assets/targets/forge-1.18.2/src/main/resources/META-INF/mods.toml.ft",
+            "destination": "gradle/target-blueprints/forge-1.18.2/src/main/resources/META-INF/mods.toml",
+            "reformat": false
+        },
+        {
+            "template": "assets/targets/forge-1.18.2/src/main/resources/META-INF/mods.toml.ft",
             "destination": "targets/forge-1.18.2/src/main/resources/META-INF/mods.toml",
             "reformat": false,
             "condition": "$TARGET_PLAN.contains('\"blueprint\":\"forge-1.18.2\"')"
+        },
+        {
+            "template": "assets/targets/forge-1.19.2/build.gradle.ft",
+            "destination": "gradle/target-blueprints/forge-1.19.2/build.gradle",
+            "reformat": false
         },
         {
             "template": "assets/targets/forge-1.19.2/build.gradle.ft",
@@ -566,9 +651,19 @@
         },
         {
             "template": "assets/targets/forge-1.19.2/gradle/wrapper/gradle-wrapper.properties.ft",
+            "destination": "gradle/target-blueprints/forge-1.19.2/gradle/wrapper/gradle-wrapper.properties",
+            "reformat": false
+        },
+        {
+            "template": "assets/targets/forge-1.19.2/gradle/wrapper/gradle-wrapper.properties.ft",
             "destination": "targets/forge-1.19.2/gradle/wrapper/gradle-wrapper.properties",
             "reformat": false,
             "condition": "$TARGET_PLAN.contains('\"blueprint\":\"forge-1.19.2\"')"
+        },
+        {
+            "template": "assets/targets/forge-1.19.2/gradle.properties.ft",
+            "destination": "gradle/target-blueprints/forge-1.19.2/gradle.properties",
+            "reformat": false
         },
         {
             "template": "assets/targets/forge-1.19.2/gradle.properties.ft",
@@ -578,9 +673,19 @@
         },
         {
             "template": "assets/targets/forge-1.19.2/gradlew.ft",
+            "destination": "gradle/target-blueprints/forge-1.19.2/gradlew",
+            "reformat": false
+        },
+        {
+            "template": "assets/targets/forge-1.19.2/gradlew.ft",
             "destination": "targets/forge-1.19.2/gradlew",
             "reformat": false,
             "condition": "$TARGET_PLAN.contains('\"blueprint\":\"forge-1.19.2\"')"
+        },
+        {
+            "template": "assets/targets/forge-1.19.2/gradlew.bat.ft",
+            "destination": "gradle/target-blueprints/forge-1.19.2/gradlew.bat",
+            "reformat": false
         },
         {
             "template": "assets/targets/forge-1.19.2/gradlew.bat.ft",
@@ -590,9 +695,19 @@
         },
         {
             "template": "assets/targets/forge-1.19.2/settings.gradle.ft",
+            "destination": "gradle/target-blueprints/forge-1.19.2/settings.gradle",
+            "reformat": false
+        },
+        {
+            "template": "assets/targets/forge-1.19.2/settings.gradle.ft",
             "destination": "targets/forge-1.19.2/settings.gradle",
             "reformat": false,
             "condition": "$TARGET_PLAN.contains('\"blueprint\":\"forge-1.19.2\"')"
+        },
+        {
+            "template": "assets/targets/forge-1.19.2/src/main/resources/META-INF/mods.toml.ft",
+            "destination": "gradle/target-blueprints/forge-1.19.2/src/main/resources/META-INF/mods.toml",
+            "reformat": false
         },
         {
             "template": "assets/targets/forge-1.19.2/src/main/resources/META-INF/mods.toml.ft",
@@ -833,9 +948,19 @@
         },
         {
             "template": "assets/targets/neoforge-26.2.0/build.gradle.ft",
+            "destination": "gradle/target-blueprints/neoforge-26.2.0/build.gradle",
+            "reformat": false
+        },
+        {
+            "template": "assets/targets/neoforge-26.2.0/build.gradle.ft",
             "destination": "targets/neoforge-26.2.0/build.gradle",
             "reformat": false,
             "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.2.0\"')"
+        },
+        {
+            "template": "assets/targets/neoforge-26.2.0/gradle/wrapper/gradle-wrapper.properties.ft",
+            "destination": "gradle/target-blueprints/neoforge-26.2.0/gradle/wrapper/gradle-wrapper.properties",
+            "reformat": false
         },
         {
             "template": "assets/targets/neoforge-26.2.0/gradle/wrapper/gradle-wrapper.properties.ft",
@@ -845,9 +970,19 @@
         },
         {
             "template": "assets/targets/neoforge-26.2.0/gradle.properties.ft",
+            "destination": "gradle/target-blueprints/neoforge-26.2.0/gradle.properties",
+            "reformat": false
+        },
+        {
+            "template": "assets/targets/neoforge-26.2.0/gradle.properties.ft",
             "destination": "targets/neoforge-26.2.0/gradle.properties",
             "reformat": false,
             "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.2.0\"')"
+        },
+        {
+            "template": "assets/targets/neoforge-26.2.0/gradlew.ft",
+            "destination": "gradle/target-blueprints/neoforge-26.2.0/gradlew",
+            "reformat": false
         },
         {
             "template": "assets/targets/neoforge-26.2.0/gradlew.ft",
@@ -857,15 +992,30 @@
         },
         {
             "template": "assets/targets/neoforge-26.2.0/gradlew.bat.ft",
+            "destination": "gradle/target-blueprints/neoforge-26.2.0/gradlew.bat",
+            "reformat": false
+        },
+        {
+            "template": "assets/targets/neoforge-26.2.0/gradlew.bat.ft",
             "destination": "targets/neoforge-26.2.0/gradlew.bat",
             "reformat": false,
             "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.2.0\"')"
         },
         {
             "template": "assets/targets/neoforge-26.2.0/settings.gradle.ft",
+            "destination": "gradle/target-blueprints/neoforge-26.2.0/settings.gradle",
+            "reformat": false
+        },
+        {
+            "template": "assets/targets/neoforge-26.2.0/settings.gradle.ft",
             "destination": "targets/neoforge-26.2.0/settings.gradle",
             "reformat": false,
             "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.2.0\"')"
+        },
+        {
+            "template": "assets/targets/neoforge-26.2.0/src/main/resources/META-INF/neoforge.mods.toml.ft",
+            "destination": "gradle/target-blueprints/neoforge-26.2.0/src/main/resources/META-INF/neoforge.mods.toml",
+            "reformat": false
         },
         {
             "template": "assets/targets/neoforge-26.2.0/src/main/resources/META-INF/neoforge.mods.toml.ft",

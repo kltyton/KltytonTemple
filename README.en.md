@@ -8,7 +8,7 @@ The template is based on [SighsTemple](https://github.com/Tower-of-Sighs/SighsTe
 
 ## Create or migrate
 
-The Minecraft Development integration provides project fields and version selectors. Minecraft, Loader and Fabric API versions come from official catalogs. Java requirements come from the selected Minecraft release's metadata. Selected versions are written to target configuration; refreshing the catalog does not upgrade existing projects.
+The Minecraft Development integration provides project fields and version selectors, with Simplified Chinese and English. Minecraft and Loader catalogs come from Mojang, Fabric, Forge and NeoForge. Fabric API versions are queried for the selected Minecraft release from Fabric's project on Modrinth. Java requirements come from Minecraft metadata. Selected versions are written to target configuration; refreshing the catalog does not upgrade existing projects.
 
 - [Install the extension and create a project](docs/wiki/Minecraft-Development.en.md)
 - [Migrate an existing project](docs/wiki/Migration.en.md)
@@ -102,6 +102,8 @@ integrations/              IDEA, wizard and migration interface
 
 Maintain shared algorithms and game logic once in `common`, compiled by every target. Version and Loader layers contain actual API differences behind small SPI boundaries; avoid copying entire implementations. `shared_sources` selects each target's source layers. Java files with the same name do not override each other. Resource precedence is target > loader > version > common. Handwritten resources stay in `src/main/resources`; datagen output goes to each target's `src/generated/resources`.
 
+Migration uses the same organization as a newly created project. Each Minecraft release has one `versions/<minecraft>` difference layer; each Loader/Minecraft pair has one target build root. Move sources and required build pipelines into these locations, then retire replaced project shells, IDE links and caches. No version folder is needed without actual differences. Generated projects include build controls and migration interfaces; IDEA plugin sources and wizard assets stay in the template repository.
+
 The IDEA extension links targets as independent Gradle projects. “Sync All Gradle Projects” includes all linked targets, each using its own Wrapper. Development integration code is not packaged in mod JARs.
 
 ## Baseline targets
@@ -114,7 +116,7 @@ The IDEA extension links targets as independent Gradle projects. “Sync All Gra
 | 26.1.2 | Fabric, NeoForge |
 | 26.2.0 | NeoForge |
 
-The nine examples do not limit the dropdown catalog. It includes additional official releases within the blueprint range. New combinations still require matching APIs and build acceptance; selecting a release does not port existing mod code to it.
+The nine examples do not limit the dropdown catalog. It includes official Minecraft releases from 1.17 within the available build pipelines, with Loader and Fabric API release history. “Recommended” is a label, not a filter. The form can include preview Loader/API releases. New combinations still require matching APIs and build acceptance; selecting a release does not port existing mod code to it.
 
 [Architecture](docs/dev/architecture.md) · [CI](docs/CI_TARGET_DISCOVERY.md) · [Publishing](docs/PUBLISHING.md)
 

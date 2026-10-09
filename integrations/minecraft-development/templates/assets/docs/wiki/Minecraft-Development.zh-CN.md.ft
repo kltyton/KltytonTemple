@@ -3,7 +3,7 @@
 
 [English](Minecraft-Development.en.md) · [Wiki](Home.zh-CN.md)
 
-本教程对应 IntelliJ IDEA 2026.2.3、Minecraft Development 2026.2-1.8.22 和 KltytonTemple 1.1.1。其他 IDEA 版本需使用对应版本的扩展；当前 ZIP 的兼容范围为 IDEA 262。
+本教程对应 IntelliJ IDEA 2026.2.3、Minecraft Development 2026.2-1.8.22 和 KltytonTemple 1.2.0。其他 IDEA 版本需使用对应版本的扩展；当前 ZIP 的兼容范围为 IDEA 262。
 
 KltytonTemple 是 Minecraft Development 的附加扩展。原有 Forge、Fabric、NeoForge、MultiLoader、Architectury 模板仍可使用。
 
@@ -16,7 +16,7 @@ KltytonTemple 是 Minecraft Development 的附加扩展。原有 Forge、Fabric�
 扩展源代码在 `integrations/idea-plugin`，本地生成的安装包在：
 
 ```text
-integrations/idea-plugin/build/distributions/KltytonTemple-IDEA-1.1.1.zip
+integrations/idea-plugin/build/distributions/KltytonTemple-IDEA-1.2.0.zip
 ```
 
 需要自行构建扩展时，使用模板的 Java 25 Wrapper。两个参数分别指向 IDEA 安装目录和 Minecraft Development 插件目录：
@@ -34,7 +34,7 @@ Windows 使用该目录内的 `gradlew.bat`。构建的是 IDEA 扩展，不会�
 1. 打开 IDEA 的“设置”。
 2. 进入左侧“插件”，选择“已安装”页签。
 3. 点击页签右侧的齿轮，选择“从磁盘安装插件”。
-4. 选择上面的 `KltytonTemple-IDEA-1.1.1.zip`。选择 ZIP 本身，不需要解压，也不要选择 Minecraft Development 的 JAR。
+4. 选择上面的 `KltytonTemple-IDEA-1.2.0.zip`。选择 ZIP 本身，不需要解压，也不要选择 Minecraft Development 的 JAR。
 5. 按 IDEA 提示应用。若明确要求重启，先保存正在编辑的工程，再重启。
 6. 在已安装列表中搜索 `KltytonTemple`，确认扩展启用。
 
@@ -72,26 +72,36 @@ Mod ID 用小写字母、数字和下划线，如 `temple_demo`。Java 包名使
 
 ## 5. 选择版本和加载器
 
-版本区域先加载官方目录。下载完成后：
+版本区域先加载官方目录。“界面语言 / Language”可选择“简体中文”或“English”，目标区域的文字随选择切换。下载完成后：
 
-1. 在 `Minecraft` 下拉列表选择版本。
-2. `Loader` 只列出该版本有可用构建蓝图和官方数据的加载器。
-3. 在 `Loader version` 选择版本；Fabric 还要选择 `Fabric API`。
+1. 在“Minecraft 版本 / Minecraft version”下拉列表选择版本。
+2. “加载器 / Loader”只列出该版本有可用构建蓝图和官方数据的加载器。
+3. 在“加载器版本 / Loader version”选择版本；Fabric 还要选择“Fabric API 版本”。字段旁的数字是当前筛选后的选项数量。带“推荐 / Recommended”的版本默认推荐，但历史版本仍可选择。
 4. Java 要求自动显示，无需手填 Java 或 Gradle 数字。
-5. 点击 `Add target`，把这个组合加入下方表格。
+5. 点击“添加目标 / Add target”，把这个组合加入下方表格。兼容版本和 Java 元数据尚未读完时按钮不可用。
 6. 同一个 Minecraft 需要第二个加载器时，切换 Loader 后再添加。
 7. 多版本工程重复上述步骤。表格中的每一行就是一个目标。
-8. 删除某行时选中它，再使用 `Remove selected`。至少保留一个目标。
+8. 删除某行时选中它，再使用“移除所选目标 / Remove selected”。至少保留一个目标。
 
 例如要维护 Fabric 和 NeoForge 的 1.21.1：先添加 `1.21.1 + fabric`，再添加 `1.21.1 + neoforge`。这会生成两个独立目标，而不是两个共用依赖的假模块。
 
-`Refresh versions` 重新下载目录，不会改写已加入表格的组合。当前目录提供正式版本，构建蓝图从 Minecraft 1.18.2 起；Forge 新旧构建世代分别处理。九个基线样例不是可选版本总数。
+“刷新版本目录 / Refresh versions”重新下载目录，不会改写已加入表格的组合。“显示预发布版本 / Include preview versions”控制 Loader/API 的 beta、alpha、RC 等选项，不会将历史正式版隐藏。Minecraft 列表当前提供构建管线覆盖的 1.17 起正式版本；Forge 新旧构建世代分别处理。九个基线样例不是可选版本总数。
+
+| 字段 | 数据来源与筛选 |
+| --- | --- |
+| Minecraft、Java | Mojang version manifest 与该版本的 Java 元数据 |
+| Fabric Loader | Fabric Meta 的 `/v2/versions/loader/<minecraft>`，保留完整兼容列表 |
+| Fabric API | Modrinth 上 Fabric 官方项目的版本 API，按 `game_versions` 精确过滤 |
+| Forge | Forge Maven 的版本目录，按 Minecraft 分组 |
+| NeoForge | NeoForge Maven 的版本目录，按 Minecraft 分组；预发布项按复选框筛选 |
+
+这些来源提供发布记录。蓝图负责生成对应世代的构建入口，已有游戏代码仍需适配；目录中出现一个版本不代表该版本已通过本工程构建。网络失败会显示读取失败，工具链区域的错误详情提示保留具体 HTTP/URL 或异常，便于检查 IDEA 代理与对应服务。
 
 ## 6. 导入全部 Gradle 目标
 
 创建后打开新工程，等待根 Gradle 工程加载。扩展读取 `temple_idea_project=true` 与目标配置，把每个目标关联为独立 Gradle 工程。
 
-已有工程需在根 `gradle.properties` 中设置 `temple_idea_project=true`。1.1.1 会监听根标记和目标配置的变化；安装或更新扩展后重新打开工程，使当前工程加载新的关联监听器。
+已有工程需在根 `gradle.properties` 中设置 `temple_idea_project=true`。扩展会监听根标记和目标配置的变化；安装或更新扩展后重新打开工程，使当前工程加载新的关联监听器。
 
 在 Gradle 窗口使用“同步所有 Gradle 项目”。同步结束后应同时看到根工程和各目标；每个 `targets/<loader>-<minecraft>` 都应具有对应模块和源码类路径。
 
@@ -110,6 +120,8 @@ Mod ID 用小写字母、数字和下划线，如 `temple_demo`。Java 包名使
 - 发布：对应平台任务打开表单，凭据只交给当前发布进程。
 
 共享源码不等于共享游戏 API。升级目标之后，仍要处理对应版本的代码差异。
+
+直接通过 Gradle `createProject` 创建工程时，同样使用这张目标表格。Mod 许可证有常用选项，也允许填写其他有效许可证；新工程目录右侧的“浏览”可选择父目录并指定新目录名称。生成器拒绝覆盖已经存在的目录。扩展开发源码和向导资产留在模板仓库，不会复制进新模组工程。
 
 ## 8. 常见问题
 

@@ -11,7 +11,7 @@ Locate the template checkout containing buildSrc, targets and integrations. Read
 
 For a new project, use the Minecraft Development wizard or the native Gradle createProject form. The target selector reads official catalogs; it does not upgrade existing target pins. Adding a catalog version is scaffolding, not proof of compatibility.
 
-For migration, read [migration.md](references/migration.md). Move production sources into the template layers and consolidate shared logic in common. Identify the actual build system and preserve required transforms and task dependencies. Use the repository's Chinese or English prompt when the developer needs a copyable request:
+For migration, read [migration.md](references/migration.md). Use the generator's file policy as the reference for a fresh project with the same target matrix. Move production sources into the template layers, consolidate shared logic in common, move required transforms and task dependencies into canonical builds, and retire the replaced project shells. No duplicate version trees or parallel old controllers may remain. Use the repository's Chinese or English prompt when the developer needs a copyable request:
 - ../../prompts/migrate.zh-CN.md
 - ../../prompts/migrate.en.md
 

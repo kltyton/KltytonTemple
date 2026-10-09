@@ -5,6 +5,8 @@ Give this prompt to an AI that can read the project. Fill in the paths, edit sco
 ```text
 Fully migrate this Minecraft mod project to KltytonTemple and continue development in its source layout.
 Maintain shared logic once in common; version and Loader layers contain only necessary differences.
+The result must have the same organization as a project created with KltytonTemple for this target matrix.
+Do not add a second set of entry points beside the old template or point new tasks at old project trees.
 
 Existing project: <absolute path>
 KltytonTemple: <absolute path or pinned commit>
@@ -20,6 +22,10 @@ package and mod ID from the files rather than folder names.
 Identify official MDKs, MultiLoader, Stonecutter, Architectury, SighsTemple
 or a combination. Read integrations/skills/kltyton-temple/SKILL.md from
 KltytonTemple, then the migration reference matching the existing build.
+Read the project generator and build conventions to determine the generated project's file list,
+source ownership and Gradle roots. Under source-only, derive that list from source without
+running generation or creating a test project. Map each old file's purpose, destination,
+consumers and retirement action.
 
 Required outcome:
 - Preserve every existing target's Wrapper, runtime/compiler JDK, mappings,
@@ -46,22 +52,34 @@ Required outcome:
   at the migrated layers and update source/resource paths, access hooks,
   Mixins, producer dependencies and publishing paths. Merge remaining shared
   implementations so a common feature needs no per-version duplicate edits.
-- Preserve actual Stonecutter preprocessing and Architectury transformation,
-  expect/actual and runtime linkage. Identify their producers and consumers;
-  do not remove them or replace task dependencies with generated-directory paths.
+- Keep at most one maintained versions/<minecraft> directory per Minecraft release,
+  named with the release number. Do not keep both 1.20.1 and ProjectName-1.20.1.
+  Create a version layer only for actual differences. Each Loader/Minecraft pair has
+  one target build root; different Loaders consume the same version layer.
+- Move required preprocessing, transformations, expect/actual and runtime linkage
+  into the new project's gradle conventions and target entry points, retaining their
+  producer/consumer semantics. Do not leave an old Stonecutter or Architectury
+  controller project in place as a second build structure.
 - Preserve mod ID, group, package, entry class and copyright. Retain no
   example namespaces, template mod IDs or template publishing project IDs.
 - Refuse existing output directories. Preserve unrelated changes, private
   configuration, saves and local dependencies. Make no unrequested backups.
+- Retire the replaced project shell after identifying file ownership: old settings/build,
+  Wrappers, module descriptors, .project/.classpath/.settings, IDE links, build/bin/.gradle
+  and generated directories. Move production sources and handwritten assets first.
+  Identify the maintenance location of saves and private configuration before cleanup;
+  do not delete them with the shell. Do not keep retired files inside old/legacy/backup trees.
 - Finish production changes before running the exact acceptance contract.
   Run no Gradle, tests, datagen or clients during a source-only phase, but
   still complete the actual source migration and consolidation.
 - Report the target matrix, path mapping, changed files, actual commands and
   results. Separate source completion, IDE import, builds, release-package
-  checks and game acceptance. Inspect actual common consumers, remaining
-  target differences and stale paths; visible IDE modules do not prove migration.
-  Remove obsolete duplicate sources and project entry points while preserving
-  saves, private configuration, handwritten assets and still-used artifacts.
+  checks and game acceptance. Compare directories, source owners, Gradle roots,
+  IDE links and stale paths against the newly generated project structure.
+  Inspect common consumers and justify every remaining version/Loader difference.
+  Old cache-only project trees, duplicate version directories, copied shared classes
+  or tasks still invoking old controllers mean migration is incomplete.
+  Visible IDE modules cannot substitute for these checks.
 
 For a capability gap, identify its task dependency or call chain and implement
 the smallest suitable adaptation. Do not replace it with disabled features,

@@ -54,7 +54,7 @@ public final class TargetsProperty extends CreatorProperty<String> {
                         value.afterPropagation(requestor);
                         return Unit.INSTANCE;
                     })
-                    .validationOnApply((builder, component) -> selection.selections().isEmpty() ? new ValidationInfo("Select at least one target", selection) : null);
+                    .validationOnApply((builder, component) -> selection.selections().isEmpty() ? new ValidationInfo(selection.messages().get("selectTarget"), selection) : null);
             return Unit.INSTANCE;
         });
     }

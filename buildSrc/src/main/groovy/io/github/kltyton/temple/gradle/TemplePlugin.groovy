@@ -24,7 +24,7 @@ final class TemplePlugin implements Plugin<Project> {
         Properties identity = ProjectFiles.read(new File(root, 'gradle.properties'))
         File active = new File(root, '.temple/active-target')
         String selected = active.isFile() ? active.getText('UTF-8').trim() : identity.getProperty('temple_default_target')
-        TargetDefinition current = targets.find { it.id == selected } ?: targets.first()
+        TargetDefinition current = selected ? targets.find { it.id == selected } : targets.first()
         JavaToolchainService toolchains = project.extensions.getByType(JavaToolchainService)
 
         project.tasks.register('listTargets') {
@@ -70,7 +70,8 @@ final class TemplePlugin implements Plugin<Project> {
         project.tasks.register('selectTarget') {
             group = 'temple'
             description = '显示根任务当前使用的默认目标。'
-            doLast { project.logger.lifecycle("当前目标 ${current.id}；每个目标分组均提供 select 任务。") }
+            doLast { project.logger.lifecycle(current ? "当前目标 ${current.id}；每个目标分组均提供 select 任务。" :
+                    "默认目标 ${selected} 不存在；使用 select_<target> 选择已有目标。") }
         }
         registerDialog(project, toolchains, 'createProject', ProjectDialog, null)
         registerDialog(project, toolchains, 'addTarget', TargetDialog, null)
@@ -115,12 +116,22 @@ final class TemplePlugin implements Plugin<Project> {
             description = '构建全部独立目标，使用各自 Wrapper 与 Java 工具链。'
             dependsOn buildTasks
         }
-        project.tasks.named('build') { dependsOn "build_${current.taskSuffix()}" }
-        registerTarget(project, toolchains, current, 'runClient', 'runClient', 'temple')
-        registerTarget(project, toolchains, current, 'runServer', 'runServer', 'temple')
-        String currentDatagen = current.properties.getProperty('datagen_task')
-        if (currentDatagen) {
-            registerTarget(project, toolchains, current, 'runDatagen', currentDatagen, 'temple')
+        if (current != null) {
+            project.tasks.named('build') { dependsOn "build_${current.taskSuffix()}" }
+            registerTarget(project, toolchains, current, 'runClient', 'runClient', 'temple')
+            registerTarget(project, toolchains, current, 'runServer', 'runServer', 'temple')
+            String currentDatagen = current.properties.getProperty('datagen_task')
+            if (currentDatagen) registerTarget(project, toolchains, current, 'runDatagen', currentDatagen, 'temple')
+        } else {
+            project.tasks.named('build') {
+                doFirst { throw new IllegalArgumentException("Default target does not exist: ${selected}. Use select_<target>.") }
+            }
+            ['runClient', 'runServer', 'runDatagen'].each { action ->
+                project.tasks.register(action) {
+                    group = 'temple'
+                    doLast { throw new IllegalArgumentException("Default target does not exist: ${selected}. Use select_<target>.") }
+                }
+            }
         }
         project.tasks.register('verifyAllDistributions') {
             group = 'verification'

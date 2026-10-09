@@ -6,9 +6,14 @@ import java.nio.file.StandardCopyOption
 
 final class ProjectFiles {
     static final Set<String> EXCLUDED = ['.git', '.idea', '.gradle', '.temple', '.omo', '.codex', '.agents',
-                                         'build', 'run', 'runs', 'out', '__pycache__', 'node_modules', 'libs'] as Set
+                                         '.settings', 'build', 'run', 'runs', 'out', '__pycache__', 'node_modules', 'libs'] as Set
     static final Set<String> PRIVATE_FILES = ['AGENT.md', 'AGENTS.md', 'AGENTS.override.md', 'CLAUDE.md',
-                                              'GEMINI.md', 'NEXT_AGENT.md', 'temple.local.properties'] as Set
+                                              'GEMINI.md', 'NEXT_AGENT.md', 'temple.local.properties', '.project', '.classpath'] as Set
+    static final Set<String> PROJECT_ROOTS = ['buildSrc', 'common', 'versions', 'loaders', 'targets',
+                                              'gradle', 'integrations', 'docs', '.github'] as Set
+    static final Set<String> PROJECT_ROOT_FILES = ['build.gradle', 'settings.gradle', 'gradle.properties',
+                                                   'gradlew', 'gradlew.bat', 'LICENSE', 'README.md', 'README.en.md',
+                                                   '.gitignore', '.gitattributes'] as Set
 
     static Properties read(File file) {
         Properties values = new Properties()
@@ -81,6 +86,15 @@ final class ProjectFiles {
         List<File> files = []
         collect(root, root, files)
         files
+    }
+
+    static List<File> projectFiles(File root) {
+        distributableFiles(root).findAll { File source ->
+            String relative = root.toPath().relativize(source.toPath()).toString().replace('\\', '/')
+            (relative.tokenize('/')[0] in PROJECT_ROOTS || relative in PROJECT_ROOT_FILES) &&
+                    !relative.startsWith('integrations/idea-plugin/') &&
+                    !relative.startsWith('integrations/minecraft-development/')
+        }
     }
 
     private static void collect(File base, File directory, List<File> into) {

@@ -3,6 +3,7 @@ package io.github.kltyton.temple.integration
 import groovy.json.JsonOutput
 import io.github.kltyton.temple.workspace.ProjectFiles
 import io.github.kltyton.temple.workspace.TargetDefinition
+import io.github.kltyton.temple.workspace.TargetPlan
 
 final class MinecraftTemplates {
     static void export(File root, File output) {
@@ -11,17 +12,11 @@ final class MinecraftTemplates {
         String original = identity.getProperty('mod_java_package', identity.getProperty('mod_group_id'))
         File assets = new File(output, 'assets')
         assets.mkdirs()
-        Set<String> blueprints = ['fabric-1.20.1', 'fabric-26.1.2', 'forge-1.20.1',
-                                   'neoforge-1.21.1', 'neoforge-26.1.2'] as Set
+        Set<String> blueprints = TargetPlan.BLUEPRINTS as Set
         List<Map<String, Object>> files = []
-        Set<String> roots = ['buildSrc', 'common', 'versions', 'loaders', 'gradle', 'targets', 'integrations', 'docs', '.github'] as Set
-        Set<String> rootFiles = ['build.gradle', 'settings.gradle', 'gradle.properties', 'gradlew', 'gradlew.bat',
-                                  'LICENSE', 'README.md', 'README.en.md', '.gitignore', '.gitattributes'] as Set
-        ProjectFiles.distributableFiles(root).each { File source ->
+        ProjectFiles.projectFiles(root).each { File source ->
             String relative = root.toPath().relativize(source.toPath()).toString().replace('\\', '/')
-            if (relative == 'gradle.properties' || relative.startsWith('integrations/minecraft-development/') ||
-                    relative.startsWith('integrations/idea-plugin/') ||
-                    !(relative.tokenize('/')[0] in roots || relative in rootFiles) || source.name.endsWith('.jar')) { return }
+            if (relative == 'gradle.properties' || source.name.endsWith('.jar')) { return }
             String destination = relative
             String content = source.getText('UTF-8')
             if (source.name.endsWith('.java') && relative.tokenize('/')[0] in ['common', 'versions', 'loaders', 'targets']) {
@@ -66,11 +61,11 @@ final class MinecraftTemplates {
                 [name:'MOD_ID', type:'string', label:'Mod ID', default:'my_mod', validator:'[a-z][a-z0-9_]{1,63}',
                  derives:[parents:['PROJECT_NAME'], method:'replace',
                           parameters:[regex:'[^a-z0-9_]+', replacement:'_', lowercase:true, maxLength:64]]],
-                [name:'MOD_NAME', type:'string', label:'Mod 名称', inheritFrom:'PROJECT_NAME', default:'My Mod'],
+                [name:'MOD_NAME', type:'string', label:'Mod 名称 / Mod name', inheritFrom:'PROJECT_NAME', default:'My Mod'],
                 [name:'TARGET_PLAN', type:'kltyton_targets', label:'Minecraft / Loader'],
-                [name:'AUTHORS', type:'string', label:'作者', default:'kltyton'],
-                [name:'LICENSE', type:'string', label:'许可证', default:'MIT'],
-                [name:'DESCRIPTION', type:'string', label:'描述', default:'A Minecraft mod.'],
+                [name:'AUTHORS', type:'string', label:'作者 / Authors', default:'kltyton'],
+                [name:'LICENSE', type:'string', label:'许可证 / License', default:'MIT'],
+                [name:'DESCRIPTION', type:'string', label:'描述 / Description', default:'A Minecraft mod.'],
                 [name:'JDK', type:'jdk', default:21, order:20]
             ],
             files: files,

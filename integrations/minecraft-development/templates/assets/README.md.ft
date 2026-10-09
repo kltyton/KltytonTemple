@@ -9,7 +9,7 @@
 
 ## 创建与迁移
 
-Minecraft Development 集成提供 Mod 信息和版本表单。Minecraft、Loader、Fabric API 使用下拉列表，数据来自对应官方目录；Java 要求来自所选 Minecraft 的官方元数据。选定版本写入目标配置，刷新目录不会升级已有项目。
+Minecraft Development 集成提供 Mod 信息和版本表单，支持简体中文与 English 切换。Minecraft 和 Loader 读取 Mojang、Fabric、Forge、NeoForge 的目录；Fabric API 按 Minecraft 版本查询 Fabric 项目在 Modrinth 发布的版本。Java 要求来自 Minecraft 官方元数据。选定版本写入目标配置，刷新目录不会升级已有项目。
 
 - [安装扩展与创建工程](docs/wiki/Minecraft-Development.zh-CN.md)
 - [现有工程迁移](docs/wiki/Migration.zh-CN.md)
@@ -103,6 +103,8 @@ integrations/              IDEA、向导与迁移接口
 
 通用算法和业务逻辑在 `common` 中维护一份，每个目标编译这份源码。版本和 Loader 层只保留实际 API 差异；通过小范围 SPI 接入，不复制整套实现。`shared_sources` 指定各目标使用的源码层。Java 同名源文件不覆盖；资源优先级为 target > loader > version > common。手写资源留在 `src/main/resources`，datagen 输出进入目标的 `src/generated/resources`。
 
+迁移工程采用与新建工程相同的组织方式。每个版本只有一个 `versions/<minecraft>` 差异层，每个 Loader/Minecraft 组合只有一个目标构建根。旧工程的源码和必要构建链路迁入这些位置后，清退被替代的工程壳、IDE 关联与缓存。没有实际差异时无需创建版本目录。新建工程包含构建控制代码和迁移接口；IDEA 插件源码与向导资产留在模板仓库。
+
 IDEA 扩展将目标关联为独立 Gradle 工程，“同步所有 Gradle 项目”覆盖全部已关联目标，各自使用自己的 Wrapper。开发控制层不进入模组 JAR。
 
 ## 基线目标
@@ -115,7 +117,7 @@ IDEA 扩展将目标关联为独立 Gradle 工程，“同步所有 Gradle 项�
 | 26.1.2 | Fabric、NeoForge |
 | 26.2.0 | NeoForge |
 
-九个样例不限制版本下拉列表。目录会提供构建蓝图范围内的其他正式版本；新组合仍需匹配 API 和实际构建验收，已有模组不会因为选了新版本就自动适配。
+九个样例不限制版本下拉列表。目录从 Minecraft 1.17 起提供当前构建管线覆盖的正式版本；Loader 和 Fabric API 保留可用历史版本，“推荐”只是标记。预发布 Loader/API 可通过表单筛选开启。新组合仍需匹配 API 和实际构建验收，已有模组不会因为选了新版本就自动适配。
 
 [架构](docs/dev/architecture.md) · [CI](docs/CI_TARGET_DISCOVERY.md) · [发布](docs/PUBLISHING.md)
 

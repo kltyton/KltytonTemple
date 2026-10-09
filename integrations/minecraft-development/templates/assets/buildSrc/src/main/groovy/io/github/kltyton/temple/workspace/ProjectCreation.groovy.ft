@@ -17,15 +17,10 @@ final class ProjectCreation {
         Properties old = ProjectFiles.read(new File(template, 'gradle.properties'))
         String oldPackage = old.getProperty('mod_java_package', old.getProperty('mod_group_id'))
         String newPackage = identity.getProperty('mod_java_package', identity.getProperty('mod_group_id'))
-        List<File> files = ProjectFiles.distributableFiles(template)
-        Set<String> roots = ['buildSrc', 'common', 'versions', 'loaders', 'targets', 'gradle', 'integrations', 'docs', '.github'] as Set
-        Set<String> rootFiles = ['build.gradle', 'settings.gradle', 'gradle.properties', 'gradlew', 'gradlew.bat',
-                                  'LICENSE', 'README.md', 'README.en.md', '.gitignore', '.gitattributes'] as Set
+        List<File> files = ProjectFiles.projectFiles(template)
         files = files.findAll { File file ->
             String relative = base.relativize(file.toPath()).toString().replace('\\', '/')
-            String first = relative.tokenize('/')[0]
-            (first in roots || relative in rootFiles) &&
-                    (!relative.startsWith('targets/') || relative.tokenize('/')[1] in selected)
+            !relative.startsWith('targets/') || relative.tokenize('/')[1] in selected
         }
         output.mkdirs()
         files.each { File source ->
@@ -43,7 +38,7 @@ final class ProjectCreation {
         old.remove('publish_modrinth_project_id')
         old.setProperty('temple_default_target', selected.first())
         ProjectFiles.write(new File(output, 'gradle.properties'), old)
-        ['fabric-1.20.1', 'fabric-26.1.2', 'forge-1.20.1', 'neoforge-1.21.1', 'neoforge-26.1.2'].each { name ->
+        TargetPlan.BLUEPRINTS.each { name ->
             File blueprint = new File(template, "targets/${name}")
             if (blueprint.isDirectory()) {
                 ProjectFiles.distributableFiles(blueprint).each { source ->
