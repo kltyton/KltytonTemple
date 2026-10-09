@@ -18,6 +18,10 @@ Read project rules, Git status, settings/build/gradle.properties, Wrappers,
 Loader metadata, source layers, access configuration, datagen, run and
 publishing configuration. Confirm every version, Loader, JDK, mapping,
 package and mod ID from the files rather than folder names.
+Confirm the original Gradle DSL and the selected Groovy or Kotlin DSL for the output.
+Use that DSL consistently without parallel build.gradle/build.gradle.kts or settings files
+in the same directory. Preserve task/dependency semantics and plugin pins when translating
+script syntax; this does not change the mod source language.
 
 Identify official MDKs, MultiLoader, Stonecutter, Architectury, SighsTemple
 or a combination. Read integrations/skills/kltyton-temple/SKILL.md from

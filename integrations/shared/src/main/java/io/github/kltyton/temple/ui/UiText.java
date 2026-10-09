@@ -6,6 +6,7 @@ import java.util.Map;
 public final class UiText {
     private static final Map<String, String[]> WORDS = Map.ofEntries(
             Map.entry("language", new String[]{"界面语言", "Language"}),
+            Map.entry("buildDsl", new String[]{"Gradle 脚本语言", "Gradle script language"}),
             Map.entry("minecraft", new String[]{"Minecraft 版本", "Minecraft version"}),
             Map.entry("loader", new String[]{"加载器", "Loader"}),
             Map.entry("loaderVersion", new String[]{"加载器版本", "Loader version"}),

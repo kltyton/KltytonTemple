@@ -15,3 +15,5 @@ common 保存跨目标共享的算法、业务规则和资源。代码在各目�
 Minecraft Development 集成使用其 .mcdev.template.json、Local 仓库和公开扩展点。KltytonTemple 扩展增加官方版本下拉和目标表格。模板文件经 Velocity 生成，Gradle 代码用字面量块保护；Wrapper 二进制使用模板资产编码，初次导入时解码为 JAR。IDEA 扩展及构建控制代码不进入模组发行包。
 
 Gradle 新建表单和 Minecraft Development 导出共用 ProjectFiles.projectFiles 的文件选择规则。新工程包含共享构建代码、目标蓝图及迁移文档，排除 IDE 插件开发工程、向导资产、私人配置和 Eclipse 元数据。版本目录按实际差异建立，每个 Minecraft 版本只维护一份；旧工程目录与缓存不属于迁移后的结构。
+
+Groovy/Kotlin DSL 选择由 temple_build_dsl 记录。KTS 构建脚本在 integrations/shared 的 resources 中维护，由 BuildScripts 安装到新建工程的标准 Gradle 路径；根工程和 IDEA 插件均打包同一份资源。目标插件版本从已有 gradle.properties 读取，BuildScripts 不更改 pins。控制插件实现继续复用 buildSrc 的 Groovy/Java 代码，游戏源码也不因 DSL 分叉。

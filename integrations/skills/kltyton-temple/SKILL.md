@@ -21,6 +21,8 @@ Read root identity and every relevant target's properties, Wrapper, settings/bui
 
 Target IDs use loader-Minecraft; task suffixes replace hyphens and dots with underscores. Targets are independent Gradle projects, preserving their Wrapper and Gradle JDK. Default selection affects root task aliases, not IDE module inclusion.
 
+Read build.gradle(.kts) and settings.gradle(.kts) according to the actual project. Creation supports Groovy and Kotlin DSL; temple_build_dsl records the selection for additional targets. Keep only one build/settings entry per directory and preserve task semantics and pins when converting script syntax. The mod source language and common ownership are independent of the Gradle DSL.
+
 - listTargets reports configured target facts.
 - select_<suffix> sets the default target.
 - build_<suffix>, runClient_<suffix>, runServer_<suffix>, runDatagen_<suffix> execute the target's own Wrapper.

@@ -3,7 +3,7 @@
 
 [中文](Minecraft-Development.zh-CN.md) · [Wiki](Home.en.md)
 
-This guide targets IntelliJ IDEA 2026.2.3, Minecraft Development 2026.2-1.8.22 and KltytonTemple 1.2.0. The current ZIP targets IDEA build 262. Other IDEA releases need a matching extension build.
+This guide targets IntelliJ IDEA 2026.2.3, Minecraft Development 2026.2-1.8.22 and KltytonTemple 1.3.1. The current ZIP targets IDEA build 262. Other IDEA releases need a matching extension build.
 
 KltytonTemple adds to Minecraft Development. Its existing Forge, Fabric, NeoForge, MultiLoader and Architectury templates remain available.
 
@@ -14,7 +14,7 @@ Install and enable Minecraft Development and Gradle support. Register JDK 21 in 
 The extension source is in `integrations/idea-plugin`. Its build creates:
 
 ```text
-integrations/idea-plugin/build/distributions/KltytonTemple-IDEA-1.2.0.zip
+integrations/idea-plugin/build/distributions/KltytonTemple-IDEA-1.3.1.zip
 ```
 
 To build it yourself, use the template's Java 25 Wrapper and specify the IDEA installation and Minecraft Development plugin directories:
@@ -32,7 +32,7 @@ On Windows, use that directory's `gradlew.bat`. This builds the extension, not a
 1. Open IDEA Settings.
 2. Select Plugins, then Installed.
 3. Open the gear menu beside the tabs and choose Install Plugin from Disk.
-4. Select `KltytonTemple-IDEA-1.2.0.zip` itself. Do not extract it or select Minecraft Development's JAR.
+4. Select `KltytonTemple-IDEA-1.3.1.zip` itself. Do not extract it or select Minecraft Development's JAR.
 5. Apply the change. If IDEA explicitly requires a restart, save current work before restarting.
 6. Search Installed for KltytonTemple and confirm it is enabled.
 
@@ -65,6 +65,10 @@ Do not select the checkout root, the assets subdirectory or the new mod's destin
 4. Fill in project name and location. Keep the new project separate from the template checkout.
 5. Fill in mod ID, display name, authors, description, license and build coordinates.
 6. Use JDK 21 for the root Gradle control project. Target compiler and Gradle JDKs are maintained independently.
+
+Gradle script language selects `Groovy (.gradle)` or `Kotlin DSL (.gradle.kts)`. It covers root builds, target builds, settings, buildSrc build scripts and shared conventions. KTS projects share the same common sources and build, run and publishing tasks.
+
+The generated root and targets keep only the selected build/settings files. KTS projects do not retain parallel Groovy entries. Additional targets follow this choice through addTarget. The root gradle.properties records `temple_build_dsl`; changing this property alone does not rewrite an existing project's scripts.
 
 Use lowercase letters, digits and underscores for mod IDs, such as `temple_demo`. Use your own Java namespace, such as `io.github.kltyton.templedemo`; retain no example group or template mod ID.
 

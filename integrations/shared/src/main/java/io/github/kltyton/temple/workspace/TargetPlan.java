@@ -27,6 +27,7 @@ public final class TargetPlan {
 
     public static void apply(Path root, List<Map<String, String>> selections, boolean removeBlueprints) throws IOException {
         if (selections.isEmpty()) throw new IllegalArgumentException("Select at least one target");
+        BuildScripts.dsl(root);
         Path targets = root.resolve("targets").toRealPath();
         Set<String> wanted = new LinkedHashSet<>(), blueprints = new LinkedHashSet<>();
         List<PlannedTarget> plans = new ArrayList<>();
@@ -115,11 +116,12 @@ public final class TargetPlan {
                 wrapper.remove("distributionSha256Sum");
                 write(to.resolve("gradle/wrapper/gradle-wrapper.properties"), wrapper);
             }
-            if (row.containsKey("forgegradle_version")) {
+            if (row.containsKey("forgegradle_version") && BuildScripts.dsl(root) == BuildScripts.Dsl.GROOVY) {
                 Files.writeString(to.resolve("build.gradle"), "plugins {\n    id 'net.minecraftforge.gradle' version \"${forgegradle_version}\"\n" +
                         "    id 'me.modmuss50.mod-publish-plugin' version \"${publish_plugin_version}\"\n}\n" +
                         "apply from: file('../../gradle/target-conventions/forgegradle.gradle')\n");
             }
+            BuildScripts.prepareTarget(root, to);
         }
         for (Path path : retired.stream().sorted(Comparator.reverseOrder()).toList()) Files.delete(path);
         Properties identity = read(root.resolve("gradle.properties"));
@@ -133,7 +135,7 @@ public final class TargetPlan {
     }
 
     private static boolean knownBlueprintFile(String file) {
-        return Set.of("build.gradle", "settings.gradle", "gradle.properties", "gradlew", "gradlew.bat",
+        return Set.of("build.gradle", "settings.gradle", "build.gradle.kts", "settings.gradle.kts", "gradle.properties", "gradlew", "gradlew.bat",
                 "gradle/wrapper/gradle-wrapper.jar", "gradle/wrapper/gradle-wrapper.properties",
                 "gradle/wrapper/kltyton-wrapper.base64", "src/main/resources/fabric.mod.json",
                 "src/main/resources/META-INF/mods.toml", "src/main/resources/META-INF/neoforge.mods.toml").contains(file);

@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.openapi.project.Project;
 import io.github.kltyton.temple.workspace.TargetPlan;
+import io.github.kltyton.temple.workspace.BuildScripts;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -23,6 +24,7 @@ public final class TargetsFinalizer implements CreatorFinalizer {
                 }.getType());
         try {
             TargetPlan.apply(Path.of(context.getProjectFileDirectory()), selections, true);
+            BuildScripts.createProject(Path.of(context.getProjectFileDirectory()));
         } catch (IOException error) {
             throw new IllegalStateException("Could not create selected targets", error);
         }

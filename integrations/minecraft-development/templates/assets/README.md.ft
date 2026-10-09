@@ -11,6 +11,8 @@
 
 Minecraft Development 集成提供 Mod 信息和版本表单，支持简体中文与 English 切换。Minecraft 和 Loader 读取 Mojang、Fabric、Forge、NeoForge 的目录；Fabric API 按 Minecraft 版本查询 Fabric 项目在 Modrinth 发布的版本。Java 要求来自 Minecraft 官方元数据。选定版本写入目标配置，刷新目录不会升级已有项目。
 
+“Gradle 脚本语言”可选择 Groovy（`.gradle`）或 Kotlin DSL（`.gradle.kts`）。两种方式使用同一套目标配置、源层和 Gradle 任务。KTS 工程的根工程、目标工程、settings、buildSrc 构建脚本及公共构建约定都生成 KTS；`addTarget` 沿用工程的选择。模组源码语言不随这个选项改变。
+
 - [安装扩展与创建工程](docs/wiki/Minecraft-Development.zh-CN.md)
 - [现有工程迁移](docs/wiki/Migration.zh-CN.md)
 - [可复制的迁移提示词](integrations/prompts/migrate.zh-CN.md)
@@ -78,6 +80,7 @@ Minecraft Development 集成提供 Mod 信息和版本表单，支持简体中�
 | `mod_description` | 根 | 描述 |
 | `temple_default_target` | 根 | 没有本地选择记录时的默认目标 |
 | `temple_idea_project` | 根 | 启用 IDEA 扩展的独立目标关联 |
+| `temple_build_dsl` | 根 | `groovy` 或 `kotlin`；新建表单写入，后续新增目标沿用对应脚本语言 |
 | `loader`、`minecraft_version` | 目标 | 加载器和 Minecraft 版本 |
 | `loader_version` | 目标 | Loader 版本 |
 | `fabric_api_version` | Fabric 目标 | Fabric API 版本 |

@@ -11,6 +11,8 @@ The template is based on [SighsTemple](https://github.com/Tower-of-Sighs/SighsTe
 
 The Minecraft Development integration provides project fields and version selectors, with Simplified Chinese and English. Minecraft and Loader catalogs come from Mojang, Fabric, Forge and NeoForge. Fabric API versions are queried for the selected Minecraft release from Fabric's project on Modrinth. Java requirements come from Minecraft metadata. Selected versions are written to target configuration; refreshing the catalog does not upgrade existing projects.
 
+Gradle script language offers Groovy (`.gradle`) and Kotlin DSL (`.gradle.kts`). Both use the same target configuration, source layers and tasks. Kotlin projects generate KTS root builds, target builds, settings, buildSrc build scripts and shared conventions. `addTarget` follows the project's selection. This choice does not change the mod source language.
+
 - [Install the extension and create a project](docs/wiki/Minecraft-Development.en.md)
 - [Migrate an existing project](docs/wiki/Migration.en.md)
 - [Copy the migration prompt](integrations/prompts/migrate.en.md)
@@ -78,6 +80,7 @@ Root `gradle.properties` defines mod identity. Target files define build environ
 | `mod_description` | Root | Description |
 | `temple_default_target` | Root | Default target when no local selection exists |
 | `temple_idea_project` | Root | Enable independent target linking in IDEA |
+| `temple_build_dsl` | Root | `groovy` or `kotlin`; written by creation forms and used for additional target scripts |
 | `loader`, `minecraft_version` | Target | Loader and Minecraft release |
 | `loader_version` | Target | Loader version |
 | `fabric_api_version` | Fabric target | Fabric API version |

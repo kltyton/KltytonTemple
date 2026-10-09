@@ -4,6 +4,7 @@
 import io.github.kltyton.temple.workspace.ProjectCreation
 import io.github.kltyton.temple.workspace.ProjectFiles
 import io.github.kltyton.temple.workspace.TargetPlan
+import io.github.kltyton.temple.workspace.BuildScripts
 import groovy.json.JsonSlurper
 import java.awt.BorderLayout
 import java.awt.GridLayout
@@ -23,6 +24,8 @@ final class ProjectDialog {
         Map<String, JLabel> labels = fields.collectEntries { name, field -> [(name): new JLabel()] }
         JPanel properties = new JPanel(new GridLayout(0, 2, 12, 8))
         JButton browse = new JButton()
+        JComboBox<BuildScripts.Dsl> dsl = new JComboBox<>(BuildScripts.Dsl.values())
+        JLabel dslLabel = new JLabel()
         JComboBox<String> license = new JComboBox<>(['MIT', 'Apache-2.0', 'BSD-3-Clause', 'MPL-2.0', 'LGPL-3.0-only', 'GPL-3.0-only', 'All Rights Reserved'] as String[])
         license.editable = true
         license.addActionListener { fields.mod_license.text = license.selectedItem.toString() }
@@ -35,12 +38,15 @@ final class ProjectDialog {
                 properties.add(directory)
             } else { properties.add(name == 'mod_license' ? license : field) }
         }
+        properties.add(dslLabel)
+        properties.add(dsl)
         TargetSelectionPanel targets = new TargetSelectionPanel(
                 { text -> new JsonSlurper().parseText(text) } as java.util.function.Function,
                 [], { selections -> } as java.util.function.Consumer)
         def translate = {
             labels.each { name, label -> label.text = name == 'mod_id' ? 'Mod ID' : targets.messages().get(keys[name]) }
             browse.text = targets.messages().get('browse')
+            dslLabel.text = targets.messages().get('buildDsl')
         }
         translate()
         targets.addPropertyChangeListener('language', { event -> translate() } as java.beans.PropertyChangeListener)
@@ -59,6 +65,7 @@ final class ProjectDialog {
                 if (selected.empty) { throw new IllegalArgumentException(targets.messages().get('selectTarget')) }
                 Properties identity = new Properties()
                 fields.findAll { it.key != 'directory' }.each { name, field -> identity.setProperty(name, field.text.trim()) }
+                identity.setProperty('temple_build_dsl', dsl.selectedItem.id)
                 if (!fields.directory.text.trim()) { throw new IllegalArgumentException(targets.messages().get('chooseDirectory')) }
                 File created = ProjectCreation.create(root, new File(fields.directory.text.trim()), identity,
                         selected.collect { it.blueprint }.unique())

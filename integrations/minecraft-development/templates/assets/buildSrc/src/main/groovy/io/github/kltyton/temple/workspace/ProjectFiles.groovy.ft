@@ -13,6 +13,7 @@ final class ProjectFiles {
     static final Set<String> PROJECT_ROOTS = ['buildSrc', 'common', 'versions', 'loaders', 'targets',
                                               'gradle', 'integrations', 'docs', '.github'] as Set
     static final Set<String> PROJECT_ROOT_FILES = ['build.gradle', 'settings.gradle', 'gradle.properties',
+                                                    'build.gradle.kts', 'settings.gradle.kts',
                                                    'gradlew', 'gradlew.bat', 'LICENSE', 'README.md', 'README.en.md',
                                                    '.gitignore', '.gitattributes'] as Set
 
@@ -44,7 +45,11 @@ final class ProjectFiles {
                     throw new IllegalArgumentException("Invalid ${key}: ${target}")
                 }
             }
-            ['build.gradle', 'settings.gradle', 'gradle/wrapper/gradle-wrapper.properties'].each { name ->
+            ['build', 'settings'].each { name ->
+                int count = ["${name}.gradle", "${name}.gradle.kts"].count { new File(target, it).isFile() }
+                if (count != 1) { throw new IllegalArgumentException("Expected one ${name}.gradle or ${name}.gradle.kts: ${target}") }
+            }
+            ['gradle/wrapper/gradle-wrapper.properties'].each { name ->
                 if (!new File(target, name).isFile()) { throw new IllegalArgumentException("Missing ${name}: ${target}") }
             }
             sourceLayers(root, values)

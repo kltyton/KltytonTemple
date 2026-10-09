@@ -8,3 +8,4 @@ mod_version=${BUILD_COORDS.version}
 mod_license=${LICENSE}
 mod_description=${DESCRIPTION}
 temple_idea_project=true
+temple_build_dsl=${BUILD_DSL}

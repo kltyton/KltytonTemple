@@ -10,6 +10,10 @@ final class ProjectCreation {
             throw new IllegalArgumentException("Choose a new directory outside the template: ${output}")
         }
         ProjectFiles.identity(identity)
+        BuildScripts.Dsl requestedDsl = BuildScripts.Dsl.parse(identity.getProperty('temple_build_dsl', 'groovy'))
+        if (new File(template, 'build.gradle.kts').isFile() && requestedDsl == BuildScripts.Dsl.GROOVY) {
+            throw new IllegalArgumentException('This source project uses Kotlin DSL. Select Kotlin DSL or use the original KltytonTemple template for Groovy.')
+        }
         List<TargetDefinition> all = ProjectFiles.targets(template)
         Set<String> selected = chosen.empty ? all.collect { it.id } as Set : chosen as Set
         if (!all.collect { it.id }.containsAll(selected)) { throw new IllegalArgumentException('Unknown target selection') }
@@ -49,6 +53,7 @@ final class ProjectCreation {
         File state = new File(output, '.temple/active-target')
         state.parentFile.mkdirs()
         state.setText(selected.first() + '\n', 'UTF-8')
+        BuildScripts.createProject(output.toPath())
         output
     }
 

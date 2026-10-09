@@ -43,7 +43,7 @@ final class MinecraftTemplates {
         String properties = '#[[org.gradle.jvmargs=-Xmx3G -Dfile.encoding=UTF-8\norg.gradle.daemon=false\n]]#' +
                 'mod_id=${MOD_ID}\nmod_name=${MOD_NAME}\nmod_group_id=${BUILD_COORDS.groupId}\n' +
                 'mod_authors=${AUTHORS}\nmod_version=${BUILD_COORDS.version}\nmod_license=${LICENSE}\n' +
-                'mod_description=${DESCRIPTION}\ntemple_idea_project=true\n'
+                'mod_description=${DESCRIPTION}\ntemple_idea_project=true\ntemple_build_dsl=${BUILD_DSL}\n'
         new File(assets, 'project.properties.ft').setText(properties, 'UTF-8')
         files.add([template: 'assets/project.properties.ft', destination: 'gradle.properties', reformat: false])
         File wrapper = new File(root, 'gradle/wrapper/gradle-wrapper.jar')
@@ -57,6 +57,7 @@ final class MinecraftTemplates {
         }
         def descriptor = [version: 3, label: 'KltytonTemple', group: 'mod',
             properties: [
+                [name:'BUILD_DSL', type:'kltyton_build_dsl', label:'Gradle 脚本语言 / Gradle script language', default:'groovy', order:9],
                 [name:'BUILD_COORDS', type:'build_system_coordinates', order:10],
                 [name:'MOD_ID', type:'string', label:'Mod ID', default:'my_mod', validator:'[a-z][a-z0-9_]{1,63}',
                  derives:[parents:['PROJECT_NAME'], method:'replace',

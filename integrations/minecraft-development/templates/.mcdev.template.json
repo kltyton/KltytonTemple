@@ -4,6 +4,13 @@
     "group": "mod",
     "properties": [
         {
+            "name": "BUILD_DSL",
+            "type": "kltyton_build_dsl",
+            "label": "Gradle \u811a\u672c\u8bed\u8a00 / Gradle script language",
+            "default": "groovy",
+            "order": 9
+        },
+        {
             "name": "BUILD_COORDS",
             "type": "build_system_coordinates",
             "order": 10
@@ -281,8 +288,68 @@
             "reformat": false
         },
         {
+            "template": "assets/integrations/shared/src/main/java/io/github/kltyton/temple/workspace/BuildScripts.java.ft",
+            "destination": "integrations/shared/src/main/java/io/github/kltyton/temple/workspace/BuildScripts.java",
+            "reformat": false
+        },
+        {
             "template": "assets/integrations/shared/src/main/java/io/github/kltyton/temple/workspace/TargetPlan.java.ft",
             "destination": "integrations/shared/src/main/java/io/github/kltyton/temple/workspace/TargetPlan.java",
+            "reformat": false
+        },
+        {
+            "template": "assets/integrations/shared/src/main/resources/io/github/kltyton/temple/dsl/kotlin/build.gradle.kts.ft",
+            "destination": "integrations/shared/src/main/resources/io/github/kltyton/temple/dsl/kotlin/build.gradle.kts",
+            "reformat": false
+        },
+        {
+            "template": "assets/integrations/shared/src/main/resources/io/github/kltyton/temple/dsl/kotlin/buildSrc/build.gradle.kts.ft",
+            "destination": "integrations/shared/src/main/resources/io/github/kltyton/temple/dsl/kotlin/buildSrc/build.gradle.kts",
+            "reformat": false
+        },
+        {
+            "template": "assets/integrations/shared/src/main/resources/io/github/kltyton/temple/dsl/kotlin/gradle/target-conventions/base.gradle.kts.ft",
+            "destination": "integrations/shared/src/main/resources/io/github/kltyton/temple/dsl/kotlin/gradle/target-conventions/base.gradle.kts",
+            "reformat": false
+        },
+        {
+            "template": "assets/integrations/shared/src/main/resources/io/github/kltyton/temple/dsl/kotlin/gradle/target-conventions/publish.gradle.kts.ft",
+            "destination": "integrations/shared/src/main/resources/io/github/kltyton/temple/dsl/kotlin/gradle/target-conventions/publish.gradle.kts",
+            "reformat": false
+        },
+        {
+            "template": "assets/integrations/shared/src/main/resources/io/github/kltyton/temple/dsl/kotlin/settings.gradle.kts.ft",
+            "destination": "integrations/shared/src/main/resources/io/github/kltyton/temple/dsl/kotlin/settings.gradle.kts",
+            "reformat": false
+        },
+        {
+            "template": "assets/integrations/shared/src/main/resources/io/github/kltyton/temple/dsl/kotlin/targets/fabric-mapped.gradle.kts.ft",
+            "destination": "integrations/shared/src/main/resources/io/github/kltyton/temple/dsl/kotlin/targets/fabric-mapped.gradle.kts",
+            "reformat": false
+        },
+        {
+            "template": "assets/integrations/shared/src/main/resources/io/github/kltyton/temple/dsl/kotlin/targets/fabric-unmapped.gradle.kts.ft",
+            "destination": "integrations/shared/src/main/resources/io/github/kltyton/temple/dsl/kotlin/targets/fabric-unmapped.gradle.kts",
+            "reformat": false
+        },
+        {
+            "template": "assets/integrations/shared/src/main/resources/io/github/kltyton/temple/dsl/kotlin/targets/forge.gradle.kts.ft",
+            "destination": "integrations/shared/src/main/resources/io/github/kltyton/temple/dsl/kotlin/targets/forge.gradle.kts",
+            "reformat": false
+        },
+        {
+            "template": "assets/integrations/shared/src/main/resources/io/github/kltyton/temple/dsl/kotlin/targets/forgegradle.gradle.kts.ft",
+            "destination": "integrations/shared/src/main/resources/io/github/kltyton/temple/dsl/kotlin/targets/forgegradle.gradle.kts",
+            "reformat": false
+        },
+        {
+            "template": "assets/integrations/shared/src/main/resources/io/github/kltyton/temple/dsl/kotlin/targets/neoforge.gradle.kts.ft",
+            "destination": "integrations/shared/src/main/resources/io/github/kltyton/temple/dsl/kotlin/targets/neoforge.gradle.kts",
+            "reformat": false
+        },
+        {
+            "template": "assets/integrations/shared/src/main/resources/io/github/kltyton/temple/dsl/kotlin/targets/settings.gradle.kts.ft",
+            "destination": "integrations/shared/src/main/resources/io/github/kltyton/temple/dsl/kotlin/targets/settings.gradle.kts",
             "reformat": false
         },
         {

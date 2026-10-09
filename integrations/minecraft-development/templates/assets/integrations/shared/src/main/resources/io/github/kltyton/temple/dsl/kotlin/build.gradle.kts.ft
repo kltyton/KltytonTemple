@@ -1,0 +1,5 @@
+#set($END_BLOCK = ']]#')
+#[[plugins {
+    id("io.github.kltyton.temple")
+}
+]]#

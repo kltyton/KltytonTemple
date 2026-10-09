@@ -17,6 +17,9 @@ KltytonTemple：<绝对路径或固定提交链接>
 先读取工程规则、Git 状态、settings/build/gradle.properties、Wrapper、
 Loader 元数据、源码层、访问配置、datagen、运行和发布配置。
 确认所有版本、加载器、Java、映射、包名及 modid，不凭目录名推断。
+确认原项目的 Gradle DSL，以及输出工程选择 Groovy 还是 Kotlin DSL。
+构建入口统一到所选 DSL；同一目录不能同时保留 build.gradle 和 build.gradle.kts，
+settings 也只保留一份。脚本语法迁移保留任务、依赖与插件版本，不改变模组源码语言。
 
 识别原工程使用官方 MDK、MultiLoader、Stonecutter、Architectury、
 SighsTemple，还是这些方案的组合。
