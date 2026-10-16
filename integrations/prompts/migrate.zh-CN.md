@@ -4,7 +4,7 @@
 
 ```text
 请将现有 Minecraft 模组工程完整迁移到 KltytonTemple，在模板结构中继续开发。
-通用逻辑只在 common 中维护一份，供所有目标使用；版本和 Loader 层只保留必要差异。
+通用逻辑只在 common/src/main 中维护一份，真实 API 差异在 common/src/compat 中用普通 Java 实现。
 最终工程要与使用相同目标矩阵、从 KltytonTemple 新建的工程具有相同组织方式。
 不要在原模板旁边另加一套入口，也不要让新入口继续指向旧工程树。
 
@@ -33,27 +33,32 @@ SighsTemple，还是这些方案的组合。
 - 保留每个已有目标的 Wrapper、运行/编译 Java、映射、Loader/API
   和构建插件版本，不顺手升级或添加发布目标。
 - 接入原生 Gradle 任务，让全部目标独立关联到 IDEA；
-  默认目标只决定根级 build/runClient 等任务的执行对象。
+  选择目标同时确定根级任务和 common 的 IDE 编辑环境，重新加载 Gradle 模型后生效。
 - 保留游戏源码、资源、注册、网络、Mixin/refmap、AT/AW/ClassTweaker、
   datagen、可选依赖、运行配置及发布链路。保留代码的内容和行为，不保留重复工程。
-- 先以当前主要开发目标为基准，将游戏源码和共享资源归入 common/src。
+- 先以当前主要开发目标为基准，将游戏源码和共享资源归入 common/src/main。
   比较所有现有版本和 Loader 的实现，并查询对应版本源码，确认真实 API 差异。
-  只有这些差异进入 versions/<minecraft>/src、loaders/<loader>/src 或目标自身的 src。
+  只有这些差异进入 common/src/compat 的对应适配位置；路径以 common 构建脚本为准。
+  按注册、网络、渲染等功能分包，没有差异就不建目录。
 - 对存在差异的类继续拆分：算法、业务规则、状态和资源处理回到 common；
   通过小范围、类型明确的 SPI 留下 API 调用、类型和生命周期的具体实现差异。
   不把几处 API 不同的整个大类复制到各版本，也不只按文件哈希判断能否共用。
 - 提取 SPI 时列出原调用的输入、输出和消费者，逐项保留数据与副作用。
   渲染适配保留原生材质、颜色、光照、法线及图层标识；存档和网络适配保留字段及往返语义。
   不用默认值掩盖丢失的数据，不因公共算法完成就漏掉平台消费者。
-- 所有已有目标编译同一份 common。shared_sources 指向迁移后的实际源码层；
+- 让各目标包含真实的 :common 模块，共享依赖在 common/build.gradle(.kts) 声明。
+  当前编辑目标的 :common.projectDir 必须映射到物理 common 目录；
+  共享 Java 和资源根只登记一个 IDE 所有者，不以显示名称或脚本文件存在代替模块接入。
+  所有目标使用同一份源码，common 使用各目标自己的 Minecraft/Loader 编译类路径；
   更新源码、资源、AT/AW/ClassTweaker、Mixin、生成任务和发布任务的路径与依赖。
   将各目标剩余的相同实现继续归并，直到通用功能无需逐版本重复修改。
-- versions 下每个 Minecraft 版本最多只有一个维护目录，命名为版本号；
-  不能同时留下 1.20.1 和 ProjectName-1.20.1。目录只有真实版本差异时才创建。
-  targets 下每个 Loader/Minecraft 组合只有一个构建根；不同加载器使用同一份版本层。
-- 原有预处理、转换、expect/actual 和运行时依赖仍被游戏代码使用时，
-  将生产者与消费者接入新工程的 gradle 构建约定和目标入口，保留原语义。
-  不能把整个旧 Stonecutter/Architectury 控制工程留在原地继续作为第二套工程。
+- 生产源码只在 common 中维护，不保留平行的 versions、loaders 或旧版本工程树。
+  同一份版本 API 适配由对应版本的所有 Loader 共用，Loader 适配也不复制公共算法。
+  targets 下每个 Loader/Minecraft 组合只有一个构建根，只放构建、元数据和必要目标内容。
+- 将 Stonecutter 的版本条件注释、常量替换和分支转换成普通 Java 适配与目标依赖配置。
+  不保留条件注释或源码预处理链；逐分支保留原有行为、输入、输出和副作用。
+  Architectury 的必要转换、expect/actual 与运行时依赖仍须保留完整消费者语义，
+  接入规范的 common/target 构建；清退旧控制工程，不保留第二套工程。
 - 保留 modid、group、包名、入口类和版权，不留下示例命名空间、
   模板 modid 或模板平台项目 ID。
 - 新目录拒绝覆盖；原地迁移保留用户改动、私有配置、存档和本地依赖。

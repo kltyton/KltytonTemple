@@ -12,13 +12,15 @@ Use the generator's file selection and build conventions as the structural refer
 
 ## Shared logic first
 
-Start with the active target's sources and shared resources in common/src. Compare all existing variants and read matching Minecraft/Loader sources before assigning a difference to a version or Loader layer.
+Start with the active target's sources and shared resources in common/src/main. Compare all existing variants and read matching Minecraft/Loader sources before assigning a difference to a version or Loader layer.
 
-Extract algorithms, business rules, state and resource handling into one common implementation. Differing imports or a few API calls do not justify copying a whole class. Use small typed SPI boundaries for the actual API/type/lifecycle differences, with concrete implementations in versions/<minecraft>/src, loaders/<loader>/src or target src. Identical file hashes help find immediate merges; they do not identify all shareable logic.
+Extract algorithms, business rules, state and resource handling into one common implementation. Differing imports or a few API calls do not justify copying a whole class. Use small typed SPI boundaries for the actual API/type/lifecycle differences, with concrete implementations in common/src/compat. Follow common/build.gradle(.kts) for exact Loader, Minecraft and combined adapter paths; create only directories with real content. Identical file hashes help find immediate merges; they do not identify all shareable logic.
 
 For each SPI extraction, map the original inputs, outputs, side effects and consumers. Rendering boundaries must retain native material attributes, colors, lighting, normals and layer identity. Persistence and networking boundaries retain fields and round-trip semantics. Shared algorithms are complete only when every platform consumer preserves that contract; defaults must not hide discarded data.
 
 Wire every target to the same common sources and the necessary variant implementations. Update resource, access-hook, Mixin, producer and publishing paths. Inspect consumers and remaining duplicate methods before declaring source migration complete. Remove obsolete copied sources and build entry points after their contents and callers are accounted for; preserve user data and required producer pipelines.
+
+Map the active target's :common.projectDir to the physical common directory. Shared Java and resource roots have one IDE owner; other targets consume the same files through their build tasks. Verify the native Gradle project directory and IDE ownership rather than inferring a module from its label or build file.
 
 ## Official Loader templates
 
@@ -30,15 +32,15 @@ Do not replace ForgeGradle with ModDevGradle across unsupported generations. The
 
 Inspect common sources and resources, loader entry points, source-set wiring, transformed artifacts and dependency scopes. Preserve the per-loader compile environment.
 
-Migrate shared game logic into common and isolate Loader API differences in their source layers. shared_sources must reference those migrated layers. Where the build consumes a transformed or shaded common artifact, retain its producer and consumer dependency rather than replacing it with file copies.
+Migrate shared game logic into common/src/main and isolate actual API differences under common/src/compat. Keep common as a real Java Library module with shared api/implementation/compileOnly/runtimeOnly scopes and each target's SDK classpath. Where the build consumes a transformed or shaded common artifact, retain its producer and consumer dependency rather than replacing it with file copies.
 
 ## Stonecutter
 
 Find stonecutter.gradle(.kts), settings/controller configuration, version nodes, constants, dependency swaps and preprocessing directives. Determine the exact preprocessing tasks from the current project; do not invent task names.
 
-Keep preprocessing before each target's compilation and keep generated-source paths distinct from handwritten sources. A generated directory listed in shared_sources without a producer dependency is incomplete.
+Translate every version branch into ordinary Java implementations under common/src/compat, retaining its inputs, outputs and side effects. Translate dependency swaps into the target's dependency configuration. Remove conditional comments and the preprocessing chain once all behavior has a normal source implementation.
 
-Move controller-owned generation into the new gradle conventions and target entry points. Preserve switches, producer dependencies, active-version editor support and publishing variants. Replaced controllers must have no remaining consumers at migration completion; a generated directory alone is not a replacement for the producer.
+Preserve the active editing SDK and publishing variants through the canonical Gradle module and target builds. Retire the replaced controller and its generated source copies; retain unrelated required resource producers.
 
 ## Architectury
 
@@ -52,7 +54,7 @@ Represent these relationships in the canonical target builds and gradle conventi
 
 Keep the existing target matrix, source precedence, metadata and Wrapper/Java pins. Replace obsolete command entry points with native Gradle tasks. Private machine configuration can be retired only after its required JDK/path information is represented by the new entry points.
 
-A prior one-target composite import must not remain the sole IDE model. Link the independent targets so Sync All includes the full matrix. Root default-target selection is a task convenience only.
+A prior one-target composite import must not remain the sole IDE model. Link the independent targets so Sync All includes the full matrix. Selection controls root aliases and the shared-source editing SDK after model reload.
 
 ## Acceptance and cleanup
 
@@ -62,4 +64,4 @@ Under an authorized build contract, execute only its exact targets, order and co
 
 Clean only files made obsolete by this migration. Keep licenses, handwritten assets, local dependencies and user data. Inspect the staged/public file list before delivery; public migration prompts and this reusable Skill are intentional product files, not private session records.
 
-Compare the final layout with the generated-project reference. Each Minecraft version has at most one versions/<minecraft> source layer; create no empty placeholder layers. Each Loader/Minecraft pair has one targets/<loader>-<minecraft> build root. Retire replaced settings/build/Wrapper files, Eclipse metadata (.project, .classpath, .settings), old IDE roots and old cache/build/bin/generated trees. Check actual file ownership before removing anything, and move user data to its confirmed maintenance location first. Do not retain retired trees as old/legacy/backup directories inside the project. Duplicate trees or leftover old controllers are unfinished migration even when their source folders are empty.
+Compare the final layout with the generated-project reference. Production sources belong to common/src/main or common/src/compat, with no parallel versions/loaders source roots and no empty placeholder adapters. Each Loader/Minecraft pair has one targets/<loader>-<minecraft> build root. Retire replaced settings/build/Wrapper files, Eclipse metadata (.project, .classpath, .settings), old IDE roots and old cache/build/bin/generated trees. Check actual file ownership before removing anything, and move user data to its confirmed maintenance location first. Do not retain retired trees as old/legacy/backup directories inside the project. Duplicate trees or leftover old controllers are unfinished migration even when their source folders are empty.

@@ -33,7 +33,8 @@ public final class TempleProjectActivity implements StartupActivity.DumbAware {
                 if (root != null && events.stream().anyMatch(event ->
                         event.getPath().equals(root + "/gradle.properties") ||
                         (event.getPath().startsWith(root + "/targets/") &&
-                                event.getPath().endsWith("/gradle.properties"))))
+                                (event.getPath().endsWith("/gradle.properties") ||
+                                        event.getPath().substring((root + "/targets/").length()).indexOf('/') < 0))))
                     ApplicationManager.getApplication().invokeLater(() -> linkTargets(project));
             }
         });
@@ -49,6 +50,13 @@ public final class TempleProjectActivity implements StartupActivity.DumbAware {
             List<Path> directories;
             try (var paths = Files.list(root.resolve("targets"))) {
                 directories = paths.filter(Files::isDirectory).sorted().toList();
+            }
+            Path targetsRoot = root.resolve("targets").toAbsolutePath().normalize();
+            for (GradleProjectSettings linked : new ArrayList<>(settings.getLinkedProjectsSettings())) {
+                Path directory = Path.of(linked.getExternalProjectPath()).toAbsolutePath().normalize();
+                if (targetsRoot.equals(directory.getParent()) && Files.notExists(directory)) {
+                    settings.unlinkExternalProject(linked.getExternalProjectPath());
+                }
             }
             for (Path directory : directories) {
                 if (!Files.isRegularFile(directory.resolve("gradle.properties"))) continue;

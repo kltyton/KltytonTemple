@@ -22,21 +22,21 @@ Compare these facts before and after migration. Template defaults must not overw
 | --- | --- |
 | Official MDK | Loader plugin, dependencies, run tasks, metadata and access hooks |
 | MultiLoader | Common producers/consumers, per-loader compilation and resource scope |
-| Stonecutter | Nodes, constants, dependency swaps and preprocessing dependencies moved into the new build conventions |
+| Stonecutter | Translate complete version-branch behavior to ordinary Java adapters and dependency swaps to target configuration |
 | Architectury | Common transformation, platform declarations, expect/actual, remapping and runtime linkage |
 | SighsTemple | Target matrix, source precedence, metadata and Wrapper/JDK pins |
 
-Listing a Stonecutter-generated folder as a source directory does not replace its producer task. Copying common sources does not replace Architectury transformations. Find actual task names in the existing configuration.
+Translate Stonecutter branches into ordinary Java adapters before removing their conditional comments and preprocessing chain. Required Architectury transforms still need their real producers and consumers.
 
 Preserve the original functionality while replacing its project shell. Move producers and consumers into the new `gradle` conventions and `targets` entries, then retire the replaced controllers. Do not keep two parallel build structures calling each other.
 
 ## New entry points
 
-Move the active target's game sources and shared resources into `common/src`, then compare all target implementations and read their matching version sources. Put evidenced API differences in version, Loader or target layers. Extract small SPI boundaries and move shared algorithms and business logic back into common; a few differing API calls do not justify copying an entire class per version.
+Move the active target's game sources and shared resources into `common/src/main`, then compare all target implementations and read their matching version sources. Put evidenced API differences in `common/src/compat`. Extract small SPI boundaries and move shared algorithms and business logic back into common; a few differing API calls do not justify copying an entire class per version.
 
-Point `shared_sources` at the migrated layers and update build, access-hook, Mixin, producer and publishing paths. Preserve handwritten-resource ownership. A shared feature should be maintained in common without duplicate edits to each version's implementation.
+Declare shared dependency scopes in `common/build.gradle(.kts)` and include a real `:common` module in each target with that target's SDK. Update build, access-hook, Mixin, producer and publishing paths. Preserve handwritten-resource ownership. A shared feature should be maintained in common without duplicate edits to each version's implementation.
 
-Keep one version directory, such as `versions/1.20.1`, without retaining `versions/ProjectName-1.20.1`. Different Loaders use that same version layer, each with its own `targets/<loader>-1.20.1` build root. Create no empty version folders without differences.
+Maintain sources inside common without parallel version or Loader project trees. Add adapters only for actual differences, group Java packages by feature and retain one independent target build per Loader/Minecraft combination.
 
 Root tasks offer target operations and default-target aliases. IDEA links targets independently, each with its own Wrapper. Sync All does not omit other targets merely because Forge 1.20.1 is the default.
 

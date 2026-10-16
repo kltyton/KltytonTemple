@@ -3,8 +3,8 @@
 目标操作使用原生 Gradle 任务；命令与参数见 README。IDEA 安装及向导步骤见 docs/wiki/Minecraft-Development.zh-CN.md。
 
 1. 读取原工程 settings/build/gradle.properties、元数据、源层、Mixin/AT/AW 与依赖。
-2. 保留版本/Loader/Java/Wrapper pins 和游戏行为，把共享源码与资源迁入 common；查询源码确认差异后，通过 SPI 分离必要的版本和 Loader 实现，继续把共用算法归并回 common。目标事实以 targets/<id>/gradle.properties 为准。
-3. 启用 IDEA 扩展的独立目标关联；默认目标只影响根任务，不限制导入矩阵。
+2. 保留版本/Loader/Java/Wrapper pins 和游戏行为，把共享源码与资源迁入 common/src/main；共享依赖在 common/build.gradle(.kts) 声明。查询源码确认差异后，用普通 Java 接口在 common/src/compat 实现必要适配，共用算法继续留在 main。目标事实以 targets/<id>/gradle.properties 为准。
+3. 启用 IDEA 扩展的独立目标关联；选择目标同时决定 common 的编辑环境，重新加载 Gradle 模型后生效；全部目标仍独立关联。
 4. 先完成授权生产批次。已有验收合同未授权时，不点构建、datagen、客户端或服务器任务。
 5. 构建成功、真实 JAR、客户端/服务器、玩法/视觉和远端发布分别报告。
 

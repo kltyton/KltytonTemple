@@ -5,7 +5,7 @@
 
 Keep multiple Minecraft versions and mod loaders in one repository. Each target owns its Wrapper, runtime JDK, compiler JDK, mappings and dependencies. Shared sources are compiled against each target's Minecraft classpath.
 
-The template is based on [SighsTemple](https://github.com/Tower-of-Sighs/SighsTemple). MultiLoader, Stonecutter and Architectury informed its layout. Their preprocessors, API transformations and runtime libraries are added only when the project needs them.
+The template is based on [SighsTemple](https://github.com/Tower-of-Sighs/SighsTemple). MultiLoader, Stonecutter and Architectury informed its layout. The common module and dependency scopes use native Gradle models. Version adapters are ordinary Java sources without conditional-comment preprocessing.
 
 ## Create or migrate
 
@@ -24,12 +24,11 @@ Run commands from the project root. Use `.\gradlew.bat` on Windows and `./gradle
 
 | Task | Purpose |
 | --- | --- |
-| `listTargets` | List target versions, Java requirements and Wrappers |
+| `listTargets` | List targets, Minecraft / Loader, compiler/runtime Java and CI settings |
 | `createProject` | Open the project form; refuse existing output directories |
 | `addTarget` | Open the target selector; refuse to replace existing targets |
-| `setupProject` | Initialize Wrappers and identity sources without building Minecraft |
-| `prepareIde` | Prepare identity sources for all targets |
-| `select_<target>` | Set the default target for root tasks |
+| `setupProject` | Initialize target Wrappers without building Minecraft |
+| `select_<target>` | Select the default target and common editing environment |
 | `build` | Build the default target |
 | `build_<target>` | Build one target |
 | `buildAllTargets` | Build all targets |
@@ -53,7 +52,7 @@ Replace hyphens and dots in target IDs with underscores: `fabric-1.21.1` becomes
 ./gradlew select_neoforge_26_1_2
 ```
 
-`runClient`, `runServer` and `runDatagen` address the default target. Selecting a default target does not remove other targets from IDEA.
+`runClient`, `runServer` and `runDatagen` address the default target. The selection also determines the common editing environment. Reload Gradle models to use that target's Minecraft, Loader and Java classpath for completion. All targets remain independently linked.
 
 `-PtemplePlan=true` prints target build/run plans and skips their child builds:
 
@@ -86,7 +85,6 @@ Root `gradle.properties` defines mod identity. Target files define build environ
 | `fabric_api_version` | Fabric target | Fabric API version |
 | `java_version` | Target | Java version for compiling game code |
 | `gradle_java_version` | Target | Java version for running target Gradle |
-| `shared_sources` | Target | Comma-separated source layers relative to the root |
 | `ci_enabled` | Target | Include the target in CI |
 | `datagen_task` | Target, optional | Configured resource-generation task; no datagen alias is registered when absent |
 
@@ -94,23 +92,25 @@ Loader and Minecraft ranges remain in target metadata properties. Each target's 
 
 ## Sources and resources
 
+Mod development has two primary directories:
+
 ```text
-common/src/                 Shared sources and resources
-versions/<minecraft>/src/   Version differences
-loaders/<loader>/src/       Loader entry points
-targets/<loader>-<mc>/      Target builds, metadata and cross-cutting differences
-gradle/target-conventions/  Build conventions
-buildSrc/                  Gradle entry points
-integrations/              IDEA, wizard and migration interface
+common/
+├── build.gradle(.kts)      Common module and shared dependencies
+└── src/
+    ├── main/              Shared Java and resources, grouped by feature
+    └── compat/            Adapters for actual API differences
+targets/
+└── <loader>-<minecraft>/  Independent build, Wrapper and Loader metadata
 ```
 
-Maintain shared algorithms and game logic once in `common`, compiled by every target. Version and Loader layers contain actual API differences behind small SPI boundaries; avoid copying entire implementations. `shared_sources` selects each target's source layers. Java files with the same name do not override each other. Resource precedence is target > loader > version > common. Handwritten resources stay in `src/main/resources`; datagen output goes to each target's `src/generated/resources`.
+Declare shared libraries with standard `api`, `implementation`, `compileOnly` and `runtimeOnly` scopes in `common/build.gradle(.kts)`. Each target includes a real `:common` module compiled against its own Minecraft/Loader environment. Common classes are merged into that target's release JAR.
 
-Forge and NeoForge datagen receive existing target and shared-layer `src/main/resources` directories through `--existing`, allowing providers to resolve maintained models, recipes and other resources. Generated directories are excluded from these inputs. Fabric continues to load shared resources through Loom's main resource set.
+Organize common Java packages by registration, networking, configuration, rendering and other actual features. Place only evidenced API differences in `common/src/compat`, connected through small ordinary Java interfaces. Create no empty adapter folders, copied business classes or version condition comments. The exact adapter paths are described in [Architecture](docs/dev/architecture.md).
 
-Migration uses the same organization as a newly created project. Each Minecraft release has one `versions/<minecraft>` difference layer; each Loader/Minecraft pair has one target build root. Move sources and required build pipelines into these locations, then retire replaced project shells, IDE links and caches. No version folder is needed without actual differences. Generated projects include build controls and migration interfaces; IDEA plugin sources and wizard assets stay in the template repository.
+Preserve handwritten resources. Datagen output remains in each target's `src/generated/resources`. Forge/NeoForge receive common and target resources as existing inputs; Fabric uses the corresponding main resource set.
 
-The IDEA extension links targets as independent Gradle projects. “Sync All Gradle Projects” includes all linked targets, each using its own Wrapper. Development integration code is not packaged in mod JARs.
+A migrated project follows the same structure as a new project. Move game implementations into common, retain independent target builds and necessary metadata, and retire old project shells once all consumers have moved. Build controls, IDEA extension code and wizard assets stay out of mod JARs.
 
 ## Baseline targets
 
@@ -120,7 +120,7 @@ The IDEA extension links targets as independent Gradle projects. “Sync All Gra
 | 1.20.1 | Fabric, Forge |
 | 1.21.1 | Fabric, NeoForge |
 | 26.1.2 | Fabric, NeoForge |
-| 26.2.0 | NeoForge |
+| 26.2 | NeoForge |
 
 The nine examples do not limit the dropdown catalog. It includes official Minecraft releases from 1.17 within the available build pipelines, with Loader and Fabric API release history. “Recommended” is a label, not a filter. The form can include preview Loader/API releases. New combinations still require matching APIs and build acceptance; selecting a release does not port existing mod code to it.
 

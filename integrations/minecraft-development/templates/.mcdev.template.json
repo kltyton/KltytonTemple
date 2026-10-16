@@ -169,6 +169,26 @@
             "reformat": false
         },
         {
+            "template": "assets/common/build.gradle.ft",
+            "destination": "common/build.gradle",
+            "reformat": false
+        },
+        {
+            "template": "assets/common/src/compat/fabric/java/io/github/kltyton/temple/TempleFabric.java.ft",
+            "destination": "common/src/compat/fabric/java/${BUILD_COORDS.groupId.replace(\".\", \"/\")}/TempleFabric.java",
+            "reformat": false
+        },
+        {
+            "template": "assets/common/src/compat/forge/java/io/github/kltyton/temple/TempleForge.java.ft",
+            "destination": "common/src/compat/forge/java/${BUILD_COORDS.groupId.replace(\".\", \"/\")}/TempleForge.java",
+            "reformat": false
+        },
+        {
+            "template": "assets/common/src/compat/neoforge/java/io/github/kltyton/temple/TempleNeoForge.java.ft",
+            "destination": "common/src/compat/neoforge/java/${BUILD_COORDS.groupId.replace(\".\", \"/\")}/TempleNeoForge.java",
+            "reformat": false
+        },
+        {
             "template": "assets/common/src/main/java/io/github/kltyton/temple/TempleCommon.java.ft",
             "destination": "common/src/main/java/${BUILD_COORDS.groupId.replace(\".\", \"/\")}/TempleCommon.java",
             "reformat": false
@@ -319,6 +339,11 @@
             "reformat": false
         },
         {
+            "template": "assets/integrations/shared/src/main/resources/io/github/kltyton/temple/dsl/kotlin/common/build.gradle.kts.ft",
+            "destination": "integrations/shared/src/main/resources/io/github/kltyton/temple/dsl/kotlin/common/build.gradle.kts",
+            "reformat": false
+        },
+        {
             "template": "assets/integrations/shared/src/main/resources/io/github/kltyton/temple/dsl/kotlin/gradle/target-conventions/base.gradle.kts.ft",
             "destination": "integrations/shared/src/main/resources/io/github/kltyton/temple/dsl/kotlin/gradle/target-conventions/base.gradle.kts",
             "reformat": false
@@ -376,21 +401,6 @@
         {
             "template": "assets/LICENSE.ft",
             "destination": "LICENSE",
-            "reformat": false
-        },
-        {
-            "template": "assets/loaders/fabric/src/main/java/io/github/kltyton/temple/TempleFabric.java.ft",
-            "destination": "loaders/fabric/src/main/java/${BUILD_COORDS.groupId.replace(\".\", \"/\")}/TempleFabric.java",
-            "reformat": false
-        },
-        {
-            "template": "assets/loaders/forge/src/main/java/io/github/kltyton/temple/TempleForge.java.ft",
-            "destination": "loaders/forge/src/main/java/${BUILD_COORDS.groupId.replace(\".\", \"/\")}/TempleForge.java",
-            "reformat": false
-        },
-        {
-            "template": "assets/loaders/neoforge/src/main/java/io/github/kltyton/temple/TempleNeoForge.java.ft",
-            "destination": "loaders/neoforge/src/main/java/${BUILD_COORDS.groupId.replace(\".\", \"/\")}/TempleNeoForge.java",
             "reformat": false
         },
         {
@@ -1025,81 +1035,81 @@
             "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.1.2\"')"
         },
         {
-            "template": "assets/targets/neoforge-26.2.0/build.gradle.ft",
-            "destination": "gradle/target-blueprints/neoforge-26.2.0/build.gradle",
+            "template": "assets/targets/neoforge-26.2/build.gradle.ft",
+            "destination": "gradle/target-blueprints/neoforge-26.2/build.gradle",
             "reformat": false
         },
         {
-            "template": "assets/targets/neoforge-26.2.0/build.gradle.ft",
-            "destination": "targets/neoforge-26.2.0/build.gradle",
+            "template": "assets/targets/neoforge-26.2/build.gradle.ft",
+            "destination": "targets/neoforge-26.2/build.gradle",
             "reformat": false,
-            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.2.0\"')"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.2\"')"
         },
         {
-            "template": "assets/targets/neoforge-26.2.0/gradle/wrapper/gradle-wrapper.properties.ft",
-            "destination": "gradle/target-blueprints/neoforge-26.2.0/gradle/wrapper/gradle-wrapper.properties",
+            "template": "assets/targets/neoforge-26.2/gradle/wrapper/gradle-wrapper.properties.ft",
+            "destination": "gradle/target-blueprints/neoforge-26.2/gradle/wrapper/gradle-wrapper.properties",
             "reformat": false
         },
         {
-            "template": "assets/targets/neoforge-26.2.0/gradle/wrapper/gradle-wrapper.properties.ft",
-            "destination": "targets/neoforge-26.2.0/gradle/wrapper/gradle-wrapper.properties",
+            "template": "assets/targets/neoforge-26.2/gradle/wrapper/gradle-wrapper.properties.ft",
+            "destination": "targets/neoforge-26.2/gradle/wrapper/gradle-wrapper.properties",
             "reformat": false,
-            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.2.0\"')"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.2\"')"
         },
         {
-            "template": "assets/targets/neoforge-26.2.0/gradle.properties.ft",
-            "destination": "gradle/target-blueprints/neoforge-26.2.0/gradle.properties",
+            "template": "assets/targets/neoforge-26.2/gradle.properties.ft",
+            "destination": "gradle/target-blueprints/neoforge-26.2/gradle.properties",
             "reformat": false
         },
         {
-            "template": "assets/targets/neoforge-26.2.0/gradle.properties.ft",
-            "destination": "targets/neoforge-26.2.0/gradle.properties",
+            "template": "assets/targets/neoforge-26.2/gradle.properties.ft",
+            "destination": "targets/neoforge-26.2/gradle.properties",
             "reformat": false,
-            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.2.0\"')"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.2\"')"
         },
         {
-            "template": "assets/targets/neoforge-26.2.0/gradlew.ft",
-            "destination": "gradle/target-blueprints/neoforge-26.2.0/gradlew",
+            "template": "assets/targets/neoforge-26.2/gradlew.ft",
+            "destination": "gradle/target-blueprints/neoforge-26.2/gradlew",
             "reformat": false
         },
         {
-            "template": "assets/targets/neoforge-26.2.0/gradlew.ft",
-            "destination": "targets/neoforge-26.2.0/gradlew",
+            "template": "assets/targets/neoforge-26.2/gradlew.ft",
+            "destination": "targets/neoforge-26.2/gradlew",
             "reformat": false,
-            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.2.0\"')"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.2\"')"
         },
         {
-            "template": "assets/targets/neoforge-26.2.0/gradlew.bat.ft",
-            "destination": "gradle/target-blueprints/neoforge-26.2.0/gradlew.bat",
+            "template": "assets/targets/neoforge-26.2/gradlew.bat.ft",
+            "destination": "gradle/target-blueprints/neoforge-26.2/gradlew.bat",
             "reformat": false
         },
         {
-            "template": "assets/targets/neoforge-26.2.0/gradlew.bat.ft",
-            "destination": "targets/neoforge-26.2.0/gradlew.bat",
+            "template": "assets/targets/neoforge-26.2/gradlew.bat.ft",
+            "destination": "targets/neoforge-26.2/gradlew.bat",
             "reformat": false,
-            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.2.0\"')"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.2\"')"
         },
         {
-            "template": "assets/targets/neoforge-26.2.0/settings.gradle.ft",
-            "destination": "gradle/target-blueprints/neoforge-26.2.0/settings.gradle",
+            "template": "assets/targets/neoforge-26.2/settings.gradle.ft",
+            "destination": "gradle/target-blueprints/neoforge-26.2/settings.gradle",
             "reformat": false
         },
         {
-            "template": "assets/targets/neoforge-26.2.0/settings.gradle.ft",
-            "destination": "targets/neoforge-26.2.0/settings.gradle",
+            "template": "assets/targets/neoforge-26.2/settings.gradle.ft",
+            "destination": "targets/neoforge-26.2/settings.gradle",
             "reformat": false,
-            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.2.0\"')"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.2\"')"
         },
         {
-            "template": "assets/targets/neoforge-26.2.0/src/main/resources/META-INF/neoforge.mods.toml.ft",
-            "destination": "gradle/target-blueprints/neoforge-26.2.0/src/main/resources/META-INF/neoforge.mods.toml",
+            "template": "assets/targets/neoforge-26.2/src/main/resources/META-INF/neoforge.mods.toml.ft",
+            "destination": "gradle/target-blueprints/neoforge-26.2/src/main/resources/META-INF/neoforge.mods.toml",
             "reformat": false
         },
         {
-            "template": "assets/targets/neoforge-26.2.0/src/main/resources/META-INF/neoforge.mods.toml.ft",
-            "destination": "targets/neoforge-26.2.0/src/main/resources/META-INF/neoforge.mods.toml",
+            "template": "assets/targets/neoforge-26.2/src/main/resources/META-INF/neoforge.mods.toml.ft",
+            "destination": "targets/neoforge-26.2/src/main/resources/META-INF/neoforge.mods.toml",
             "reformat": false,
-            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.2.0\"')"
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.2\"')"
         },
         {
             "template": "assets/project.properties.ft",
@@ -1161,8 +1171,8 @@
         },
         {
             "template": "assets/wrapper.base64.ft",
-            "destination": "targets/neoforge-26.2.0/gradle/wrapper/kltyton-wrapper.base64",
-            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.2.0\"')",
+            "destination": "targets/neoforge-26.2/gradle/wrapper/kltyton-wrapper.base64",
+            "condition": "$TARGET_PLAN.contains('\"blueprint\":\"neoforge-26.2\"')",
             "reformat": false
         }
     ],

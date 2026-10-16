@@ -3,8 +3,6 @@ on:
   push:
     paths:
       - 'common/**'
-      - 'versions/**'
-      - 'loaders/**'
       - 'targets/**'
       - 'buildSrc/**'
       - 'integrations/shared/**'

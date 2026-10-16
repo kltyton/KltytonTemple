@@ -2,7 +2,7 @@
 
 [中文](Minecraft-Development.zh-CN.md) · [Wiki](Home.en.md)
 
-This guide targets IntelliJ IDEA 2026.2.3, Minecraft Development 2026.2-1.8.22 and KltytonTemple 1.3.3. The current ZIP targets IDEA build 262. Other IDEA releases need a matching extension build.
+This guide targets IntelliJ IDEA 2026.2.3, Minecraft Development 2026.2-1.8.22 and KltytonTemple 1.4.0. The current ZIP targets IDEA build 262. Other IDEA releases need a matching extension build.
 
 KltytonTemple adds to Minecraft Development. Its existing Forge, Fabric, NeoForge, MultiLoader and Architectury templates remain available.
 
@@ -13,7 +13,7 @@ Install and enable Minecraft Development and Gradle support. Register JDK 21 in 
 The extension source is in `integrations/idea-plugin`. Its build creates:
 
 ```text
-integrations/idea-plugin/build/distributions/KltytonTemple-IDEA-1.3.3.zip
+integrations/idea-plugin/build/distributions/KltytonTemple-IDEA-1.4.0.zip
 ```
 
 To build it yourself, use the template's Java 25 Wrapper and specify the IDEA installation and Minecraft Development plugin directories:
@@ -31,7 +31,7 @@ On Windows, use that directory's `gradlew.bat`. This builds the extension, not a
 1. Open IDEA Settings.
 2. Select Plugins, then Installed.
 3. Open the gear menu beside the tabs and choose Install Plugin from Disk.
-4. Select `KltytonTemple-IDEA-1.3.3.zip` itself. Do not extract it or select Minecraft Development's JAR.
+4. Select `KltytonTemple-IDEA-1.4.0.zip` itself. Do not extract it or select Minecraft Development's JAR.
 5. Apply the change. If IDEA explicitly requires a restart, save current work before restarting.
 6. Search Installed for KltytonTemple and confirm it is enabled.
 
@@ -115,7 +115,7 @@ For an existing project, set `temple_idea_project=true` in the root `gradle.prop
 
 Use Sync All Gradle Projects. After completion, the root and all target projects should be present, with matching source modules and classpaths.
 
-Selecting a default target does not unlink the others. `select_<target>` changes only the root build/runClient aliases.
+`select_<target>` selects the default target and the common editing SDK. Sync all Gradle projects after changing it; the common module then uses the selected Minecraft/Loader environment while all targets remain linked.
 
 Each target uses its own Wrapper and Gradle JDK. JDK 21 and JDK 25 targets can coexist; do not replace their configurations with one shared version.
 

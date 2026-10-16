@@ -1,41 +1,67 @@
-# 原生 Gradle 与源层
+# 构建与源码结构
 
-根工程的 buildSrc 提供 io.github.kltyton.temple 插件。IDEA 直接导入根工程，按 Loader/Minecraft 分组注册目标任务；Gradle面板是正式用户入口，没有 Python 执行链。
-
-每个目标保留独立 Wrapper、运行 JDK、编译 JDK、映射与依赖。目标任务用对应 JavaLauncher 启动自己的 GradleWrapperMain，避免 Windows shell 转义与不同 Gradle 版本混用。Foojay1.0.0 是必要的构建工具链 resolver，自动提供目标所需 JDK；不添加模组运行时库。
-
-根工程只提供构建入口，不把不同 Wrapper 的目标合成同一个 Gradle 构建。IDEA 扩展读取 temple_idea_project=true，独立关联全部目标。select_<id> 只保存默认目标，根 Wrapper 不随选择改变。BuildInfo 按 mod_java_package 生成，未单独配置包名时使用 mod_group_id。
-
-common → version → loader → target 是源码归属层级；同名Java文件不能覆盖。资源按 target > loader > version > common 选择一个输出。人工/编辑器资源保持原维护方式，datagen输出位于target/src/generated/resources。
-
-common 保存跨目标共享的算法、业务规则和资源。代码在各目标自己的 Minecraft 类路径中编译；稳定 API 可以直接共用。只有源码证实不同的 API、类型与生命周期调用进入版本或 Loader 层，通过小范围、类型明确的 SPI 接入 common。几处调用不同的类应拆出这些调用，共通算法仍保留一份。
-
-[MultiLoader 源配置](https://github.com/jaredlll08/MultiLoader-Template/blob/d6b81d85d63566cbe5e67fd2f246f1441cccf686/buildSrc/src/main/groovy/multiloader-loader.gradle)提供“目标环境重新编译共享源”的参考；[Architectury](https://docs.architectury.dev/plugin/introduction/)提供可选 common/API 转换方案；[Stonecutter](https://codeberg.org/stonecutter/stonecutter/src/branch/0.10/README.md)提供注释预处理与活动版本管理。模板不声称安装这些运行时组件，也不强制迁移既有管线。
-
-Minecraft Development 集成使用其 .mcdev.template.json、Local 仓库和公开扩展点。KltytonTemple 扩展增加官方版本下拉和目标表格。模板文件经 Velocity 生成，Gradle 代码用字面量块保护；Wrapper 二进制使用模板资产编码，初次导入时解码为 JAR。IDEA 扩展及构建控制代码不进入模组发行包。
-
-Gradle 新建表单和 Minecraft Development 导出共用 ProjectFiles.projectFiles 的文件选择规则。新工程包含共享构建代码、目标蓝图及迁移文档，排除 IDE 插件开发工程、向导资产、私人配置和 Eclipse 元数据。版本目录按实际差异建立，每个 Minecraft 版本只维护一份；旧工程目录与缓存不属于迁移后的结构。
-
-Groovy/Kotlin DSL 选择由 temple_build_dsl 记录。KTS 构建脚本在 integrations/shared 的 resources 中维护，由 BuildScripts 安装到新建工程的标准 Gradle 路径；根工程和 IDEA 插件均打包同一份资源。目标插件版本从已有 gradle.properties 读取，BuildScripts 不更改 pins。控制插件实现继续复用 buildSrc 的 Groovy/Java 代码，游戏源码也不因 DSL 分叉。
-
-## Datagen 的现有资源
-
-Forge、NeoForge 和 ForgeGradle 的 data 运行配置从相同源层读取现有资源输入（`src/main/resources`）。仅传入实际存在的目录，跳过 `src/generated/resources`；传入顺序从 common 到 target，使目标资源保持最高优先级。provider 的输出仍由 `src/generated/resources` 维护，手写文件保留原位置。
+游戏源码集中在 common，目标构建集中在 targets。common 是真实的 Java Library 模块；每个 target 通过项目依赖使用它，并保留独立 Wrapper、Java、映射和 Loader 构建插件。
 
 ```mermaid
 flowchart LR
-    C["common/src/main/resources"] --> E["--existing：低优先级到高优先级"]
-    V["versions/&lt;mc&gt;/src/main/resources"] --> E
-    L["loaders/&lt;loader&gt;/src/main/resources"] --> E
-    T["target/src/main/resources"] --> E
-    E --> P["Data provider"]
-    P --> G["target/src/generated/resources"]
-    T --> R["processResources"]
-    C --> R
-    V --> R
-    L --> R
-    G --> R
-    R --> J["发行 JAR"]
+    S["common/src：单份实现"] --> C["目标内的 :common 模块"]
+    D["common/build.gradle：共享依赖"] --> C
+    E["目标 Minecraft / Loader SDK"] --> C
+    C --> J["目标发行 JAR"]
+    T["target 源码与元数据"] --> J
 ```
 
-Fabric 的 datagen 使用 Loom 配置的主资源集，沿用相同的共享资源路径；不向 Fabric 运行入口添加 Forge 的命令行参数。
+## Common 的源码
+
+| 位置 | 职责 |
+| --- | --- |
+| `common/src/main/java` | 按功能分包的公共实现 |
+| `common/src/main/resources` | 公共手写资源 |
+| `common/src/compat/minecraft/<mc>/java` | 只与该 Minecraft 版本有关的 API 适配 |
+| `common/src/compat/<loader>/java` | Loader 入口及只与该 Loader 有关的适配 |
+| `common/src/compat/<loader>/<mc>/java` | 同时受 Loader 与版本影响的少量适配 |
+| 上述适配位置的 `resources` | 确实不同的手写资源 |
+| `common/src/test` | 公共模块测试 |
+
+适配目录只在有实际源码或资源时建立。包仍按注册、网络、渲染、存储等功能组织，不把所有适配塞进一个类。公共算法和状态只维护一份，小范围接口隔离真实 API 差异。使用普通 Java 源码，不使用版本条件注释、注释切换或源码预处理器；同名 Java 文件也不互相覆盖。
+
+每个目标只编译 main、对应 Minecraft、对应 Loader 和该 Loader/版本组合的源码。资源优先级为目标手写、目标生成、Loader/版本适配、Loader 适配、Minecraft 适配、main。手写资源留在其维护位置，datagen 输出进入目标 `src/generated/resources`。
+
+## 依赖与发行包
+
+共享库在 `common/build.gradle(.kts)` 声明，使用 Java Library 的标准依赖范围。目标的 `implementation project(':common')` 保留 API 与运行时依赖关系。common 的编译类路径还接入当前目标的 Minecraft/Loader 环境，移除指向 common 自身的项目依赖以避免循环。
+
+common 的输出按目标分开保存在 `common/build/<target>`。根任务调用目标自己的 GradleWrapperMain，目标构建再编译其 common 模块；不会把一个 Minecraft 版本编译的公共二进制交给其他版本。
+
+目标 JAR 合入 common 类和资源，sources JAR 合入对应源码。Loader 的开发运行配置同时注册目标与 common 的源集。发布任务选择实际生产 JAR，并依赖发行检查。
+
+`BuildInfo.java` 由 common 模块读取根身份生成，使用 `mod_java_package`，未指定时使用 `mod_group_id`。控制插件、版本查询和 IDEA 扩展代码不进入游戏 JAR。
+
+## IDE 中的共享源码
+
+一个物理源文件只有一个当前编辑环境。根 `select_<target>` 保存选择；重新加载 Gradle 模型后，共享源码使用该目标的 SDK。其他目标仍可同步、构建和运行。
+
+当前编辑目标的 `:common` 项目目录直接映射到实际的 `common/`，因此该目录成为 IDEA 模块，Gradle 模型中也有对应的 `:common` 子项目。它使用所属目标的 Wrapper、Java 和 Minecraft/Loader SDK，共享依赖由 `common/build.gradle(.kts)` 管理，无须再复制一份 `gradle.properties`。
+
+共享 Java 和资源目录只登记在该 common 模块中。target 的源集只登记自己的目录；资源处理任务另外读取 common 资源，按既定优先级合入目标输出，不把共享目录重复导入成多个模块的资源根。
+
+其余目标的 common 模型工作目录位于 `common/.gradle/contexts/<target>`，共同使用唯一的 common 构建脚本，通过编译任务读取同一份文件，避免重复内容根争用。切换编辑目标后重新加载全部 Gradle 模型，将实际 `common/` 的归属转交给新目标。工作目录和构建输出均为自动生成内容，不是需要维护的源码副本。
+
+## Groovy、Kotlin 与生成器
+
+Groovy/Kotlin DSL 由 `temple_build_dsl` 记录。KTS 文件资源保存在 integrations/shared，由 BuildScripts 安装到标准路径；同一目录只保留一种 DSL。两种 DSL 使用同样的模块、目标配置和源码归属。
+
+Gradle 新建表单与 Minecraft Development 向导共用文件选择策略。新工程不复制 IDE 扩展开发工程、向导资产、缓存或本机配置。导出任务同步描述符和资产，并移除已失效的导出文件。
+
+```mermaid
+flowchart LR
+    P["正式工程文件"] --> G["生成器"]
+    G --> N["Groovy / Kotlin 新工程"]
+    P --> X["exportMinecraftTemplates"]
+    X --> W["Minecraft Development 资产"]
+    W --> N
+```
+
+## 参考实现
+
+[MultiLoader 的 common 模块](https://github.com/jaredlll08/MultiLoader-Template/blob/1.21.1/common/build.gradle)提供真实公共模块与显式源码输出的参考。[Architectury 的依赖配置](https://docs.architectury.dev/plugin/gradle_configurations/)区分公共 API、运行时依赖和平台产物。Stonecutter 的当前编辑版本说明了单份源码的 IDE 上下文；本模板的版本适配使用普通 Java，不采用它的条件注释写法。

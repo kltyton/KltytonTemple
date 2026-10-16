@@ -5,7 +5,7 @@ Give this prompt to an AI that can read the project. Fill in the paths, edit sco
 
 ```text
 Fully migrate this Minecraft mod project to KltytonTemple and continue development in its source layout.
-Maintain shared logic once in common; version and Loader layers contain only necessary differences.
+Maintain shared logic once in common/src/main; actual API differences use ordinary Java in common/src/compat.
 The result must have the same organization as a project created with KltytonTemple for this target matrix.
 Do not add a second set of entry points beside the old template or point new tasks at old project trees.
 
@@ -36,14 +36,15 @@ Required outcome:
 - Preserve every existing target's Wrapper, runtime/compiler JDK, mappings,
   Loader/API and build-plugin versions. Add no unrequested release targets.
 - Add native Gradle entry points and independent IDEA target linking.
-  Default-target selection affects only root build/runClient aliases.
+  Selection determines root aliases and the common editing SDK; reload Gradle models after changing it.
 - Preserve game code, assets, registries, networking, Mixin/refmap,
   AT/AW/ClassTweaker, datagen, optional dependencies, run and publishing paths.
   Preserve code contents and behavior while replacing duplicated project trees.
 - Start from the active development target and move game sources and shared
-  resources into common/src. Compare every existing version and Loader and
+  resources into common/src/main. Compare every existing version and Loader and
   read their matching sources to identify actual API differences. Only those
-  differences belong in versions/<minecraft>/src, loaders/<loader>/src or target src.
+  differences belong in common/src/compat, following the common build script's path rules.
+  Group packages by actual features and create no empty adapter directories.
 - Split differing classes further: keep algorithms, business rules, state and
   resource handling in common. Use small, typed SPI boundaries for differing
   API calls, types and lifecycle hooks. Do not duplicate a large class because
@@ -53,18 +54,23 @@ Required outcome:
   lighting, normals and layer identity; persistence and networking retain
   fields and round-trip semantics. Do not hide missing data with defaults
   or leave platform consumers incomplete after extracting shared algorithms.
-- Every existing target compiles the same common sources. Point shared_sources
-  at the migrated layers and update source/resource paths, access hooks,
+- Include a real :common module in each target and declare shared dependency scopes in
+  common/build.gradle(.kts). The active target's :common.projectDir must be the physical
+  common directory. Give shared Java and resource roots one IDE owner; a display name
+  or the presence of a build script does not establish a module.
+  Compile the same sources against each target's own SDK.
+  Update source/resource paths, access hooks,
   Mixins, producer dependencies and publishing paths. Merge remaining shared
   implementations so a common feature needs no per-version duplicate edits.
-- Keep at most one maintained versions/<minecraft> directory per Minecraft release,
-  named with the release number. Do not keep both 1.20.1 and ProjectName-1.20.1.
-  Create a version layer only for actual differences. Each Loader/Minecraft pair has
-  one target build root; different Loaders consume the same version layer.
-- Move required preprocessing, transformations, expect/actual and runtime linkage
-  into the new project's gradle conventions and target entry points, retaining their
-  producer/consumer semantics. Do not leave an old Stonecutter or Architectury
-  controller project in place as a second build structure.
+- Maintain production sources under common without parallel versions, loaders or old
+  version-project trees. Share a version adapter across its Loaders, and keep shared
+  algorithms out of Loader adapters. Each Loader/Minecraft pair has one target build
+  root containing build configuration, metadata and necessary target-owned content.
+- Translate Stonecutter version directives, constant swaps and branches into ordinary
+  Java adapters and target dependency configuration. Retain no conditional-comment
+  preprocessing. Preserve every branch's behavior, inputs, outputs and side effects.
+  Keep required Architectury transformations, expect/actual and runtime relationships
+  in the canonical common/target builds, then retire the old controllers.
 - Preserve mod ID, group, package, entry class and copyright. Retain no
   example namespaces, template mod IDs or template publishing project IDs.
 - Refuse existing output directories. Preserve unrelated changes, private

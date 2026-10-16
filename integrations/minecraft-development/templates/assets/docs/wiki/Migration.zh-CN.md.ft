@@ -23,21 +23,21 @@
 | --- | --- |
 | 官方 MDK | 对应 Loader 插件、依赖、运行任务、元数据及访问配置 |
 | MultiLoader | common 的源码/产物消费者、每个 Loader 的编译环境与资源范围 |
-| Stonecutter | 版本节点、常量、依赖替换和预处理到编译的任务依赖，迁入新构建约定 |
+| Stonecutter | 条件分支的完整行为转成普通 Java 适配，依赖替换转成目标配置 |
 | Architectury | common 转换、平台声明、expect/actual、remap 与运行时依赖 |
 | SighsTemple | 原目标矩阵、源层优先级、元数据和 Wrapper/Java pins |
 
-Stonecutter 的生成目录不能只加进 sourceSets；生成任务必须仍在编译前执行。Architectury 的转换产物不能用普通源码复制冒充。具体任务名以原工程配置为准。
+Stonecutter 的条件注释不带入新工程。先把各分支转换成普通 Java 适配并保留行为，再移除预处理链。Architectury 的必要转换产物仍须接入真实生产者和消费者。
 
 原模板的功能链路需要保留，原工程壳需要替换。把生产者和消费者接入 `gradle` 构建约定及 `targets` 入口后，清退旧控制工程；不能留两套构建系统继续交叉调用。
 
 ## 新入口
 
-先把当前主要开发目标的游戏源码与共享资源迁入 `common/src`，再比较所有目标的实现并查询对应版本源码。确认存在的 API 差异进入版本、Loader 或目标层；抽出小范围 SPI，把差异类里的通用算法与业务逻辑继续归并回 common。不要仅因几处 API 调用不同，就在每个版本复制整个类。
+先把当前主要开发目标的游戏源码与共享资源迁入 `common/src/main`，再比较所有目标的实现并查询对应版本源码。确认存在的 API 差异进入 `common/src/compat`；抽出小范围 SPI，把差异类里的通用算法与业务逻辑继续归并回 common。不要仅因几处 API 调用不同，就在每个版本复制整个类。
 
-`shared_sources` 指向迁移后的源码层，构建、访问配置、Mixin、生成和发布任务同步更新路径。手写资源不转成 datagen。迁移完成时，应能在 common 修改通用功能而无需重复编辑各版本的同一实现。
+共享依赖在 `common/build.gradle(.kts)` 声明；各目标包含真实的 `:common` 模块，并使用自己的 SDK 编译它。构建、访问配置、Mixin、生成和发布任务同步更新路径。手写资源不转成 datagen。迁移完成时，应能在 common 修改通用功能而无需重复编辑各版本的同一实现。
 
-`versions` 中每个版本只有一个维护目录，例如 `versions/1.20.1`，不再保留 `versions/ProjectName-1.20.1`。这个版本的不同 Loader 使用同一份版本差异层，各自保留 `targets/<loader>-1.20.1` 构建根。没有差异时不用创建空版本目录。
+源码只在 common 内维护，不保留平行的版本或加载器工程树。适配目录按真实差异建立，各 Loader/Minecraft 组合保留自己的目标构建。普通 Java 类按功能分包；没有差异时不建目录。
 
 根任务提供目标构建和默认目标简写。IDEA 将各目标独立关联，各自使用自己的 Wrapper；同步全部工程时不会因为默认目标是 Forge 1.20.1 就忽略其他目标。
 
