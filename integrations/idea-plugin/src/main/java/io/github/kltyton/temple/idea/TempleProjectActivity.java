@@ -6,6 +6,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.startup.StartupActivity;
+import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener;
+import io.github.kltyton.temple.idea.model.CompatSourceModel;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
@@ -25,11 +27,20 @@ public final class TempleProjectActivity implements StartupActivity.DumbAware {
     @Override
     public void runActivity(Project project) {
         linkTargets(project);
+        CompatSourceModel sources = new CompatSourceModel(project);
+        sources.refresh();
+        project.getMessageBus().connect(project).subscribe(ProjectDataImportListener.TOPIC, new ProjectDataImportListener() {
+            @Override public void onImportFinished(String projectPath) { sources.refresh(); }
+        });
         ApplicationManager.getApplication().getMessageBus().connect(project)
                 .subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
             @Override
             public void after(List<? extends VFileEvent> events) {
                 String root = project.getBasePath();
+                if (root != null && events.stream().anyMatch(event ->
+                        event.getPath().equals(root + "/.temple/active-target") ||
+                                (event.getPath().startsWith(root + "/common/.gradle/contexts/") &&
+                                        event.getPath().endsWith("/ide-sources.json")))) sources.refresh();
                 if (root != null && events.stream().anyMatch(event ->
                         event.getPath().equals(root + "/gradle.properties") ||
                         (event.getPath().startsWith(root + "/targets/") &&

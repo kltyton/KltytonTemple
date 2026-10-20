@@ -69,3 +69,4 @@ rootProject.afterEvaluate {
 }
 extra["templeResourceDirectories"] = resourceDirectories
 extra["templeSourceDirectories"] = javaDirectories + constants
+apply(from = templeRoot.resolve("gradle/target-conventions/ide-sources.gradle"))

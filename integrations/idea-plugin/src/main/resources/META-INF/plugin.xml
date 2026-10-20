@@ -1,9 +1,9 @@
 <idea-plugin>
     <id>io.github.kltyton.temple.idea</id>
     <name>KltytonTemple</name>
-    <version>1.4.0</version>
+    <version>1.5.0</version>
     <vendor url="https://github.com/kltyton/KltytonTemple">kltyton</vendor>
-    <description>Multi-version Minecraft project creation and independent Gradle target linking.</description>
+    <description>Multi-version Minecraft project creation, independent Gradle targets and SDK-aware compatibility source roots.</description>
     <idea-version since-build="262" until-build="262.*"/>
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.java</depends>

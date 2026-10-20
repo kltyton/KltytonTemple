@@ -46,6 +46,12 @@
             "visible": false
         },
         {
+            "name": "DEFAULT_TARGET",
+            "type": "string",
+            "default": "",
+            "visible": false
+        },
+        {
             "name": "TARGET_PLAN",
             "type": "kltyton_targets",
             "label": "Minecraft / Loader",
@@ -266,6 +272,11 @@
         {
             "template": "assets/gradle/target-conventions/forgegradle.gradle.ft",
             "destination": "gradle/target-conventions/forgegradle.gradle",
+            "reformat": false
+        },
+        {
+            "template": "assets/gradle/target-conventions/ide-sources.gradle.ft",
+            "destination": "gradle/target-conventions/ide-sources.gradle",
             "reformat": false
         },
         {

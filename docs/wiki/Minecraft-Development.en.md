@@ -2,7 +2,7 @@
 
 [中文](Minecraft-Development.zh-CN.md) · [Wiki](Home.en.md)
 
-This guide targets IntelliJ IDEA 2026.2.3, Minecraft Development 2026.2-1.8.22 and KltytonTemple 1.4.0. The current ZIP targets IDEA build 262. Other IDEA releases need a matching extension build.
+This guide targets IntelliJ IDEA 2026.2.3, Minecraft Development 2026.2-1.8.22 and KltytonTemple 1.5.0. The current ZIP targets IDEA build 262. Other IDEA releases need a matching extension build.
 
 KltytonTemple adds to Minecraft Development. Its existing Forge, Fabric, NeoForge, MultiLoader and Architectury templates remain available.
 
@@ -13,7 +13,7 @@ Install and enable Minecraft Development and Gradle support. Register JDK 21 in 
 The extension source is in `integrations/idea-plugin`. Its build creates:
 
 ```text
-integrations/idea-plugin/build/distributions/KltytonTemple-IDEA-1.4.0.zip
+integrations/idea-plugin/build/distributions/KltytonTemple-IDEA-1.5.0.zip
 ```
 
 To build it yourself, use the template's Java 25 Wrapper and specify the IDEA installation and Minecraft Development plugin directories:
@@ -31,7 +31,7 @@ On Windows, use that directory's `gradlew.bat`. This builds the extension, not a
 1. Open IDEA Settings.
 2. Select Plugins, then Installed.
 3. Open the gear menu beside the tabs and choose Install Plugin from Disk.
-4. Select `KltytonTemple-IDEA-1.4.0.zip` itself. Do not extract it or select Minecraft Development's JAR.
+4. Select `KltytonTemple-IDEA-1.5.0.zip` itself. Do not extract it or select Minecraft Development's JAR.
 5. Apply the change. If IDEA explicitly requires a restart, save current work before restarting.
 6. Search Installed for KltytonTemple and confirm it is enabled.
 
@@ -92,6 +92,7 @@ Wait for the official version catalogs to load. Language offers Simplified Chine
 6. For another Loader on the same Minecraft release, change Loader and add another row.
 7. Repeat for additional releases. Each row represents one target.
 8. Select a row and use Remove selected to remove it. Keep at least one target.
+9. Choose the primary development combination from Default editing target above the table. This dropdown contains the added targets. Choosing neoforge-26.2 makes common use that Minecraft, NeoForge and Java environment on first import. Creation writes both the root default and the local selection record, without resetting them to the first row. Removing the default chooses the first remaining entry; another entry can be selected manually.
 
 For Fabric and NeoForge on 1.21.1, add `1.21.1 + fabric`, then `1.21.1 + neoforge`. They become independent targets with matching dependency environments.
 
@@ -116,6 +117,8 @@ For an existing project, set `temple_idea_project=true` in the root `gradle.prop
 Use Sync All Gradle Projects. After completion, the root and all target projects should be present, with matching source modules and classpaths.
 
 `select_<target>` selects the default target and the common editing SDK. Sync all Gradle projects after changing it; the common module then uses the selected Minecraft/Loader environment while all targets remain linked.
+
+The extension also assigns other compat directories to suitable target common source-set modules. Shared main may use NeoForge 26.2 while Forge adapters use a suitable Forge SDK. Each directory has one source owner, updated with its module dependencies after synchronization. Sync Gradle after adding an adapter directory to include it in the source model. Existing projects need the common build and shared convention updates as well as the extension; installing the ZIP does not rewrite a mod project's build files.
 
 Each target uses its own Wrapper and Gradle JDK. JDK 21 and JDK 25 targets can coexist; do not replace their configurations with one shared version.
 

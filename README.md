@@ -53,6 +53,10 @@ Minecraft Development 集成提供 Mod 信息和版本表单，支持简体中�
 
 `runClient`、`runServer`、`runDatagen` 是默认目标的简写。选择目标同时确定共享源码的编辑环境；重新加载 Gradle 模型后，补全使用该目标的 Minecraft、Loader 和 Java。全部目标仍独立导入。
 
+创建工程时，“默认编辑目标”下拉框列出已添加的 Minecraft / Loader 组合。选择后，首次导入的 `common` 环境和根任务默认值都使用这个目标。删除当前默认目标后，下拉框改选剩余列表中的第一个目标，可以继续手动选择。
+
+安装 1.5.0 扩展并同步全部 Gradle 项目后，其他 `compat` 目录也按实际构建模型登记到匹配的 common 源集模块，使用所属目标的 SDK。共享 main 保留一个编辑环境；切换默认目标不需要复制源码，也不会把其他版本的适配目录合到同一个 SDK 下。
+
 `-PtemplePlan=true` 输出目标构建/运行计划，并跳过对应子构建：
 
 ```sh
@@ -76,7 +80,7 @@ Minecraft Development 集成提供 Mod 信息和版本表单，支持简体中�
 | `mod_authors` | 根 | 作者 |
 | `mod_license` | 根 | 许可证 |
 | `mod_description` | 根 | 描述 |
-| `temple_default_target` | 根 | 没有本地选择记录时的默认目标 |
+| `temple_default_target` | 根 | 创建表单选定的默认编辑目标；没有本地选择记录时使用 |
 | `temple_idea_project` | 根 | 启用 IDEA 扩展的独立目标关联 |
 | `temple_build_dsl` | 根 | `groovy` 或 `kotlin`；新建表单写入，后续新增目标沿用对应脚本语言 |
 | `loader`、`minecraft_version` | 目标 | 加载器和 Minecraft 版本 |

@@ -54,6 +54,9 @@ Required outcome:
   lighting, normals and layer identity; persistence and networking retain
   fields and round-trip semantics. Do not hide missing data with defaults
   or leave platform consumers incomplete after extracting shared algorithms.
+- Preserve the primary development target as the default editing target instead of resetting it to the first matrix entry.
+  Apply ide-sources.gradle after common defines templeSourceDirectories and templeResourceDirectories.
+  Keep existing valid source-layer calculations so the extension can assign other compat roots using their actual target models.
 - Include a real :common module in each target and declare shared dependency scopes in
   common/build.gradle(.kts). The active target's :common.projectDir must be the physical
   common directory. Give shared Java and resource roots one IDE owner; a display name

@@ -60,6 +60,12 @@ public final class TargetsProperty extends CreatorProperty<String> {
         Gson json = new Gson();
         TargetSelectionPanel selection = new TargetSelectionPanel(text -> json.fromJson(text, Object.class), List.of(),
                 targets -> value.set(json.toJson(targets)));
+        CreatorProperty<?> defaultTarget = getProperties().get("DEFAULT_TARGET");
+        if (defaultTarget != null) {
+            @SuppressWarnings("unchecked")
+            CreatorProperty<String> targetProperty = (CreatorProperty<String>) defaultTarget;
+            selection.enableDefaultTargetSelection(target -> targetProperty.getGraphProperty().set(target));
+        }
         JComponent form = getDescriptor().getParameters() != null
                 && "split".equals(getDescriptor().getParameters().get("layout")) ? splitForm(selection) : selection;
         panel.row("", row -> {

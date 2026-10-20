@@ -22,6 +22,8 @@ Read root identity and every relevant target's properties, Wrapper, settings/bui
 
 Target IDs use loader-Minecraft; task suffixes replace hyphens and dots with underscores. Targets are independent Gradle projects, preserving their Wrapper and Gradle JDK. Selection determines root aliases and the common editing SDK after Gradle model reload. All targets remain linked.
 
+Both project creation forms let the developer select the initial editing target from the chosen matrix. Preserve that choice in temple_default_target and .temple/active-target. Keep the ide-sources.gradle convention applied after common defines templeSourceDirectories and templeResourceDirectories, in both DSLs. The IDEA extension uses its per-target models to assign other compatibility roots to matching SDK modules, with one owner per physical root. Preserve custom source-layer calculations during migration rather than replacing them with a second path policy.
+
 Read build.gradle(.kts) and settings.gradle(.kts) according to the actual project. Creation supports Groovy and Kotlin DSL; temple_build_dsl records the selection for additional targets. Keep only one build/settings entry per directory and preserve task semantics and pins when converting script syntax. The mod source language and common ownership are independent of the Gradle DSL.
 
 - listTargets reports configured target facts.

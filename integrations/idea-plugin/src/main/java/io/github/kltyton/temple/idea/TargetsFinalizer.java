@@ -23,7 +23,9 @@ public final class TargetsFinalizer implements CreatorFinalizer {
                 new TypeToken<List<Map<String, String>>>() {
                 }.getType());
         try {
-            TargetPlan.apply(Path.of(context.getProjectFileDirectory()), selections, true);
+            Object defaultTarget = templateProperties.get("DEFAULT_TARGET");
+            TargetPlan.apply(Path.of(context.getProjectFileDirectory()), selections, true,
+                    defaultTarget == null ? null : defaultTarget.toString());
             BuildScripts.createProject(Path.of(context.getProjectFileDirectory()));
         } catch (IOException error) {
             throw new IllegalStateException("Could not create selected targets", error);

@@ -47,6 +47,9 @@ SighsTemple，还是这些方案的组合。
 - 提取 SPI 时列出原调用的输入、输出和消费者，逐项保留数据与副作用。
   渲染适配保留原生材质、颜色、光照、法线及图层标识；存档和网络适配保留字段及往返语义。
   不用默认值掩盖丢失的数据，不因公共算法完成就漏掉平台消费者。
+- 保留主要开发目标作为默认编辑目标，不把它无条件改成矩阵第一项。
+  common 定义 templeSourceDirectories、templeResourceDirectories 后接入 ide-sources.gradle；
+  保留原有的有效适配层计算，让扩展按实际模型分配其他 compat 目录的源码归属和 SDK。
 - 让各目标包含真实的 :common 模块，共享依赖在 common/build.gradle(.kts) 声明。
   当前编辑目标的 :common.projectDir 必须映射到物理 common 目录；
   共享 Java 和资源根只登记一个 IDE 所有者，不以显示名称或脚本文件存在代替模块接入。

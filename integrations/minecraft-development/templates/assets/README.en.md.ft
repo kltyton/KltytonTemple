@@ -54,6 +54,10 @@ Replace hyphens and dots in target IDs with underscores: `fabric-1.21.1` becomes
 
 `runClient`, `runServer` and `runDatagen` address the default target. The selection also determines the common editing environment. Reload Gradle models to use that target's Minecraft, Loader and Java classpath for completion. All targets remain independently linked.
 
+During project creation, Default editing target lists the Minecraft / loader combinations already added to the matrix. It controls common on first import and the default root tasks. Removing that target selects the first remaining entry; another entry can be chosen from the dropdown.
+
+With extension 1.5.0 and all Gradle projects synchronized, other compat directories are registered in matching common source-set modules and use those targets' SDKs. Shared main retains one editing environment. Changing the default transfers ownership without copying sources or combining the compatibility directories under one SDK.
+
 `-PtemplePlan=true` prints target build/run plans and skips their child builds:
 
 ```sh
@@ -77,7 +81,7 @@ Root `gradle.properties` defines mod identity. Target files define build environ
 | `mod_authors` | Root | Authors |
 | `mod_license` | Root | License |
 | `mod_description` | Root | Description |
-| `temple_default_target` | Root | Default target when no local selection exists |
+| `temple_default_target` | Root | Default editing target selected during creation; used when no local selection exists |
 | `temple_idea_project` | Root | Enable independent target linking in IDEA |
 | `temple_build_dsl` | Root | `groovy` or `kotlin`; written by creation forms and used for additional target scripts |
 | `loader`, `minecraft_version` | Target | Loader and Minecraft release |

@@ -44,9 +44,23 @@ common 的输出按目标分开保存在 `common/build/<target>`。根任务调�
 
 当前编辑目标的 `:common` 项目目录直接映射到实际的 `common/`，因此该目录成为 IDEA 模块，Gradle 模型中也有对应的 `:common` 子项目。它使用所属目标的 Wrapper、Java 和 Minecraft/Loader SDK，共享依赖由 `common/build.gradle(.kts)` 管理，无须再复制一份 `gradle.properties`。
 
-共享 Java 和资源目录只登记在该 common 模块中。target 的源集只登记自己的目录；资源处理任务另外读取 common 资源，按既定优先级合入目标输出，不把共享目录重复导入成多个模块的资源根。
+共享 main 及当前目标需要的 Java 和资源目录登记在该 common 模块中。扩展将其他适配目录分配给使用它们的目标源集模块，每个物理目录只有一个所有者。多个目标共用一个适配目录时，当前编辑目标优先，其余按目标 ID 排序选择。模块通过原生依赖引用所需的公共类；各目标的 Minecraft/Loader 类路径仍由各自 Gradle 模型提供。
+
+target 的源集只登记自己的目录；资源处理任务另外读取 common 资源，按既定优先级合入目标输出，不把共享目录重复导入成多个模块的资源根。
 
 其余目标的 common 模型工作目录位于 `common/.gradle/contexts/<target>`，共同使用唯一的 common 构建脚本，通过编译任务读取同一份文件，避免重复内容根争用。切换编辑目标后重新加载全部 Gradle 模型，将实际 `common/` 的归属转交给新目标。工作目录和构建输出均为自动生成内容，不是需要维护的源码副本。
+
+`gradle/target-conventions/ide-sources.gradle` 从 common 已计算的 `templeSourceDirectories` 和 `templeResourceDirectories` 导出实际目录，写入各上下文的 `ide-sources.json`。Groovy 和 Kotlin DSL 共用这一导出约定。扩展在 Gradle 导入结束后读取模型，分配源码根，并在重新选择或同步时清理自己的旧归属。自定义适配层也由实际构建目录决定，无须在扩展中维护第二份路径规则。
+
+```mermaid
+flowchart LR
+    G[各目标的 Gradle 源目录] --> M[ide-sources.json]
+    M --> I[IDEA 适配目录与模块依赖]
+    D[默认编辑目标] --> C[共享 main 的编辑 SDK]
+    I --> S[各适配目录的目标 SDK]
+```
+
+新建工程时，默认编辑目标从已选矩阵中指定，同时写入根 `temple_default_target` 和 `.temple/active-target`。后者是本地选择，优先于根默认值。后续的 `select_<target>` 更新本地选择；只切换 IDEA 顶部的运行配置不会改变 common 的编辑 SDK。
 
 ## Groovy、Kotlin 与生成器
 
