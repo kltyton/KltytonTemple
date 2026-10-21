@@ -67,6 +67,8 @@ Groovy/Kotlin DSL 由 `temple_build_dsl` 记录。KTS 文件资源保存在 inte
 
 Gradle 新建表单与 Minecraft Development 向导共用文件选择策略。新工程不复制 IDE 扩展开发工程、向导资产、缓存或本机配置。导出任务同步描述符和资产，并移除已失效的导出文件。
 
+两个创建入口共用身份校验。原生向导在导入 Gradle 前通过 `Properties.store` 保存 UTF-8 配置，避免反斜杠被当作 properties 转义。显示名称只用于产品信息，Gradle 工程名由 Mod ID 决定。
+
 ```mermaid
 flowchart LR
     P["正式工程文件"] --> G["生成器"]

@@ -3,7 +3,7 @@
 
 [中文](Minecraft-Development.zh-CN.md) · [Wiki](Home.en.md)
 
-This guide targets IntelliJ IDEA 2026.2.3, Minecraft Development 2026.2-1.8.22 and KltytonTemple 1.5.0. The current ZIP targets IDEA build 262. Other IDEA releases need a matching extension build.
+This guide targets IntelliJ IDEA 2026.2.3, Minecraft Development 2026.2-1.9.0 and KltytonTemple 1.5.3. The current ZIP targets IDEA build 262. Other IDEA releases need a matching extension build.
 
 KltytonTemple adds to Minecraft Development. Its existing Forge, Fabric, NeoForge, MultiLoader and Architectury templates remain available.
 
@@ -14,7 +14,7 @@ Install and enable Minecraft Development and Gradle support. Register JDK 21 in 
 The extension source is in `integrations/idea-plugin`. Its build creates:
 
 ```text
-integrations/idea-plugin/build/distributions/KltytonTemple-IDEA-1.5.0.zip
+integrations/idea-plugin/build/distributions/KltytonTemple-IDEA-1.5.3.zip
 ```
 
 To build it yourself, use the template's Java 25 Wrapper and specify the IDEA installation and Minecraft Development plugin directories:
@@ -32,7 +32,7 @@ On Windows, use that directory's `gradlew.bat`. This builds the extension, not a
 1. Open IDEA Settings.
 2. Select Plugins, then Installed.
 3. Open the gear menu beside the tabs and choose Install Plugin from Disk.
-4. Select `KltytonTemple-IDEA-1.5.0.zip` itself. Do not extract it or select Minecraft Development's JAR.
+4. Select `KltytonTemple-IDEA-1.5.3.zip` itself. Do not extract it or select Minecraft Development's JAR.
 5. Apply the change. If IDEA explicitly requires a restart, save current work before restarting.
 6. Search Installed for KltytonTemple and confirm it is enabled.
 
@@ -110,6 +110,8 @@ Refresh versions downloads the catalog again without rewriting rows already sele
 These sources describe published releases. Blueprints generate build entries for the appropriate generation; existing game code still needs adaptation. A listed version has not necessarily passed this project's build. Download failures retain the HTTP/URL or exception in the error-detail tooltip, so the relevant service and IDEA proxy can be checked.
 
 ## 6. Import all Gradle targets
+
+The extension selects JDKs using each target's `gradle_java_version`. A target with a missing JDK remains pending while other targets continue linking. Register the required version under Project Structure → SDKs to trigger another attempt. Changing the target's Java requirement also rechecks an existing selection.
 
 Open the generated project and allow the root Gradle model to load. With `temple_idea_project=true`, the extension links every configured target as an independent Gradle project.
 

@@ -7,9 +7,9 @@
 
 ## 交给 AI
 
-复制 [迁移提示词](../../../integrations/prompts/migrate.zh-CN.md)，填写原工程、模板、输出位置、允许修改的文件，以及允许执行的验收任务。
+复制 [迁移提示词](../../integrations/prompts/migrate.zh-CN.md)，填写原工程、模板、输出位置、允许修改的文件，以及允许执行的验收任务。
 
-[迁移 Skill](../../../integrations/skills/kltyton-temple/SKILL.md) 可由智能体直接读取，不需要额外 MCP。它覆盖官方单加载器模板、MultiLoader、Stonecutter、Architectury 和 SighsTemple。无需把私人会话或全局规则提交进游戏仓库。
+[迁移 Skill](../../integrations/skills/kltyton-temple/SKILL.md) 可由智能体直接读取，不需要额外 MCP。它覆盖官方单加载器模板、MultiLoader、Stonecutter、Architectury 和 SighsTemple。无需把私人会话或全局规则提交进游戏仓库。
 
 ## 迁移前确认
 

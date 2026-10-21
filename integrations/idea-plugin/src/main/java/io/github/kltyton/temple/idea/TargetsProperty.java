@@ -17,6 +17,8 @@ import com.intellij.ui.dsl.builder.Panel;
 import com.intellij.ui.dsl.builder.TextFieldKt;
 import com.intellij.util.ui.JBUI;
 import io.github.kltyton.temple.ui.TargetSelectionPanel;
+import io.github.kltyton.temple.workspace.ProjectIdentity;
+import io.github.kltyton.temple.idea.project.WizardIdentity;
 
 import java.util.*;
 import java.awt.Dimension;
@@ -72,22 +74,29 @@ public final class TargetsProperty extends CreatorProperty<String> {
             row.cell(form).resizableColumn().align(Align.FILL)
                     .validationRequestor((kotlin.jvm.functions.Function0<Unit> requestor) -> {
                         value.afterPropagation(requestor);
+                        for (String name : List.of("MOD_ID", "MOD_NAME", "AUTHORS", "LICENSE", "DESCRIPTION", "BUILD_COORDS"))
+                            getProperties().get(name).getGraphProperty().afterPropagation(requestor);
                         return Unit.INSTANCE;
                     })
-                    .validationOnApply((builder, component) -> selection.selections().isEmpty() ? new ValidationInfo(selection.messages().get("selectTarget"), selection.targetsPanel()) : null);
+                    .validationOnApply((builder, component) -> {
+                        if (selection.selections().isEmpty())
+                            return new ValidationInfo(selection.messages().get("selectTarget"), selection.targetsPanel());
+                        var identity = WizardIdentity.collect(name -> getProperties().get(name).get());
+                        return identityProblem(selection, ProjectIdentity.problem(identity), component);
+                    });
             return Unit.INSTANCE;
         }).resizableRow();
     }
 
     private JComponent splitForm(TargetSelectionPanel selection) {
         DialogPanel configuration = BuilderKt.panel(left -> {
-            stringField(left, "MOD_ID", new JLabel("Mod ID"));
-            stringField(left, "MOD_NAME", fieldLabel(selection, "name"));
+            stringField(left, "MOD_ID", new JLabel("Mod ID"), selection);
+            stringField(left, "MOD_NAME", fieldLabel(selection, "name"), selection);
             selection.configurationRows((label, component) -> left.row(label, row -> {
                 row.cell(component).resizableColumn().align(Align.FILL);
                 return Unit.INSTANCE;
             }));
-            stringField(left, "AUTHORS", fieldLabel(selection, "authors"));
+            stringField(left, "AUTHORS", fieldLabel(selection, "authors"), selection);
             CreatorProperty<String> description = getContext().property("DESCRIPTION");
             JTextArea descriptionText = new JTextArea(3, 24);
             descriptionText.setLineWrap(true);
@@ -99,7 +108,7 @@ public final class TargetsProperty extends CreatorProperty<String> {
                 field.validationOnApply((builder, component) -> descriptionValidation(selection, component));
                 return Unit.INSTANCE;
             });
-            licenseField(left, fieldLabel(selection, "license"));
+            licenseField(left, fieldLabel(selection, "license"), selection);
             ((BuildDslProperty) getProperties().get("BUILD_DSL")).buildUi(left, fieldLabel(selection, "buildDsl"));
             getProperties().get("BUILD_COORDS").buildUi(left);
             getProperties().get("JDK").buildUi(left);
@@ -193,12 +202,15 @@ public final class TargetsProperty extends CreatorProperty<String> {
     }
 
     private ValidationInfo descriptionValidation(TargetSelectionPanel selection, JTextArea component) {
-        String input = component.getText();
-        return input.indexOf('\n') >= 0 || input.indexOf('\r') >= 0
-                ? new ValidationInfo(selection.messages().get("singleLineDescription"), component) : null;
+        return identityProblem(selection, ProjectIdentity.problem("mod_description", component.getText()), component);
     }
 
-    private void stringField(Panel panel, String name, JLabel label) {
+    private ValidationInfo identityProblem(TargetSelectionPanel selection, ProjectIdentity.Problem problem, JComponent component) {
+        return problem == null ? null : new ValidationInfo(selection.messages().get(problem.messageKey())
+                + " (" + problem.property() + ")", component);
+    }
+
+    private void stringField(Panel panel, String name, JLabel label, TargetSelectionPanel selection) {
         CreatorProperty<String> property = getContext().property(name);
         panel.row(label, row -> {
             Cell<JTextField> field = TextFieldKt.bindText(row.cell(new JTextField(24))
@@ -206,11 +218,21 @@ public final class TargetsProperty extends CreatorProperty<String> {
                     property.toStringProperty(property.getGraphProperty()));
             if (property.getDescriptor().getValidator() instanceof String validator)
                 TextFieldKt.textValidation(field, BuiltinValidations.INSTANCE.byRegex(new Regex(validator)));
+            String key = switch (name) {
+                case "MOD_ID" -> "mod_id";
+                case "MOD_NAME" -> "mod_name";
+                case "AUTHORS" -> "mod_authors";
+                default -> throw new IllegalArgumentException("Unknown identity field: " + name);
+            };
+            field.validationOnInput((builder, component) -> identityProblem(selection,
+                    ProjectIdentity.problem(key, component.getText()), component));
+            field.validationOnApply((builder, component) -> identityProblem(selection,
+                    ProjectIdentity.problem(key, component.getText()), component));
             return Unit.INSTANCE;
         });
     }
 
-    private void licenseField(Panel panel, JLabel label) {
+    private void licenseField(Panel panel, JLabel label, TargetSelectionPanel selection) {
         CreatorProperty<String> property = getContext().property("LICENSE");
         JComboBox<String> license = new JComboBox<>(new String[]{"MIT", "Apache-2.0", "BSD-2-Clause",
                 "BSD-3-Clause", "GPL-3.0-only", "LGPL-3.0-only", "MPL-2.0", "Unlicense", "CC0-1.0",
@@ -219,6 +241,8 @@ public final class TargetsProperty extends CreatorProperty<String> {
         license.setSelectedItem(property.get());
         panel.row(label, row -> {
             row.cell(license).resizableColumn().align(Align.FILL)
+                    .validationOnApply((builder, component) -> identityProblem(selection,
+                            ProjectIdentity.problem("mod_license", component.getEditor().getItem().toString()), component))
                     .onApply(() -> {
                         property.getGraphProperty().set(license.getEditor().getItem().toString());
                         return Unit.INSTANCE;

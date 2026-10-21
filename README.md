@@ -55,7 +55,11 @@ Minecraft Development 集成提供 Mod 信息和版本表单，支持简体中�
 
 创建工程时，“默认编辑目标”下拉框列出已添加的 Minecraft / Loader 组合。选择后，首次导入的 `common` 环境和根任务默认值都使用这个目标。删除当前默认目标后，下拉框改选剩余列表中的第一个目标，可以继续手动选择。
 
-安装 1.5.0 扩展并同步全部 Gradle 项目后，其他 `compat` 目录也按实际构建模型登记到匹配的 common 源集模块，使用所属目标的 SDK。共享 main 保留一个编辑环境；切换默认目标不需要复制源码，也不会把其他版本的适配目录合到同一个 SDK 下。
+安装 1.5.3 扩展并同步全部 Gradle 项目后，其他 `compat` 目录也按实际构建模型登记到匹配的 common 源集模块，使用所属目标的 SDK。共享 main 保留一个编辑环境；切换默认目标不需要复制源码，也不会把其他版本的适配目录合到同一个 SDK 下。
+
+目标目录删除或改名后，扩展会解除旧目录的 Gradle 关联，并移除对应的项目缓存和模块。清理范围限于 `targets` 下已经不存在的目标目录。
+
+扩展按目标的 `gradle_java_version` 关联已注册 JDK。缺少某个 JDK 时，其余目标继续关联；注册对应 JDK 后会再次处理该目标。已有匹配版本的 JDK 选择保留。
 
 `-PtemplePlan=true` 输出目标构建/运行计划，并跳过对应子构建：
 
@@ -88,10 +92,13 @@ Minecraft Development 集成提供 Mod 信息和版本表单，支持简体中�
 | `fabric_api_version` | Fabric 目标 | Fabric API 版本 |
 | `java_version` | 目标 | 游戏代码的编译 Java 版本 |
 | `gradle_java_version` | 目标 | 运行目标 Gradle 的 Java 版本 |
+| `forgegradle_version` | Forge 目标，可选 | 使用 ForgeGradle 的目标所需插件版本；7.x 使用新 API 约定 |
 | `ci_enabled` | 目标 | 是否纳入 CI 矩阵 |
 | `datagen_task` | 目标，可选 | 已实际配置的资源生成任务；未配置时不注册 datagen 别名 |
 
 Loader 和 Minecraft 的版本范围保留在目标元数据参数中。Wrapper 版本由目标的 `gradle/wrapper/gradle-wrapper.properties` 决定。
+
+`mod_name` 是显示名称；Gradle 工程名使用 `mod_id`，目标工程名追加目标 ID。名称、作者和描述中的中文、引号、反斜杠及非 BMP 字符按 UTF-8 保存，写入 JSON/TOML 时转义。创建表单要求必填文本为单行，Java 包名还会检查保留字。
 
 ## 源码与资源
 
@@ -112,6 +119,12 @@ targets/
 `common/src/main/java` 中的类按注册、网络、配置、渲染等实际功能分包。只把查证过的 API 差异放入 `common/src/compat`，通过普通 Java 的小范围接口接入公共逻辑。没有差异就不建目录，不复制完整业务类，不写版本条件注释。适配目录的精确规则见[架构](docs/dev/architecture.md)。
 
 手写资源保持原维护方式，datagen 输出仍在各目标的 `src/generated/resources`。Forge/NeoForge 的现有资源输入包含 common 与当前目标；Fabric 使用相同的主资源集。
+
+Forge 的 `processResources` 会在没有手写 `pack.mcmeta` 时生成默认元数据，格式号来自目标 SDK 的 `version.json`。旧格式分别写入客户端资源与服务端数据的 Forge 格式字段；带次版本号的新格式使用服务端数据范围，客户端资源由 Forge 的模组资源包合并。已有手写文件按资源优先级使用，其额外章节和过滤规则保持原样。需要把模组单独显示为资源包时，在对应资源层提供自定义元数据。
+
+新增 Forge 1.21.5 及后续 1.21.x 目标使用 ForgeGradle 7.0.40 和 Gradle 9.5.0；较早的非基线 Forge 目标沿用 ForgeGradle 6 路径。九个基线目标的插件与 Wrapper 版本由各自配置保留。Groovy 与 Kotlin DSL 使用同一选型规则。
+
+ForgeGradle 7 的构建工具使用独立 JDK：当前 Mavenizer 使用 Java 25，官方映射转换还会查找 Java 8。已有 Java 8 可通过环境变量 `JAVA_HOME_8` 指定；未找到时由官方工具安装。它们不改变目标的游戏编译版本。使用代理时，也要让 Mavenizer 子进程获得 Java 代理设置；Gradle JVM 的 `systemProp.*` 不会自动传给它，可通过该进程的 `JAVA_TOOL_OPTIONS` 启用系统代理。
 
 迁移采用与新建工程相同的结构。游戏实现归入 common，targets 保留独立构建和必要元数据；旧工程壳和失效路径在消费者全部迁移后清退。构建控制、IDEA 扩展和向导资产不进入模组 JAR。
 

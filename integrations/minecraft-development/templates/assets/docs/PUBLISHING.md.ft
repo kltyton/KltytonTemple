@@ -19,4 +19,6 @@ flowchart LR
 ```
 
 这里的依赖只安排构建和发行检查，不自动执行上传。远端 Maven 地址仍由项目配置，模板没有默认的第三方发布仓库。
+
+发行检查解析 JSON/TOML，核对当前 Mod ID、Mod 版本和 Minecraft 范围。Forge 的 `pack.mcmeta` 必须存在并包含格式信息。TOML 的 `${file.jarVersion}` 从 JAR Manifest 读取，`${file.<key>}` 从元数据的 `properties` 表读取；普通描述文本不会被当成待展开模板。Fabric 默认语言适配器的类、方法和字段入口均按所属类检查，自定义适配器保留自己的引用语义。
 ]]#

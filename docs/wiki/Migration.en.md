@@ -6,9 +6,9 @@ The migrated project uses the same organization as a project created with Kltyto
 
 ## Use an AI
 
-Copy the [migration prompt](../../../integrations/prompts/migrate.en.md). Fill in the existing project, template, destination, edit scope and exact acceptance contract.
+Copy the [migration prompt](../../integrations/prompts/migrate.en.md). Fill in the existing project, template, destination, edit scope and exact acceptance contract.
 
-The [migration Skill](../../../integrations/skills/kltyton-temple/SKILL.md) can be read directly without an MCP service. It covers official MDKs, MultiLoader, Stonecutter, Architectury and SighsTemple. Keep private session records and global AI rules out of the game repository.
+The [migration Skill](../../integrations/skills/kltyton-temple/SKILL.md) can be read directly without an MCP service. It covers official MDKs, MultiLoader, Stonecutter, Architectury and SighsTemple. Keep private session records and global AI rules out of the game repository.
 
 ## Inventory
 

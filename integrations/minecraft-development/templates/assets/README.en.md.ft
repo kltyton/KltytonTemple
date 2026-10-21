@@ -56,7 +56,11 @@ Replace hyphens and dots in target IDs with underscores: `fabric-1.21.1` becomes
 
 During project creation, Default editing target lists the Minecraft / loader combinations already added to the matrix. It controls common on first import and the default root tasks. Removing that target selects the first remaining entry; another entry can be chosen from the dropdown.
 
-With extension 1.5.0 and all Gradle projects synchronized, other compat directories are registered in matching common source-set modules and use those targets' SDKs. Shared main retains one editing environment. Changing the default transfers ownership without copying sources or combining the compatibility directories under one SDK.
+With extension 1.5.3 and all Gradle projects synchronized, other compat directories are registered in matching common source-set modules and use those targets' SDKs. Shared main retains one editing environment. Changing the default transfers ownership without copying sources or combining the compatibility directories under one SDK.
+
+When a target directory is removed or renamed, the extension detaches its old Gradle project and removes its cached project data and modules. Cleanup applies only to missing target directories directly under `targets`.
+
+The extension links registered JDKs according to each target's `gradle_java_version`. A missing JDK does not stop other targets from linking. Registering it triggers another attempt, while an existing choice with the required Java version is retained.
 
 `-PtemplePlan=true` prints target build/run plans and skips their child builds:
 
@@ -94,6 +98,10 @@ Root `gradle.properties` defines mod identity. Target files define build environ
 
 Loader and Minecraft ranges remain in target metadata properties. Each target's `gradle/wrapper/gradle-wrapper.properties` selects its Wrapper version.
 
+The optional target property `forgegradle_version` selects the ForgeGradle plugin. Version 7.x uses the convention for its new API.
+
+`mod_name` is the display name. Gradle project names use `mod_id`, with the target ID appended for target builds. Names, authors and descriptions retain Unicode, quotes and backslashes in UTF-8, with escaping when written to JSON/TOML. Creation requires nonblank single-line fields and checks Java package keywords.
+
 ## Sources and resources
 
 Mod development has two primary directories:
@@ -113,6 +121,12 @@ Declare shared libraries with standard `api`, `implementation`, `compileOnly` an
 Organize common Java packages by registration, networking, configuration, rendering and other actual features. Place only evidenced API differences in `common/src/compat`, connected through small ordinary Java interfaces. Create no empty adapter folders, copied business classes or version condition comments. The exact adapter paths are described in [Architecture](docs/dev/architecture.md).
 
 Preserve handwritten resources. Datagen output remains in each target's `src/generated/resources`. Forge/NeoForge receive common and target resources as existing inputs; Fabric uses the corresponding main resource set.
+
+For Forge, `processResources` generates default `pack.mcmeta` only when no handwritten file exists. Formats come from the target SDK's `version.json`. Legacy metadata declares separate Forge client-resource and server-data formats. Formats with minor versions use the server-data range; Forge merges client resources into its mod resource pack. Handwritten files retain their resource-layer priority, extra sections and filters. Supply custom metadata when exposing the mod as a separate resource pack.
+
+New Forge 1.21.5 and later 1.21.x targets use ForgeGradle 7.0.40 with Gradle 9.5.0. Earlier non-baseline Forge targets keep the ForgeGradle 6 path. The nine baseline targets retain their configured plugins and Wrappers. Groovy and Kotlin DSL use the same selection rules.
+
+ForgeGradle 7 uses separate JDKs for its build tools. The current Mavenizer uses Java 25, and official mapping conversion also looks for Java 8. Set `JAVA_HOME_8` to an existing Java 8 installation, or let the official tool provision it. These do not change the target's game compilation version. Proxy settings must also reach the Mavenizer process: Gradle JVM `systemProp.*` settings are not automatically inherited. Its `JAVA_TOOL_OPTIONS` environment variable can enable the Java system proxy.
 
 A migrated project follows the same structure as a new project. Move game implementations into common, retain independent target builds and necessary metadata, and retire old project shells once all consumers have moved. Build controls, IDEA extension code and wizard assets stay out of mod JARs.
 
