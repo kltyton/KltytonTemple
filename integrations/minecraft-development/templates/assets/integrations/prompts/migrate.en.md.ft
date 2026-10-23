@@ -27,6 +27,7 @@ script syntax; this does not change the mod source language.
 Identify official MDKs, MultiLoader, Stonecutter, Architectury, SighsTemple
 or a combination. Read integrations/skills/kltyton-temple/SKILL.md from
 KltytonTemple, then the migration reference matching the existing build.
+Read docs/dev/source-layout.en.md in full and follow its source-layer, responsibility-package and completion rules.
 Read the project generator and build conventions to determine the generated project's file list,
 source ownership and Gradle roots. Under source-only, derive that list from source without
 running generation or creating a test project. Map each old file's purpose, destination,
@@ -44,7 +45,12 @@ Required outcome:
   resources into common/src/main. Compare every existing version and Loader and
   read their matching sources to identify actual API differences. Only those
   differences belong in common/src/compat, following the common build script's path rules.
-  Group packages by actual features and create no empty adapter directories.
+  Before adding or moving files, identify their domain, responsibility package, source root,
+  selected targets and consumers. Separate registration, commands/arguments, payloads/handlers,
+  configuration/storage, screens/input/localization, entity/block-entity rendering and data providers.
+  Do not dump unrelated work into the base package, one client package or manager/util/misc;
+  filename prefixes do not replace packages. Keep the same responsibility hierarchy inside
+  adapter roots, and create no directories without actual contents.
 - Split differing classes further: keep algorithms, business rules, state and
   resource handling in common. Use small, typed SPI boundaries for differing
   API calls, types and lifecycle hooks. Do not duplicate a large class because
@@ -57,6 +63,12 @@ Required outcome:
 - Preserve the primary development target as the default editing target instead of resetting it to the first matrix entry.
   Apply ide-sources.gradle after common defines templeSourceDirectories and templeResourceDirectories.
   Keep existing valid source-layer calculations so the extension can assign other compat roots using their actual target models.
+  Custom capability/API-generation layers need explicit target predicates. Select same-name variants
+  exclusively within each target. Every nonempty production Java/resource path must be selected by
+  a current target and included in its actual exported model. Distinguish stale models from unassigned
+  branches. Do not fix either by marking arbitrary source roots or including all java directories.
+  Unassigned branches are not supported; explain their purpose before deciding their disposition.
+  Do not add unrequested targets or delete sources to hide them.
 - Include a real :common module in each target and declare shared dependency scopes in
   common/build.gradle(.kts). The active target's :common.projectDir must be the physical
   common directory. Give shared Java and resource roots one IDE owner; a display name
@@ -91,6 +103,9 @@ Required outcome:
   checks and game acceptance. Compare directories, source owners, Gradle roots,
   IDE links and stale paths against the newly generated project structure.
   Inspect common consumers and justify every remaining version/Loader difference.
+  Account for responsibility packages and the target ownership of every production path. Under the
+  authorized unified acceptance contract, use verifySourceLayout with models for all current targets.
+  That task does not synchronize or build; successful builds do not validate excluded files.
   Old cache-only project trees, duplicate version directories, copied shared classes
   or tasks still invoking old controllers mean migration is incomplete.
   Visible IDE modules cannot substitute for these checks.

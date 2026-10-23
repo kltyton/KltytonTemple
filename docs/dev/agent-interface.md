@@ -1,5 +1,7 @@
 # Gradle 与 Agent 入口
 
+创建、日常开发和迁移均先读取[源码目录规则](source-layout.md)。`verifySourceLayout` 读取所有目标的现有模型，报告过期数据、未归属生产目录和同一目标中的重复 Java 路径，不隐式同步或构建。职责分包还须逐项阅读实现和消费者，不能由目录归属结果代替。
+
 正式入口是原生 Gradle 插件 io.github.kltyton.temple，由项目 buildSrc 提供。IDEA 直接导入根目录，任务按 Loader/Minecraft 分组。没有 Python CLI 或桥接进程。
 
 Root listTargets 返回目标事实；writeCiMatrix 输出启用目标；buildAllTargets 依赖各目标 build_<id>。Task ID 中的短横线和点统一替换为下划线。例如 forge-1.20.1 对应 build_forge_1_20_1、select_forge_1_20_1、runClient_forge_1_20_1、verify_forge_1_20_1。

@@ -33,6 +33,8 @@ Preserve the original functionality while replacing its project shell. Move prod
 
 ## New entry points
 
+Use the [source directory rules](../dev/source-layout.en.md) to establish responsibility packages, compilation layers, selected targets and consumers. Custom API capability layers need explicit predicates. Unassigned production paths prevent completion. Synchronize stale models; if current models still leave a path unassigned, fix its actual layer selection rather than placing all variants under one SDK. Under an authorized acceptance contract, use `verifySourceLayout` for the complete ownership list.
+
 Move the active target's game sources and shared resources into `common/src/main`, then compare all target implementations and read their matching version sources. Put evidenced API differences in `common/src/compat`. Extract small SPI boundaries and move shared algorithms and business logic back into common; a few differing API calls do not justify copying an entire class per version.
 
 Declare shared dependency scopes in `common/build.gradle(.kts)` and include a real `:common` module in each target with that target's SDK. Update build, access-hook, Mixin, producer and publishing paths. Preserve handwritten-resource ownership. A shared feature should be maintained in common without duplicate edits to each version's implementation.

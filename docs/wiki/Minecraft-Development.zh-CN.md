@@ -2,7 +2,7 @@
 
 [English](Minecraft-Development.en.md) · [Wiki](Home.zh-CN.md)
 
-本教程对应 IntelliJ IDEA 2026.2.3、Minecraft Development 2026.2-1.9.0 和 KltytonTemple 1.5.3。其他 IDEA 版本需使用对应版本的扩展；当前 ZIP 的兼容范围为 IDEA 262。
+本教程对应 IntelliJ IDEA 2026.2.3、Minecraft Development 2026.2-1.9.0 和 KltytonTemple 1.6.0。其他 IDEA 版本需使用对应版本的扩展；当前 ZIP 的兼容范围为 IDEA 262。
 
 KltytonTemple 是 Minecraft Development 的附加扩展。原有 Forge、Fabric、NeoForge、MultiLoader、Architectury 模板仍可使用。
 
@@ -15,7 +15,7 @@ KltytonTemple 是 Minecraft Development 的附加扩展。原有 Forge、Fabric�
 扩展源代码在 `integrations/idea-plugin`，本地生成的安装包在：
 
 ```text
-integrations/idea-plugin/build/distributions/KltytonTemple-IDEA-1.5.3.zip
+integrations/idea-plugin/build/distributions/KltytonTemple-IDEA-1.6.0.zip
 ```
 
 需要自行构建扩展时，使用模板的 Java 25 Wrapper。两个参数分别指向 IDEA 安装目录和 Minecraft Development 插件目录：
@@ -33,7 +33,7 @@ Windows 使用该目录内的 `gradlew.bat`。构建的是 IDEA 扩展，不会�
 1. 打开 IDEA 的“设置”。
 2. 进入左侧“插件”，选择“已安装”页签。
 3. 点击页签右侧的齿轮，选择“从磁盘安装插件”。
-4. 选择上面的 `KltytonTemple-IDEA-1.5.3.zip`。选择 ZIP 本身，不需要解压，也不要选择 Minecraft Development 的 JAR。
+4. 选择上面的 `KltytonTemple-IDEA-1.6.0.zip`。选择 ZIP 本身，不需要解压，也不要选择 Minecraft Development 的 JAR。
 5. 按 IDEA 提示应用。若明确要求重启，先保存正在编辑的工程，再重启。
 6. 在已安装列表中搜索 `KltytonTemple`，确认扩展启用。
 
@@ -123,6 +123,18 @@ JDK 按各目标的 `gradle_java_version` 选择。缺少某个版本时，该�
 `select_<target>` 同时选择默认构建目标与 common 的编辑环境。执行选择后，再同步全部 Gradle 工程；common 的补全、类型检查和 Java 使用选定目标的 SDK，其他目标仍保留关联。
 
 扩展还会把其他 compat 目录登记到适用目标的 common 源集模块。例如共享 main 选用 NeoForge 26.2 时，Forge 适配目录仍使用适用的 Forge SDK。每个目录只有一个源码所有者，扩展在每次同步后更新归属和模块依赖。新增适配目录后同步 Gradle，让源目录模型包含新目录。已有工程升级时，共享构建约定和 common 构建脚本也应同步更新；只更新扩展 ZIP 不会改写模组工程的构建文件。
+
+如果出现“源码目录需要处理”通知，先看具体类别：
+
+| 提示 | 处理 |
+| --- | --- |
+| 模型缺失或过期 | 同步所有目标；旧 schema 也需要重新导出 |
+| 模型无效 | 根据目标名和错误定位配置，检查 common 的源层导出和项目路径 |
+| common 模块尚未导入 | 先解决该目标的 Gradle 导入错误和 JDK 关联 |
+| 没有目标使用此目录 | 检查 common 的实际选择条件；反复刷新不能给未接入分支创造目标 |
+| 同一目标重复 Java 路径 | 检查适配条件是否互斥，避免同时选择同名实现 |
+
+模型和模块未全部就绪时，扩展保留上一次完整的源码归属，避免跨目标转移做到一半。`verifySourceLayout` 可输出完整问题清单及目标源码根；它不会替你同步或构建。目录和职责分类按[源码目录规则](../dev/source-layout.md)维护。
 
 每个目标使用自己的 Wrapper 和 Gradle Java。Java 21 与 Java 25 可以同时出现在同一工程中；不要为了同步把所有目标的 Wrapper 或 Java 改成同一个版本。
 

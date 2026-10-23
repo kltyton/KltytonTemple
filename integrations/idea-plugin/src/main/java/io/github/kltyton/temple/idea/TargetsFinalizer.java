@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project;
 import io.github.kltyton.temple.workspace.TargetPlan;
 import io.github.kltyton.temple.workspace.BuildScripts;
 import io.github.kltyton.temple.workspace.ProjectIdentity;
+import io.github.kltyton.temple.workspace.sources.SourceBlueprints;
 import io.github.kltyton.temple.idea.project.WizardIdentity;
 
 import java.io.IOException;
@@ -40,6 +41,7 @@ public final class TargetsFinalizer implements CreatorFinalizer {
             TargetPlan.apply(root, selections, true,
                     defaultTarget == null ? null : defaultTarget.toString());
             BuildScripts.createProject(root);
+            SourceBlueprints.selectLoaders(root, selections.stream().map(row -> row.get("loader")).distinct().toList());
         } catch (IOException error) {
             throw new IllegalStateException("Could not create selected targets", error);
         }

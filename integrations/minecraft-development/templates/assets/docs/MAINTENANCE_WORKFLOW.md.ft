@@ -1,6 +1,8 @@
 #set($END_BLOCK = ']]#')
 #[[# 开发与迁移
 
+新增、移动和维护文件均遵守[源码目录规则](dev/source-layout.md)。先确定职责包和适用目标；完成生产改动后，在约定验收中用 `verifySourceLayout` 核对完整目标矩阵的现有模型与目录归属。它不代替职责审查、实际构建或游戏验收。
+
 目标操作使用原生 Gradle 任务；命令与参数见 README。IDEA 安装及向导步骤见 docs/wiki/Minecraft-Development.zh-CN.md。
 
 1. 读取原工程 settings/build/gradle.properties、元数据、源层、Mixin/AT/AW 与依赖。

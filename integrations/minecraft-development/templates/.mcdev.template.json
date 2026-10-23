@@ -215,6 +215,16 @@
             "reformat": false
         },
         {
+            "template": "assets/docs/dev/source-layout.en.md.ft",
+            "destination": "docs/dev/source-layout.en.md",
+            "reformat": false
+        },
+        {
+            "template": "assets/docs/dev/source-layout.md.ft",
+            "destination": "docs/dev/source-layout.md",
+            "reformat": false
+        },
+        {
             "template": "assets/docs/MAINTENANCE_WORKFLOW.md.ft",
             "destination": "docs/MAINTENANCE_WORKFLOW.md",
             "reformat": false
@@ -347,6 +357,16 @@
         {
             "template": "assets/integrations/shared/src/main/java/io/github/kltyton/temple/workspace/ProjectIdentity.java.ft",
             "destination": "integrations/shared/src/main/java/io/github/kltyton/temple/workspace/ProjectIdentity.java",
+            "reformat": false
+        },
+        {
+            "template": "assets/integrations/shared/src/main/java/io/github/kltyton/temple/workspace/sources/SourceBlueprints.java.ft",
+            "destination": "integrations/shared/src/main/java/io/github/kltyton/temple/workspace/sources/SourceBlueprints.java",
+            "reformat": false
+        },
+        {
+            "template": "assets/integrations/shared/src/main/java/io/github/kltyton/temple/workspace/sources/SourceLayout.java.ft",
+            "destination": "integrations/shared/src/main/java/io/github/kltyton/temple/workspace/sources/SourceLayout.java",
             "reformat": false
         },
         {

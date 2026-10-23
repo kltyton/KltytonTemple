@@ -10,7 +10,7 @@
 
 Minecraft Development 集成提供 Mod 信息和版本表单，支持简体中文与 English 切换。Minecraft 和 Loader 读取 Mojang、Fabric、Forge、NeoForge 的目录；Fabric API 按 Minecraft 版本查询 Fabric 项目在 Modrinth 发布的版本。Java 要求来自 Minecraft 官方元数据。选定版本写入目标配置，刷新目录不会升级已有项目。
 
-“Gradle 脚本语言”可选择 Groovy（`.gradle`）或 Kotlin DSL（`.gradle.kts`）。两种方式使用同一套目标配置、源层和 Gradle 任务。KTS 工程的根工程、目标工程、settings、buildSrc 构建脚本及公共构建约定都生成 KTS；`addTarget` 沿用工程的选择。模组源码语言不随这个选项改变。
+“Gradle 脚本语言”可选择 Groovy（`.gradle`）或 Kotlin DSL（`.gradle.kts`）。两种方式使用同一套目标配置、源层和 Gradle 任务。KTS 工程使用 Kotlin 编写的根工程、目标工程、settings、buildSrc 构建脚本及对应构建约定，源码模型导出复用同一份脚本；`addTarget` 沿用工程的选择。模组源码语言不随这个选项改变。
 
 - [安装扩展与创建工程](docs/wiki/Minecraft-Development.zh-CN.md)
 - [现有工程迁移](docs/wiki/Migration.zh-CN.md)
@@ -20,6 +20,8 @@ Minecraft Development 集成提供 Mod 信息和版本表单，支持简体中�
 ## Gradle 任务
 
 命令从工程根目录执行。Windows 使用 `.\gradlew.bat`，其他系统使用 `./gradlew`。
+
+根工程使用 Gradle 9.8.2，可在 Java 21 或 25 下运行。目标仍使用各自 Wrapper 与运行 JDK；根版本不决定 Minecraft 的编译环境。
 
 | 任务 | 功能 |
 | --- | --- |
@@ -36,6 +38,7 @@ Minecraft Development 集成提供 Mod 信息和版本表单，支持简体中�
 | `runDatagen_<target>` | 执行目标的资源生成任务 |
 | `verify_<target>` | 检查已有发行 JAR，不追加构建 |
 | `verifyAllDistributions` | 检查全部已有发行 JAR |
+| `verifySourceLayout` | 核对全部目标的现有源码模型，列出过期模型、无归属目录和重复 Java 路径；不自动同步或构建 |
 | `publish_modrinth_<target>` | 打开 Modrinth 发布表单 |
 | `publish_curseforge_<target>` | 打开 CurseForge 发布表单 |
 | `publish_maven_<target>` | 打开 Maven 发布表单 |
@@ -55,7 +58,7 @@ Minecraft Development 集成提供 Mod 信息和版本表单，支持简体中�
 
 创建工程时，“默认编辑目标”下拉框列出已添加的 Minecraft / Loader 组合。选择后，首次导入的 `common` 环境和根任务默认值都使用这个目标。删除当前默认目标后，下拉框改选剩余列表中的第一个目标，可以继续手动选择。
 
-安装 1.5.3 扩展并同步全部 Gradle 项目后，其他 `compat` 目录也按实际构建模型登记到匹配的 common 源集模块，使用所属目标的 SDK。共享 main 保留一个编辑环境；切换默认目标不需要复制源码，也不会把其他版本的适配目录合到同一个 SDK 下。
+安装 1.6.0 扩展并同步全部 Gradle 项目后，其他 `compat` 目录按实际构建模型登记到匹配的 common 源集模块，使用所属目标的 SDK。模型不完整时保留已有归属并列出受影响目标；完整模型中仍无目标使用的目录也会提示。共享 main 保留一个编辑环境；切换默认目标不需要复制源码。
 
 目标目录删除或改名后，扩展会解除旧目录的 Gradle 关联，并移除对应的项目缓存和模块。清理范围限于 `targets` 下已经不存在的目标目录。
 
@@ -116,7 +119,9 @@ targets/
 
 共享依赖在 `common/build.gradle(.kts)` 中使用 `api`、`implementation`、`compileOnly`、`runtimeOnly` 等标准配置声明。每个 target 包含真实的 `:common` 模块，使用自己的 Minecraft/Loader 类路径编译；公共类合入该目标的发行 JAR。
 
-`common/src/main/java` 中的类按注册、网络、配置、渲染等实际功能分包。只把查证过的 API 差异放入 `common/src/compat`，通过普通 Java 的小范围接口接入公共逻辑。没有差异就不建目录，不复制完整业务类，不写版本条件注释。适配目录的精确规则见[架构](docs/dev/architecture.md)。
+新建时未选 Loader 的源码保存在 `gradle/target-blueprints/common` 中，使用 `.template` 后缀；新增该 Loader 的目标后再回到 common。生产目录不保留没有目标使用的 Loader 入口。
+
+源码层与包分类按[源码目录规则](docs/dev/source-layout.md)维护：通用实现只写一次，适配层只放真实 API 差异；注册、指令、网络、配置、存档、界面、渲染和数据生成分别归入自己的职责包。自定义能力层必须有明确的目标选择条件，每个非空生产目录都要接入至少一个目标。构建模型见[架构](docs/dev/architecture.md)。
 
 手写资源保持原维护方式，datagen 输出仍在各目标的 `src/generated/resources`。Forge/NeoForge 的现有资源输入包含 common 与当前目标；Fabric 使用相同的主资源集。
 

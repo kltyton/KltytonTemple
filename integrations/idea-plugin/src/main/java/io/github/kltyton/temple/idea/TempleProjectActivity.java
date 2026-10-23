@@ -19,6 +19,7 @@ import io.github.kltyton.temple.idea.model.CompatSourceModel;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
+import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent;
 import com.intellij.util.lang.JavaVersion;
 
 import java.io.*;
@@ -47,6 +48,18 @@ public final class TempleProjectActivity implements StartupActivity.DumbAware {
                 String root = project.getBasePath();
                 if (root != null && events.stream().anyMatch(event ->
                         event.getPath().equals(root + "/.temple/active-target") ||
+                                event.getPath().equals(root + "/gradle.properties") ||
+                                event.getPath().equals(root + "/build.gradle") || event.getPath().equals(root + "/build.gradle.kts") ||
+                                event.getPath().equals(root + "/settings.gradle") || event.getPath().equals(root + "/settings.gradle.kts") ||
+                                event.getPath().equals(root + "/common/build.gradle") || event.getPath().equals(root + "/common/build.gradle.kts") ||
+                                (!(event instanceof VFileContentChangeEvent) &&
+                                        (event.getPath().startsWith(root + "/common/src/") ||
+                                                (event.getFile() != null && event.getFile().getPath().startsWith(root + "/common/src/")))) ||
+                                event.getPath().startsWith(root + "/gradle/target-conventions/") ||
+                                (event.getPath().startsWith(root + "/targets/") &&
+                                        (event.getPath().endsWith(".gradle") || event.getPath().endsWith(".gradle.kts") ||
+                                                event.getPath().endsWith("/gradle.properties") ||
+                                                event.getPath().substring((root + "/targets/").length()).indexOf('/') < 0)) ||
                                 (event.getPath().startsWith(root + "/common/.gradle/contexts/") &&
                                         event.getPath().endsWith("/ide-sources.json")))) sources.refresh();
                 if (root != null && events.stream().anyMatch(event ->

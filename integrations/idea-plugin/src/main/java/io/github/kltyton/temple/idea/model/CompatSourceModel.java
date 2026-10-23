@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
@@ -13,6 +15,11 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.vfs.VfsUtilCore;
+import io.github.kltyton.temple.ui.UiText;
+import io.github.kltyton.temple.workspace.sources.SourceLayout;
+import io.github.kltyton.temple.workspace.sources.SourceLayout.SourceRoot;
+import io.github.kltyton.temple.workspace.sources.SourceLayout.Target;
+import io.github.kltyton.temple.workspace.sources.SourceLayout.Snapshot;
 import org.jetbrains.jps.model.java.JavaResourceRootType;
 import org.jetbrains.jps.model.java.JavaSourceRootType;
 
@@ -31,13 +38,9 @@ public final class CompatSourceModel {
     private final Project project;
     private final AtomicBoolean pending = new AtomicBoolean();
     private final AtomicInteger revision = new AtomicInteger();
-
-    private record Descriptor(int schema, String target, String selection, String targetDirectory,
-                              String projectDirectory, List<String> javaRoots, List<String> resourceRoots) {}
-    private record SourceRoot(Path path, boolean resource) {}
-    private record TargetModel(String id, Path targetDirectory, Path projectDirectory, List<SourceRoot> roots) {}
-    private record Snapshot(Path common, String selection, List<TargetModel> targets) {}
-    private record Binding(TargetModel target, Module module) {}
+    private List<String> lastProblems = List.of();
+    private Notification notification;
+    private record Binding(Target target, Module module) {}
     private record Managed(List<String> roots, List<String> dependencies) {}
 
     public CompatSourceModel(Project project) {
@@ -53,13 +56,18 @@ public final class CompatSourceModel {
                 Snapshot snapshot = readModels();
                 ApplicationManager.getApplication().invokeLater(() -> {
                     try {
-                        if (!project.isDisposed() && snapshot != null) WriteAction.run(() -> apply(snapshot));
+                        if (!project.isDisposed() && snapshot != null && revision.get() == requested)
+                            WriteAction.run(() -> apply(snapshot));
                     } catch (IllegalArgumentException | JsonParseException error) {
                         LOG.warn("Could not assign KltytonTemple compatibility source roots", error);
+                        report(List.of(UiText.system().get("sourceAssignmentFailed")));
                     } finally { finished(requested); }
                 });
             } catch (IOException | IllegalArgumentException | JsonParseException error) {
                 LOG.warn("Could not read KltytonTemple source models; synchronize the affected Gradle projects", error);
+                ApplicationManager.getApplication().invokeLater(() -> {
+                    if (!project.isDisposed()) report(List.of(UiText.system().get("sourceReadFailed")));
+                });
                 finished(requested);
             }
         });
@@ -73,57 +81,25 @@ public final class CompatSourceModel {
     private Snapshot readModels() throws IOException {
         String base = project.getBasePath();
         if (base == null) return null;
-        Path root = Path.of(base).toRealPath();
-        Properties identity = new Properties();
-        try (Reader reader = Files.newBufferedReader(root.resolve("gradle.properties"))) { identity.load(reader); }
-        if (!"true".equals(identity.getProperty("temple_idea_project"))) return null;
-        Path common = root.resolve("common").toRealPath();
-        Path choice = root.resolve(".temple/active-target");
-        String selection = Files.isRegularFile(choice) ? Files.readString(choice).trim() : identity.getProperty("temple_default_target");
-        List<TargetModel> targets = new ArrayList<>();
-        try (var directories = Files.list(root.resolve("targets"))) {
-            for (Path directory : directories.filter(Files::isDirectory).sorted().toList()) {
-                String id = directory.getFileName().toString();
-                if (!Files.isRegularFile(directory.resolve("gradle.properties"))) continue;
-                Path modelFile = common.resolve(".gradle/contexts").resolve(id).resolve("ide-sources.json");
-                if (!Files.isRegularFile(modelFile)) continue;
-                Descriptor descriptor;
-                try (Reader reader = Files.newBufferedReader(modelFile)) { descriptor = JSON.fromJson(reader, Descriptor.class); }
-                if (descriptor == null || descriptor.schema() != 1 || !id.equals(descriptor.target())
-                        || descriptor.targetDirectory() == null || descriptor.projectDirectory() == null
-                        || descriptor.javaRoots() == null || descriptor.resourceRoots() == null)
-                    throw new IllegalArgumentException("Invalid compatibility source model: " + modelFile);
-                if (!Objects.equals(selection, descriptor.selection())) continue;
-                Path targetDirectory = directory.toRealPath();
-                Path expectedProject = id.equals(selection) ? common : common.resolve(".gradle/contexts").resolve(id);
-                if (!Path.of(descriptor.targetDirectory()).toRealPath().equals(targetDirectory)
-                        || !Path.of(descriptor.projectDirectory()).toRealPath().equals(expectedProject.toRealPath()))
-                    throw new IllegalArgumentException("Source model belongs to a different target: " + modelFile);
-                List<SourceRoot> roots = new ArrayList<>();
-                addRoots(common, descriptor.javaRoots(), false, roots);
-                addRoots(common, descriptor.resourceRoots(), true, roots);
-                targets.add(new TargetModel(id, targetDirectory, expectedProject, roots));
+        Path root = Path.of(base);
+        if (!Files.isRegularFile(root.resolve("gradle.properties"))) return null;
+        return SourceLayout.read(root, file -> {
+            try (Reader reader = Files.newBufferedReader(file)) {
+                try { return JSON.fromJson(reader, SourceLayout.Descriptor.class); }
+                catch (JsonParseException error) { throw new IllegalArgumentException("Invalid source model: " + file, error); }
             }
-        }
-        targets.sort(Comparator.comparing((TargetModel value) -> !value.id().equals(selection)).thenComparing(TargetModel::id));
-        return new Snapshot(common, selection, targets);
-    }
-
-    private static void addRoots(Path common, List<String> paths, boolean resource, List<SourceRoot> into) throws IOException {
-        for (String value : paths) {
-            Path path = Path.of(value);
-            if (!Files.isDirectory(path)) continue;
-            path = path.toRealPath();
-            if (!path.startsWith(common.resolve("src")) && !path.startsWith(common.resolve("build")))
-                throw new IllegalArgumentException("Source root is outside common sources and build outputs: " + path);
-            into.add(new SourceRoot(path, resource));
-        }
+        });
     }
 
     private void apply(Snapshot snapshot) {
+        UiText text = UiText.system();
+        List<String> problems = new ArrayList<>();
+        for (SourceLayout.Problem problem : snapshot.problems())
+            problems.add(text.get(problem.code()) + ": " + problem.detail());
+        if (!snapshot.modelsComplete()) { report(problems); return; }
         Module[] modules = ModuleManager.getInstance(project).getModules();
         List<Binding> bindings = new ArrayList<>();
-        for (TargetModel target : snapshot.targets()) {
+        for (Target target : snapshot.targets()) {
             Module main = null, merged = null;
             for (Module module : modules) {
                 var properties = ExternalSystemModulePropertyManager.getInstance(module);
@@ -134,8 +110,11 @@ public final class CompatSourceModel {
                 else if (id != null && id.endsWith(":common")) merged = module;
             }
             if (main != null || merged != null) bindings.add(new Binding(target, main != null ? main : merged));
+            else problems.add(text.get("sourceModuleMissing") + ": " + target.id());
         }
-        if (bindings.stream().noneMatch(value -> value.target().id().equals(snapshot.selection()))) return;
+        if (!problems.isEmpty()) { report(problems); return; }
+        for (String path : snapshot.unassigned()) problems.add(text.get("sourceUnassigned") + ": " + path);
+        report(problems);
 
         Map<Path, Binding> owners = new LinkedHashMap<>();
         for (Binding binding : bindings)
@@ -217,6 +196,22 @@ public final class CompatSourceModel {
             updated.put(binding.module().getName(), new Managed(roots, dependencies));
         }
         properties.setValue(STATE_KEY, JSON.toJson(updated));
+    }
+
+    private void report(List<String> problems) {
+        if (lastProblems.equals(problems)) return;
+        lastProblems = List.copyOf(problems);
+        if (notification != null) { notification.expire(); notification = null; }
+        if (problems.isEmpty()) return;
+        UiText text = UiText.system();
+        String details = String.join("\n", problems);
+        LOG.warn("KltytonTemple source layout:\n" + details);
+        String body = problems.stream().limit(20).map(value -> value.replace("&", "&amp;")
+                .replace("<", "&lt;").replace(">", "&gt;")).reduce((left, right) -> left + "<br>" + right).orElse("");
+        if (problems.size() > 20) body += "<br>" + text.get("sourceMore") + ": " + problems.size();
+        notification = new Notification("KltytonTemple Source Layout", text.get("sourceLayoutTitle"),
+                body + "<br><br>" + text.get("sourceLayoutHint"), NotificationType.WARNING);
+        notification.notify(project);
     }
 
     private static boolean samePath(String value, Path expected) {

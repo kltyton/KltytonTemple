@@ -7,9 +7,19 @@ description: Create, maintain, or migrate Minecraft projects to KltytonTemple, i
 
 Locate the template checkout containing buildSrc, targets and integrations. Read the active edit and acceptance contract before running anything. This interface needs no MCP service or Python runtime.
 
+Read [Source ownership and directory rules](../../../docs/dev/source-layout.en.md) before creating, maintaining or migrating production files. Use the [Chinese edition](../../../docs/dev/source-layout.md) when appropriate. This contract applies to ongoing development as well as initial migration.
+
+## File placement
+
+Before editing, identify each file's domain, responsibility, source layer, selecting targets and consumers. Put shared behavior in common/src/main once. Keep only evidenced API differences in compat; retain the same responsibility packages inside adapter roots. Group commands, payloads, handlers, configuration, storage, screens, renderers and data providers by their actual domains. Do not dump unrelated classes into the base package, one client package, manager, util or misc. Preserve required framework entry points without growing them into business implementations; create no empty package skeletons.
+
+Every nonempty production Java/resource path must be selected by at least one configured target. Custom capability/profile layers need explicit target predicates and must be exported from the actual common build calculation. Same-name variants must be mutually exclusive within a target. Do not include every java directory, assign unsupported variants an arbitrary SDK, silently delete them, or add unrequested target versions. An unassigned production branch, stale model or copied business implementation prevents completion even if existing builds pass.
+
 ## Select the work
 
 For a new project, use the Minecraft Development wizard or the native Gradle createProject form. The target selector reads official catalogs; it does not upgrade existing target pins. Adding a catalog version is scaffolding, not proof of compatibility.
+
+Creation stages unselected Loader sources in gradle/target-blueprints/common/<loader> as .template assets. Adding a target restores the matching Loader sources. Keep this producer/consumer path intact; do not retain inactive Loader Java roots in common, discard the blueprints, or overwrite existing different files.
 
 For migration, read [migration.md](references/migration.md). Use the generator's file policy as the reference for a fresh project with the same target matrix. Move production sources into the template layers, consolidate shared logic in common, translate conditional preprocessing into ordinary Java adapters and preserve required artifact transforms in canonical builds, and retire the replaced project shells. No duplicate version trees or parallel old controllers may remain. Use the repository's Chinese or English prompt when the developer needs a copyable request:
 - ../../prompts/migrate.zh-CN.md
@@ -29,6 +39,7 @@ Read build.gradle(.kts) and settings.gradle(.kts) according to the actual projec
 - select_<suffix> sets the default target.
 - build_<suffix>, runClient_<suffix>, runServer_<suffix>, runDatagen_<suffix> execute the target's own Wrapper.
 - verify_<suffix> inspects an existing release JAR without building.
+- verifySourceLayout checks existing target models, reports Java/resource ownership, and fails on stale models, unassigned paths or duplicate Java paths. It does not synchronize or build targets. Execute it only under the current acceptance contract.
 - createProject/addTarget open version forms.
 - publish_<platform>_<suffix> opens a publishing form and needs upload authorization.
 

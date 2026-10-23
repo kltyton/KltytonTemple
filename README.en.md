@@ -10,7 +10,7 @@ The template is based on [SighsTemple](https://github.com/Tower-of-Sighs/SighsTe
 
 The Minecraft Development integration provides project fields and version selectors, with Simplified Chinese and English. Minecraft and Loader catalogs come from Mojang, Fabric, Forge and NeoForge. Fabric API versions are queried for the selected Minecraft release from Fabric's project on Modrinth. Java requirements come from Minecraft metadata. Selected versions are written to target configuration; refreshing the catalog does not upgrade existing projects.
 
-Gradle script language offers Groovy (`.gradle`) and Kotlin DSL (`.gradle.kts`). Both use the same target configuration, source layers and tasks. Kotlin projects generate KTS root builds, target builds, settings, buildSrc build scripts and shared conventions. `addTarget` follows the project's selection. This choice does not change the mod source language.
+Gradle script language offers Groovy (`.gradle`) and Kotlin DSL (`.gradle.kts`). Both use the same target configuration, source layers and tasks. Kotlin projects use KTS root builds, target builds, settings, buildSrc build scripts and their matching conventions, while sharing the source-model export script. `addTarget` follows the project's selection. This choice does not change the mod source language.
 
 - [Install the extension and create a project](docs/wiki/Minecraft-Development.en.md)
 - [Migrate an existing project](docs/wiki/Migration.en.md)
@@ -18,6 +18,8 @@ Gradle script language offers Groovy (`.gradle`) and Kotlin DSL (`.gradle.kts`).
 - [Migration Skill](integrations/skills/kltyton-temple/SKILL.md)
 
 ## Gradle tasks
+
+The root uses Gradle 9.8.2 and can run on Java 21 or 25. Targets retain their own Wrappers and runtime JDKs; the root version does not select the Minecraft compilation environment.
 
 Run commands from the project root. Use `.\gradlew.bat` on Windows and `./gradlew` elsewhere.
 
@@ -36,6 +38,7 @@ Run commands from the project root. Use `.\gradlew.bat` on Windows and `./gradle
 | `runDatagen_<target>` | Run the target's resource generator |
 | `verify_<target>` | Inspect an existing release JAR without rebuilding |
 | `verifyAllDistributions` | Inspect all existing release JARs |
+| `verifySourceLayout` | Check all existing source models; report stale models, unassigned paths and duplicate Java paths without synchronizing or building |
 | `publish_modrinth_<target>` | Open the Modrinth publishing form |
 | `publish_curseforge_<target>` | Open the CurseForge publishing form |
 | `publish_maven_<target>` | Open the Maven publishing form |
@@ -55,7 +58,7 @@ Replace hyphens and dots in target IDs with underscores: `fabric-1.21.1` becomes
 
 During project creation, Default editing target lists the Minecraft / loader combinations already added to the matrix. It controls common on first import and the default root tasks. Removing that target selects the first remaining entry; another entry can be chosen from the dropdown.
 
-With extension 1.5.3 and all Gradle projects synchronized, other compat directories are registered in matching common source-set modules and use those targets' SDKs. Shared main retains one editing environment. Changing the default transfers ownership without copying sources or combining the compatibility directories under one SDK.
+With extension 1.6.0 and all Gradle projects synchronized, other compat directories are registered in matching common source-set modules and use those targets' SDKs. Incomplete models retain existing ownership and report the affected targets. Complete models also report paths used by no target. Shared main keeps one editing environment; changing the default does not copy sources.
 
 When a target directory is removed or renamed, the extension detaches its old Gradle project and removes its cached project data and modules. Cleanup applies only to missing target directories directly under `targets`.
 
@@ -117,7 +120,9 @@ targets/
 
 Declare shared libraries with standard `api`, `implementation`, `compileOnly` and `runtimeOnly` scopes in `common/build.gradle(.kts)`. Each target includes a real `:common` module compiled against its own Minecraft/Loader environment. Common classes are merged into that target's release JAR.
 
-Organize common Java packages by registration, networking, configuration, rendering and other actual features. Place only evidenced API differences in `common/src/compat`, connected through small ordinary Java interfaces. Create no empty adapter folders, copied business classes or version condition comments. The exact adapter paths are described in [Architecture](docs/dev/architecture.md).
+Follow the [source directory rules](docs/dev/source-layout.en.md): write shared implementations once, keep only actual API differences in adapters, and classify registration, commands, networking, configuration, storage, screens, rendering and data generation by responsibility. Custom capability layers need explicit target predicates, and every nonempty production path needs at least one target. See [Architecture](docs/dev/architecture.md) for the build model.
+
+Unselected Loader sources are kept as `.template` assets in `gradle/target-blueprints/common` and restored when that Loader is added. They do not remain as unused Java entry points in production directories.
 
 Preserve handwritten resources. Datagen output remains in each target's `src/generated/resources`. Forge/NeoForge receive common and target resources as existing inputs; Fabric uses the corresponding main resource set.
 

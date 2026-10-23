@@ -1,6 +1,8 @@
 #set($END_BLOCK = ']]#')
 #[[# 构建与源码结构
 
+源码层、职责分包、自定义适配目录及归属完成条件见[源码目录规则](source-layout.md)（[English](source-layout.en.md)）。本页说明构建模型。
+
 游戏源码集中在 common，目标构建集中在 targets。common 是真实的 Java Library 模块；每个 target 通过项目依赖使用它，并保留独立 Wrapper、Java、映射和 Loader 构建插件。
 
 ```mermaid

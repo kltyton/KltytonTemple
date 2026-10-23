@@ -13,6 +13,8 @@ Use the generator's file selection and build conventions as the structural refer
 
 ## Shared logic first
 
+Apply the [source ownership and directory contract](../../../../docs/dev/source-layout.en.md). Build-layer placement and business-package classification are separate decisions. Inventory each file's responsibility, selected targets and consumers; a compat directory name alone does not wire it into the build.
+
 Start with the active target's sources and shared resources in common/src/main. Compare all existing variants and read matching Minecraft/Loader sources before assigning a difference to a version or Loader layer.
 
 Extract algorithms, business rules, state and resource handling into one common implementation. Differing imports or a few API calls do not justify copying a whole class. Use small typed SPI boundaries for the actual API/type/lifecycle differences, with concrete implementations in common/src/compat. Follow common/build.gradle(.kts) for exact Loader, Minecraft and combined adapter paths; create only directories with real content. Identical file hashes help find immediate merges; they do not identify all shareable logic.
@@ -58,6 +60,8 @@ Keep the existing target matrix, source precedence, metadata and Wrapper/Java pi
 A prior one-target composite import must not remain the sole IDE model. Link the independent targets so Sync All includes the full matrix. Selection controls root aliases and the shared-source editing SDK after model reload.
 
 ## Acceptance and cleanup
+
+Require current models for every configured target before concluding that all compat sources are owned. Account for every nonempty production Java/resource path, including custom capability profiles; preserve disjoint version predicates rather than globbing mutually exclusive implementations together. Read packages and call chains to confirm domain classification. Under an authorized acceptance contract, use verifySourceLayout for model/ownership evidence and actual target builds/JARs for compilation and packaging evidence. None of these checks substitutes for game acceptance.
 
 Implement the authorized production batch first. Under source-only, stop at source/file review and report unverified behavior; do not run Gradle or clients.
 
